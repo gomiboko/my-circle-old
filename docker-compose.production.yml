@@ -1,0 +1,21 @@
+version: '3'
+services:
+  back-web:
+    build:
+      context: ./back-end/nginx
+      dockerfile: Dockerfile.production
+    container_name: mc-back-web-prod-compose
+    ports:
+      - '8080:80'
+  back:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile.production
+    container_name: mc-back-prod-compose
+  front:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile.production
+    container_name: mc-front-prod-compose
+    ports:
+      - '80:80'

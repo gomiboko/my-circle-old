@@ -1,0 +1,15 @@
+version: '3'
+services:
+  dev-back:
+    build: ./back-end
+    ports:
+      - '8080:8080'
+    container_name: mc-back-dev-compose
+  dev-front:
+    build: ./front-end
+    ports:
+      - '80:8080'
+    volumes:
+      - ./front-end/src:/app/src
+      - ./front-end/public:/app/public
+    container_name: mc-front-dev-compose
