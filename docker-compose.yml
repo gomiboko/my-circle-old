@@ -4,6 +4,8 @@ services:
     build: ./back-end
     ports:
       - '8080:8080'
+    volumes:
+      - ./back-end:/app
     container_name: mc-back-dev-compose
   dev-front:
     build: ./front-end
