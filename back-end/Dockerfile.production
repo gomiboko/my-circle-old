@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine as build-stage
+FROM golang:1.16-alpine AS build-stage
 # ビルド
 ENV APP_ROOT /build
 WORKDIR ${APP_ROOT}
@@ -6,7 +6,7 @@ COPY . ${APP_ROOT}
 RUN go mod download
 RUN go build -o dist/mycircle main.go
 
-FROM alpine:3.14.0 as production-stage
+FROM alpine:3.14.0
 ENV GIN_MODE=release
 WORKDIR /app
 RUN apk update && apk add --no-cache ca-certificates
