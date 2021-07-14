@@ -2,6 +2,10 @@ version: '3'
 services:
   dev-back:
     build: ./back-end
+    env_file:
+      - ./.env
+    environment:
+      DB_SERVICE_NAME: dev-db
     ports:
       - '8080:8080'
     volumes:
@@ -18,8 +22,8 @@ services:
   dev-db:
     build: ./back-end/db
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      TZ: ${DB_TIME_ZONE}
     ports:
       - '3306:3306'
     volumes:
