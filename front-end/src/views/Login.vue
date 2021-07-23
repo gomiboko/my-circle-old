@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-form>
+    <form>
       <!-- Justify -->
       <v-row justify-md="center">
         <v-col md="3">
@@ -9,17 +9,25 @@
       </v-row>
       <v-row justify-md="center">
         <v-col md="3">
-          <v-text-field
-            label="メールアドレス"
-          ></v-text-field>
+          <validation-provider rules="required|email|max:254" name="メールアドレス" v-slot="{ errors }">
+            <v-text-field
+              label="メールアドレス"
+              v-model="email"
+              :error-messages="errors"
+            ></v-text-field>
+          </validation-provider>
         </v-col>
       </v-row>
       <v-row justify-md="center">
         <v-col md="3">
-          <v-text-field
-            label="パスワード"
-            type="password"
-          ></v-text-field>
+          <validation-provider rules="required|alpha_num|min:8|max:64" name="パスワード" v-slot="{ errors }">
+            <v-text-field
+              label="パスワード"
+              type="password"
+              v-model="password"
+              :error-messages="errors"
+            ></v-text-field>
+          </validation-provider>
         </v-col>
       </v-row>
       <v-row justify-md="center">
@@ -33,7 +41,7 @@
           <v-btn block>ログイン</v-btn>
         </v-col>
       </v-row>
-    </v-form>
+    </form>
 
     <v-row>
       <v-col offset-md="5" md="2" class="text-center">
@@ -46,9 +54,25 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { ValidationProvider, extend, localize } from "vee-validate";
+import { alpha_num, email, max, min, required } from "vee-validate/dist/rules";
+import ja from "vee-validate/dist/locale/ja.json";
 
-@Component
+extend('required', required)
+extend('alpha_num', alpha_num)
+extend('email', email)
+extend('min', min)
+extend('max', max)
+localize('ja', ja)
+
+@Component({
+  components: {
+    ValidationProvider
+  }
+})
 export default class Login extends Vue {
+  private email = ''
+  private password = ''
 }
 </script>
 
