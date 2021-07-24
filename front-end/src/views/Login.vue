@@ -1,46 +1,48 @@
 <template>
   <div>
-    <form>
-      <v-row justify-md="center">
-        <v-col md="3">
-          <div class="text-center">My Circle にログイン</div>
-        </v-col>
-      </v-row>
-      <v-row justify-md="center">
-        <v-col md="3">
-          <validation-provider rules="required|email|max:254" name="メールアドレス" v-slot="{ errors }">
-            <v-text-field
-              label="メールアドレス"
-              v-model="email"
-              :error-messages="errors"
-            ></v-text-field>
-          </validation-provider>
-        </v-col>
-      </v-row>
-      <v-row justify-md="center">
-        <v-col md="3">
-          <validation-provider rules="required|alpha_num|min:8|max:64" name="パスワード" v-slot="{ errors }">
-            <v-text-field
-              label="パスワード"
-              type="password"
-              v-model="password"
-              :error-messages="errors"
-            ></v-text-field>
-          </validation-provider>
-        </v-col>
-      </v-row>
-      <v-row justify-md="center">
-        <v-col md="3">
-          <!-- TODO: リンク先 -->
-          <router-link to="/" class="link">パスワードを忘れた場合</router-link>
-        </v-col>
-      </v-row>
-      <v-row justify-md="center">
-        <v-col md="3">
-          <v-btn block>ログイン</v-btn>
-        </v-col>
-      </v-row>
-    </form>
+    <validation-observer v-slot="{ invalid }">
+      <form>
+        <v-row justify-md="center">
+          <v-col md="3">
+            <div class="text-center">My Circle にログイン</div>
+          </v-col>
+        </v-row>
+        <v-row justify-md="center">
+          <v-col md="3">
+            <validation-provider rules="required|email|max:254" name="メールアドレス" v-slot="{ errors }">
+              <v-text-field
+                label="メールアドレス"
+                v-model="email"
+                :error-messages="errors"
+              ></v-text-field>
+            </validation-provider>
+          </v-col>
+        </v-row>
+        <v-row justify-md="center">
+          <v-col md="3">
+            <validation-provider rules="required|alpha_num|min:8|max:64" name="パスワード" v-slot="{ errors }">
+              <v-text-field
+                label="パスワード"
+                type="password"
+                v-model="password"
+                :error-messages="errors"
+              ></v-text-field>
+            </validation-provider>
+          </v-col>
+        </v-row>
+        <v-row justify-md="center">
+          <v-col md="3">
+            <!-- TODO: リンク先 -->
+            <router-link to="/" class="link">パスワードを忘れた場合</router-link>
+          </v-col>
+        </v-row>
+        <v-row justify-md="center">
+          <v-col md="3">
+            <v-btn :disabled="invalid" block>ログイン</v-btn>
+          </v-col>
+        </v-row>
+      </form>
+    </validation-observer>
 
     <v-row>
       <v-col offset-md="5" md="2" class="text-center">
@@ -53,7 +55,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ValidationProvider, extend, localize } from "vee-validate";
+import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
 import { alpha_num, email, max, min, required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 
@@ -66,6 +68,7 @@ localize('ja', ja)
 
 @Component({
   components: {
+    ValidationObserver,
     ValidationProvider
   }
 })
