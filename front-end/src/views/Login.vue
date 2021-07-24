@@ -1,7 +1,6 @@
 <template>
   <div>
     <form>
-      <!-- Justify -->
       <v-row justify-md="center">
         <v-col md="3">
           <div class="text-center">My Circle にログイン</div>
