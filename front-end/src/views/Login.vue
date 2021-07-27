@@ -48,7 +48,7 @@
         </v-row>
         <v-row justify-md="center">
           <v-col md="3">
-            <v-btn :disabled="invalid" block>ログイン</v-btn>
+            <v-btn :disabled="invalid" @click="login" block>ログイン</v-btn>
           </v-col>
         </v-row>
       </form>
@@ -73,6 +73,7 @@ import {
 } from "vee-validate";
 import { alpha_num, email, max, min, required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
+import axios from "axios";
 
 extend("required", required);
 extend("alpha_num", alpha_num);
@@ -90,6 +91,13 @@ localize("ja", ja);
 export default class Login extends Vue {
   private email = "";
   private password = "";
+
+  private async login() {
+    // TODO:
+    const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+    const res = await axios.get(`${baseUrl}/login`);
+    this.email = res.data.msg;
+  }
 }
 </script>
 
