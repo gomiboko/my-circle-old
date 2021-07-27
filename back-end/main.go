@@ -1,15 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/gomiboko/my-circle/db"
 )
 
 type User struct {
@@ -22,20 +18,13 @@ type User struct {
 }
 
 func main() {
-	dbSvcNm := os.Getenv("DB_SERVICE_NAME")
-	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbTz := os.Getenv("DB_TIME_ZONE")
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb3&parseTime=True&loc=%s", dbUser, dbPass, dbSvcNm, dbName, url.QueryEscape(dbTz))
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	err := db.Init()
 	if err != nil {
 		panic("failed to connect mycircle database!!")
 	}
 
 	var user User
-	db.First(&user)
+	db.GetDB().First(&user)
 
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
