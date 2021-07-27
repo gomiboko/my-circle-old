@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gomiboko/my-circle/db"
+	"github.com/gomiboko/my-circle/server"
 )
 
 type User struct {
@@ -26,7 +27,7 @@ func main() {
 	var user User
 	db.GetDB().First(&user)
 
-	r := gin.Default()
+	r := server.NewRouter()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"id":            user.ID,
