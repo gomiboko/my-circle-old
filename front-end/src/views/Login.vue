@@ -9,7 +9,11 @@
         </v-row>
         <v-row justify-md="center">
           <v-col md="3">
-            <validation-provider rules="required|email|max:254" name="メールアドレス" v-slot="{ errors }">
+            <validation-provider
+              rules="required|email|max:254"
+              name="メールアドレス"
+              v-slot="{ errors }"
+            >
               <v-text-field
                 label="メールアドレス"
                 v-model="email"
@@ -20,7 +24,11 @@
         </v-row>
         <v-row justify-md="center">
           <v-col md="3">
-            <validation-provider rules="required|alpha_num|min:8|max:64" name="パスワード" v-slot="{ errors }">
+            <validation-provider
+              rules="required|alpha_num|min:8|max:64"
+              name="パスワード"
+              v-slot="{ errors }"
+            >
               <v-text-field
                 label="パスワード"
                 type="password"
@@ -33,7 +41,9 @@
         <v-row justify-md="center">
           <v-col md="3">
             <!-- TODO: リンク先 -->
-            <router-link to="/" class="link">パスワードを忘れた場合</router-link>
+            <router-link to="/" class="link"
+              >パスワードを忘れた場合</router-link
+            >
           </v-col>
         </v-row>
         <v-row justify-md="center">
@@ -55,26 +65,31 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
+import {
+  ValidationObserver,
+  ValidationProvider,
+  extend,
+  localize,
+} from "vee-validate";
 import { alpha_num, email, max, min, required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 
-extend('required', required)
-extend('alpha_num', alpha_num)
-extend('email', email)
-extend('min', min)
-extend('max', max)
-localize('ja', ja)
+extend("required", required);
+extend("alpha_num", alpha_num);
+extend("email", email);
+extend("min", min);
+extend("max", max);
+localize("ja", ja);
 
 @Component({
   components: {
     ValidationObserver,
-    ValidationProvider
-  }
+    ValidationProvider,
+  },
 })
 export default class Login extends Vue {
-  private email = ''
-  private password = ''
+  private email = "";
+  private password = "";
 }
 </script>
 
