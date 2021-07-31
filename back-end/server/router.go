@@ -16,7 +16,7 @@ func NewRouter() *gin.Engine {
 	r.Use(cors.New(cfg))
 
 	a := new(controllers.Auth)
-	r.GET("/login", a.Login)
+	r.POST("/login", a.Login)
 	r.GET("/logout", a.Logout)
 
 	return r

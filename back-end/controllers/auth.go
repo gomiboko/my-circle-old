@@ -8,8 +8,21 @@ import (
 
 type Auth struct{}
 
+type LoginForm struct {
+	Email    string `json:"email"    binding:"required,email,max=254"`
+	Password string `json:"password" binding:"required,alphanum,min=8,max=64"`
+}
+
 func (a Auth) Login(c *gin.Context) {
-	// TODO:
+	var form LoginForm
+	err := c.BindJSON(&form)
+
+	if err != nil {
+		return
+	}
+
+	// TODO: ログイン処理
+
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "logged in",
 	})

@@ -93,10 +93,18 @@ export default class Login extends Vue {
   private password = "";
 
   private async login() {
-    // TODO:
     const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-    const res = await axios.get(`${baseUrl}/login`);
-    this.email = res.data.msg;
+    try {
+      await axios.post(`${baseUrl}/login`, {
+        email: this.email,
+        password: this.password,
+      });
+      // TODO: トップページに遷移
+      this.$router.push("/");
+    } catch(e) {
+      // TODO: エラーメッセージの表示方法
+      alert("エラーが発生しました。");
+    }
   }
 }
 </script>
