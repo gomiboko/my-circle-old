@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"time"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gomiboko/my-circle/db"
@@ -19,6 +20,8 @@ type User struct {
 }
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Llongfile)
+
 	err := db.Init()
 	if err != nil {
 		panic("failed to connect mycircle database!!")
