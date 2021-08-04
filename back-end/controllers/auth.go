@@ -15,9 +15,12 @@ type LoginForm struct {
 
 func (a Auth) Login(c *gin.Context) {
 	var form LoginForm
-	err := c.BindJSON(&form)
+	err := c.ShouldBindJSON(&form)
 
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": "入力エラー",
+		})
 		return
 	}
 
