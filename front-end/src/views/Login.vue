@@ -103,7 +103,11 @@ export default class Login extends Vue {
       this.$router.push("/");
     } catch(e) {
       // TODO: エラーメッセージの表示方法
-      alert("エラーが発生しました。");
+      if (axios.isAxiosError(e) && e.response) {
+        alert(e.response.data.msg);
+      } else {
+        alert(`予期せぬエラー(${e})`);
+      }
     }
   }
 }

@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/repositories"
 )
 
 type Auth struct{}
@@ -15,19 +17,37 @@ type LoginForm struct {
 
 func (a Auth) Login(c *gin.Context) {
 	var form LoginForm
-	err := c.ShouldBindJSON(&form)
-
-	if err != nil {
+	if err := c.ShouldBindJSON(&form); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "入力エラー",
 		})
 		return
 	}
 
-	// TODO: ログイン処理
+	// ログイン認証
+	ur := new(repositories.UserRepository)
+	user, err := ur.GetUser(form.Email, form.Password)
+
+	if err != nil {
+		log.Print(err)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": "予期せぬエラー",
+		})
+		return
+	}
+
+	// 認証失敗
+	if user == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"msg": "認証エラー",
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"msg": "logged in",
+		"msg":  "logged in",
+		"user": user,
 	})
 }
 
