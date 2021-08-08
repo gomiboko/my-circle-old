@@ -16,9 +16,9 @@ func NewRouter() *gin.Engine {
 	cfg.AllowOrigins = []string{os.Getenv("FRONTEND_ORIGIN")}
 	r.Use(cors.New(cfg))
 
-	a := controllers.NewAuth(repositories.NewUserRepository())
-	r.POST("/login", a.Login)
-	r.GET("/logout", a.Logout)
+	ac := controllers.NewAuthController(repositories.NewUserRepository())
+	r.POST("/login", ac.Login)
+	r.GET("/logout", ac.Logout)
 
 	return r
 }

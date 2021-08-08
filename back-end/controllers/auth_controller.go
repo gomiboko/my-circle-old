@@ -8,15 +8,15 @@ import (
 	"github.com/gomiboko/my-circle/repositories"
 )
 
-type Auth struct {
+type AuthController struct {
 	ur repositories.UserRepository
 }
 
-func NewAuth(ur repositories.UserRepository) *Auth {
-	a := &Auth{
+func NewAuthController(ur repositories.UserRepository) *AuthController {
+	ac := &AuthController{
 		ur: ur,
 	}
-	return a
+	return ac
 }
 
 type LoginForm struct {
@@ -24,7 +24,7 @@ type LoginForm struct {
 	Password string `json:"password" binding:"required,alphanum,min=8,max=64"`
 }
 
-func (a Auth) Login(c *gin.Context) {
+func (ac AuthController) Login(c *gin.Context) {
 	var form LoginForm
 	if err := c.ShouldBindJSON(&form); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -34,7 +34,7 @@ func (a Auth) Login(c *gin.Context) {
 	}
 
 	// ログイン認証
-	user, err := a.ur.GetUser(form.Email, form.Password)
+	user, err := ac.ur.GetUser(form.Email, form.Password)
 
 	if err != nil {
 		log.Print(err)
@@ -59,7 +59,7 @@ func (a Auth) Login(c *gin.Context) {
 	})
 }
 
-func (a Auth) Logout(c *gin.Context) {
+func (ac AuthController) Logout(c *gin.Context) {
 	// TODO:
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "logged out",
