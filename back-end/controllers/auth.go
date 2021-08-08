@@ -8,7 +8,16 @@ import (
 	"github.com/gomiboko/my-circle/repositories"
 )
 
-type Auth struct{}
+type Auth struct {
+	ur repositories.UserRepository
+}
+
+func NewAuth(ur repositories.UserRepository) *Auth {
+	a := &Auth{
+		ur: ur,
+	}
+	return a
+}
 
 type LoginForm struct {
 	Email    string `json:"email"    binding:"required,email,max=254"`
@@ -25,8 +34,7 @@ func (a Auth) Login(c *gin.Context) {
 	}
 
 	// ログイン認証
-	ur := new(repositories.UserRepository)
-	user, err := ur.GetUser(form.Email, form.Password)
+	user, err := a.ur.GetUser(form.Email, form.Password)
 
 	if err != nil {
 		log.Print(err)

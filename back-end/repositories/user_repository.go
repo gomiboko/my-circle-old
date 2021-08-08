@@ -9,10 +9,18 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserRepository struct {
+type UserRepository interface {
+	GetUser(email string, password string) (*models.User, error)
 }
 
-func (ur UserRepository) GetUser(email string, password string) (*models.User, error) {
+type userRepository struct {
+}
+
+func NewUserRepository() UserRepository {
+	return new(userRepository)
+}
+
+func (ur userRepository) GetUser(email string, password string) (*models.User, error) {
 	var user models.User
 
 	// email(UQ)で検索
