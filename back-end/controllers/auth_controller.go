@@ -20,15 +20,15 @@ func NewAuthController(ur repositories.UserRepository) *AuthController {
 }
 
 type LoginForm struct {
-	Email    string `json:"email"    binding:"required,email,max=254"`
-	Password string `json:"password" binding:"required,alphanum,min=8,max=64"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func (ac AuthController) Login(c *gin.Context) {
 	var form LoginForm
 	if err := c.ShouldBindJSON(&form); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "入力エラー",
+			"msg": "不正なリクエスト",
 		})
 		return
 	}

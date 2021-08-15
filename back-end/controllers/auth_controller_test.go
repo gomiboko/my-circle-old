@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -34,7 +35,29 @@ func (m *userRepositoryMock) GetUser(email string, password string) (*models.Use
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
-func TestLoginValidationNG(t *testing.T) {
+func TestInvalidRequest(t *testing.T) {
+	ac := NewAuthController(nil)
+
+	values := url.Values{}
+	values.Set("email", validEmail)
+	values.Add("password", validPassword)
+
+	// URLエンコードで送信
+	r := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(r)
+	c.Request, _ = http.NewRequest(http.MethodPost, "/login", strings.NewReader(values.Encode()))
+	c.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	ac.Login(c)
+
+	var res apiResponse
+	json.Unmarshal(r.Body.Bytes(), &res)
+
+	assert.Equal(t, http.StatusBadRequest, r.Code)
+	assert.Equal(t, "不正なリクエスト", res.Msg)
+}
+
+func TestLoginWithInvalidValue(t *testing.T) {
 	inputs := []struct {
 		email    string
 		password string
@@ -71,7 +94,12 @@ func TestLoginValidationNG(t *testing.T) {
 		},
 	}
 
-	ac := NewAuthController(nil)
+	var user *models.User
+
+	urMock := new(userRepositoryMock)
+	urMock.On("GetUser", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(user, nil)
+
+	ac := NewAuthController(urMock)
 
 	for _, in := range inputs {
 		reqBody := createRequestBody(in.email, in.password)
@@ -82,12 +110,12 @@ func TestLoginValidationNG(t *testing.T) {
 		var res apiResponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
-		assert.Equal(t, http.StatusBadRequest, r.Code)
-		assert.Equal(t, "入力エラー", res.Msg)
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		assert.Equal(t, "認証エラー", res.Msg)
 	}
 }
 
-func TestLoginValidationOK(t *testing.T) {
+func TestLoginWithValidValue(t *testing.T) {
 	inputs := []struct {
 		email    string
 		password string
@@ -133,35 +161,12 @@ func TestLoginValidationOK(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, "logged in", res.Msg)
+		assert.Equal(t, validEmail, res.User.Email)
+		assert.Equal(t, "", res.User.PasswordHash)
 	}
 }
 
-func TestSucceedLogin(t *testing.T) {
-	user := &models.User{
-		Email:        validEmail,
-		PasswordHash: "",
-	}
-
-	urMock := new(userRepositoryMock)
-	urMock.On("GetUser", validEmail, validPassword).Return(user, nil)
-
-	ac := NewAuthController(urMock)
-
-	reqBody := createRequestBody(validEmail, validPassword)
-	r, c := createLoginPostContext(reqBody)
-
-	ac.Login(c)
-
-	var res apiResponse
-	json.Unmarshal(r.Body.Bytes(), &res)
-
-	assert.Equal(t, http.StatusOK, r.Code)
-	assert.Equal(t, "logged in", res.Msg)
-	assert.Equal(t, validEmail, res.User.Email)
-	assert.Equal(t, "", res.User.PasswordHash)
-}
-
-func TestFailToLogin(t *testing.T) {
+func TestLoginAuthenticationFailed(t *testing.T) {
 	var user *models.User
 
 	// 認証NGの場合、ユーザデータの返却値がnil
@@ -182,7 +187,7 @@ func TestFailToLogin(t *testing.T) {
 	assert.Equal(t, "認証エラー", res.Msg)
 }
 
-func TestUnexpectedError(t *testing.T) {
+func TestLoginUnexpectedError(t *testing.T) {
 	var user *models.User
 
 	urMock := new(userRepositoryMock)

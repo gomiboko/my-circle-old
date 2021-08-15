@@ -10,7 +10,7 @@
         <v-row justify-md="center">
           <v-col md="3">
             <validation-provider
-              rules="required|email|max:254"
+              rules="required"
               name="メールアドレス"
               v-slot="{ errors }"
             >
@@ -25,7 +25,7 @@
         <v-row justify-md="center">
           <v-col md="3">
             <validation-provider
-              rules="required|alpha_num|min:8|max:64"
+              rules="required"
               name="パスワード"
               v-slot="{ errors }"
             >
@@ -71,15 +71,11 @@ import {
   extend,
   localize,
 } from "vee-validate";
-import { alpha_num, email, max, min, required } from "vee-validate/dist/rules";
+import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import axios from "axios";
 
 extend("required", required);
-extend("alpha_num", alpha_num);
-extend("email", email);
-extend("min", min);
-extend("max", max);
 localize("ja", ja);
 
 @Component({
