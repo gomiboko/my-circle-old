@@ -35,6 +35,11 @@ func (m *userRepositoryMock) GetUser(email string, password string) (*models.Use
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
+func TestMain(m *testing.M) {
+	gin.SetMode(gin.TestMode)
+	m.Run()
+}
+
 func TestInvalidRequest(t *testing.T) {
 	ac := NewAuthController(nil)
 
