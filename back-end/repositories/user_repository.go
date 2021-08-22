@@ -3,7 +3,6 @@ package repositories
 import (
 	"errors"
 
-	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -14,18 +13,19 @@ type UserRepository interface {
 }
 
 type userRepository struct {
+	DB *gorm.DB
 }
 
-func NewUserRepository() UserRepository {
-	return new(userRepository)
+func NewUserRepository(db *gorm.DB) UserRepository {
+	return &userRepository{db}
 }
 
-func (ur userRepository) GetUser(email string, password string) (*models.User, error) {
+func (ur *userRepository) GetUser(email string, password string) (*models.User, error) {
 	var user models.User
 
 	// email(UQ)で検索
 	cond := models.User{Email: email}
-	result := db.GetDB().Where(&cond).First(&user)
+	result := ur.DB.Where(&cond).First(&user)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
