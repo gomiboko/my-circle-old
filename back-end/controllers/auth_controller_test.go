@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gomiboko/my-circle/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -22,17 +21,16 @@ const passwordMinLength = 8
 const passwordMaxLength = 64
 
 type apiResponse struct {
-	Msg  string
-	User models.User
+	Msg string
 }
 
-type userRepositoryMock struct {
+type authServiceMock struct {
 	mock.Mock
 }
 
-func (m *userRepositoryMock) GetUser(email string, password string) (*models.User, error) {
+func (m *authServiceMock) Authenticate(email string, password string) (bool, error) {
 	args := m.Called(email, password)
-	return args.Get(0).(*models.User), args.Error(1)
+	return args.Bool(0), args.Error(1)
 }
 
 func TestMain(m *testing.M) {
@@ -99,12 +97,10 @@ func TestLoginWithInvalidValue(t *testing.T) {
 		},
 	}
 
-	var user *models.User
+	asMock := new(authServiceMock)
+	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, nil)
 
-	urMock := new(userRepositoryMock)
-	urMock.On("GetUser", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(user, nil)
-
-	ac := NewAuthController(urMock)
+	ac := NewAuthController(asMock)
 
 	for _, in := range inputs {
 		reqBody := createRequestBody(in.email, in.password)
@@ -145,15 +141,10 @@ func TestLoginWithValidValue(t *testing.T) {
 		},
 	}
 
-	user := &models.User{
-		Email:        validEmail,
-		PasswordHash: "",
-	}
+	asMock := new(authServiceMock)
+	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(true, nil)
 
-	urMock := new(userRepositoryMock)
-	urMock.On("GetUser", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(user, nil)
-
-	ac := NewAuthController(urMock)
+	ac := NewAuthController(asMock)
 
 	for _, in := range inputs {
 		reqBody := createRequestBody(in.email, in.password)
@@ -166,19 +157,14 @@ func TestLoginWithValidValue(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, "logged in", res.Msg)
-		assert.Equal(t, validEmail, res.User.Email)
-		assert.Equal(t, "", res.User.PasswordHash)
 	}
 }
 
 func TestLoginAuthenticationFailed(t *testing.T) {
-	var user *models.User
+	asMock := new(authServiceMock)
+	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, nil)
 
-	// 認証NGの場合、ユーザデータの返却値がnil
-	urMock := new(userRepositoryMock)
-	urMock.On("GetUser", validEmail, validPassword).Return(user, nil)
-
-	ac := NewAuthController(urMock)
+	ac := NewAuthController(asMock)
 
 	reqBody := createRequestBody(validEmail, validPassword)
 	r, c := createLoginPostContext(reqBody)
@@ -193,12 +179,10 @@ func TestLoginAuthenticationFailed(t *testing.T) {
 }
 
 func TestLoginUnexpectedError(t *testing.T) {
-	var user *models.User
+	asMock := new(authServiceMock)
+	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, errors.New("test exception"))
 
-	urMock := new(userRepositoryMock)
-	urMock.On("GetUser", validEmail, validPassword).Return(user, errors.New("test exception"))
-
-	ac := NewAuthController(urMock)
+	ac := NewAuthController(asMock)
 
 	reqBody := createRequestBody(validEmail, validPassword)
 	r, c := createLoginPostContext(reqBody)

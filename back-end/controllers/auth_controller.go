@@ -5,16 +5,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gomiboko/my-circle/repositories"
+	"github.com/gomiboko/my-circle/services"
 )
 
 type AuthController struct {
-	ur repositories.UserRepository
+	as services.AuthService
 }
 
-func NewAuthController(ur repositories.UserRepository) *AuthController {
+func NewAuthController(as services.AuthService) *AuthController {
 	ac := &AuthController{
-		ur: ur,
+		as: as,
 	}
 	return ac
 }
@@ -34,7 +34,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 
 	// ログイン認証
-	user, err := ac.ur.GetUser(form.Email, form.Password)
+	result, err := ac.as.Authenticate(form.Email, form.Password)
 
 	if err != nil {
 		log.Print(err)
@@ -46,7 +46,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 
 	// 認証失敗
-	if user == nil {
+	if !result {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"msg": "認証エラー",
 		})
@@ -54,8 +54,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"msg":  "logged in",
-		"user": user,
+		"msg": "logged in",
 	})
 }
 

@@ -43,8 +43,8 @@ func (s *UserRepositoryTestSuite) TestGetUser() {
 		s.FailNow(err.Error())
 	}
 
-	s.Run("認証情報が正しい場合", func() {
-		user, err := s.ur.GetUser("user1@example.com", "password")
+	s.Run("存在するメールアドレスの場合", func() {
+		user, err := s.ur.GetUser("user1@example.com")
 		if err != nil {
 			s.FailNow(err.Error())
 		}
@@ -55,22 +55,13 @@ func (s *UserRepositoryTestSuite) TestGetUser() {
 
 		assert.Equal(s.T(), "user1", user.Name)
 		assert.Equal(s.T(), "user1@example.com", user.Email)
-		assert.Empty(s.T(), user.PasswordHash)
+		assert.Equal(s.T(), "$2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG", user.PasswordHash)
 		assert.Equal(s.T(), createdAt, user.CreatedAt)
 		assert.Equal(s.T(), updatedAt, user.UpdatedAt)
 	})
 
-	s.Run("パスワードが間違っている場合", func() {
-		user, err := s.ur.GetUser("user1@example.com", "foo")
-		if err != nil {
-			s.FailNow(err.Error())
-		}
-
-		assert.Nil(s.T(), user)
-	})
-
-	s.Run("メールアドレスが間違っている場合", func() {
-		user, err := s.ur.GetUser("not-exist@example.com", "password")
+	s.Run("存在しないメールアドレス場合", func() {
+		user, err := s.ur.GetUser("not-exist@example.com")
 		if err != nil {
 			s.FailNow(err.Error())
 		}

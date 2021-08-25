@@ -8,6 +8,7 @@ import (
 	"github.com/gomiboko/my-circle/controllers"
 	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/repositories"
+	"github.com/gomiboko/my-circle/services"
 )
 
 func NewRouter() *gin.Engine {
@@ -17,7 +18,8 @@ func NewRouter() *gin.Engine {
 	cfg.AllowOrigins = []string{os.Getenv("FRONTEND_ORIGIN")}
 	r.Use(cors.New(cfg))
 
-	ac := controllers.NewAuthController(repositories.NewUserRepository(db.GetDB()))
+	ur := repositories.NewUserRepository(db.GetDB())
+	ac := controllers.NewAuthController(services.NewAuthService(ur))
 	r.POST("/login", ac.Login)
 	r.GET("/logout", ac.Logout)
 
