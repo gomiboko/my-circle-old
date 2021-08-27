@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"errors"
-
 	"github.com/gomiboko/my-circle/models"
 	"gorm.io/gorm"
 )
@@ -26,12 +24,5 @@ func (ur *userRepository) GetUser(email string) (*models.User, error) {
 	cond := models.User{Email: email}
 	result := ur.DB.Where(&cond).First(&user)
 
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, result.Error
-	}
-
-	return &user, nil
+	return &user, result.Error
 }

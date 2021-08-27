@@ -1,14 +1,17 @@
 package repositories
 
 import (
+	"errors"
 	"testing"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-testfixtures/testfixtures/v3"
+	"github.com/gomiboko/my-circle/models"
 	"github.com/gomiboko/my-circle/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
 )
 
 type UserRepositoryTestSuite struct {
@@ -62,10 +65,10 @@ func (s *UserRepositoryTestSuite) TestGetUser() {
 
 	s.Run("存在しないメールアドレス場合", func() {
 		user, err := s.ur.GetUser("not-exist@example.com")
-		if err != nil {
-			s.FailNow(err.Error())
-		}
 
-		assert.Nil(s.T(), user)
+		var userDefaultValue models.User
+
+		assert.True(s.T(), errors.Is(err, gorm.ErrRecordNotFound))
+		assert.Equal(s.T(), userDefaultValue, *user)
 	})
 }
