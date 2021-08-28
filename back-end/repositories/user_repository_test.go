@@ -66,9 +66,7 @@ func (s *UserRepositoryTestSuite) TestGetUser() {
 	s.Run("存在しないメールアドレス場合", func() {
 		user, err := s.ur.GetUser("not-exist@example.com")
 
-		var userDefaultValue models.User
-
 		assert.True(s.T(), errors.Is(err, gorm.ErrRecordNotFound))
-		assert.Equal(s.T(), userDefaultValue, *user)
+		assert.Equal(s.T(), models.User{}, *user)
 	})
 }
