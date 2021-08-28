@@ -47,7 +47,7 @@ func (s *UserRepositoryTestSuite) TestGetUser() {
 	}
 
 	s.Run("存在するメールアドレスの場合", func() {
-		user, err := s.ur.GetUser("user1@example.com")
+		user, err := s.ur.GetUser(testutils.User1Email)
 		if err != nil {
 			s.FailNow(err.Error())
 		}
@@ -56,15 +56,15 @@ func (s *UserRepositoryTestSuite) TestGetUser() {
 		createdAt := time.Date(2021, 8, 24, 12, 34, 56, 0, jst)
 		updatedAt := time.Date(2021, 8, 25, 23, 45, 01, 0, jst)
 
-		assert.Equal(s.T(), "user1", user.Name)
-		assert.Equal(s.T(), "user1@example.com", user.Email)
-		assert.Equal(s.T(), "$2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG", user.PasswordHash)
+		assert.Equal(s.T(), testutils.User1Name, user.Name)
+		assert.Equal(s.T(), testutils.User1Email, user.Email)
+		assert.Equal(s.T(), testutils.User1PasswordHash, user.PasswordHash)
 		assert.Equal(s.T(), createdAt, user.CreatedAt)
 		assert.Equal(s.T(), updatedAt, user.UpdatedAt)
 	})
 
 	s.Run("存在しないメールアドレス場合", func() {
-		user, err := s.ur.GetUser("not-exist@example.com")
+		user, err := s.ur.GetUser(testutils.InvalidUserEmail)
 
 		assert.True(s.T(), errors.Is(err, gorm.ErrRecordNotFound))
 		assert.Equal(s.T(), models.User{}, *user)

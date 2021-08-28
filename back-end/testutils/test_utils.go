@@ -10,6 +10,13 @@ import (
 	"gorm.io/gorm"
 )
 
+const User1Email = "user1@example.com"
+const User1Password = "password"
+const User1PasswordHash = "$2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG"
+const User1Name = "user1"
+
+const InvalidUserEmail = "not-exist@example.com"
+
 func GetFixtures(fixturesDirPath string) (*testfixtures.Loader, error) {
 	sqldb, err := sql.Open("mysql", getDSN())
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/gomiboko/my-circle/models"
+	"github.com/gomiboko/my-circle/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -31,14 +32,14 @@ func TestAuthService(t *testing.T) {
 func (s *AuthServiceTestSuite) TestAuthenticate() {
 	s.Run("認証OKの場合", func() {
 		user := models.User{
-			PasswordHash: "$2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG",
+			PasswordHash: testutils.User1PasswordHash,
 		}
 		urMock := new(userRepositoryMock)
 		urMock.On("GetUser", mock.AnythingOfType("string")).Return(&user, nil)
 
 		as := NewAuthService(urMock)
 
-		authenticataed, err := as.Authenticate("user1@example.com", "password")
+		authenticataed, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
 
 		assert.True(s.T(), authenticataed)
 		assert.Nil(s.T(), err)
@@ -50,7 +51,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 		as := NewAuthService(urMock)
 
-		authenticated, err := as.Authenticate("not-exist@example.com", "password")
+		authenticated, err := as.Authenticate(testutils.InvalidUserEmail, testutils.User1Password)
 
 		assert.False(s.T(), authenticated)
 		assert.Nil(s.T(), err)
@@ -67,7 +68,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 		as := NewAuthService(urMock)
 
 		// "password"で認証
-		authenticated, err := as.Authenticate("user1@example.com", "password")
+		authenticated, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
 
 		assert.False(s.T(), authenticated)
 		assert.Nil(s.T(), err)
@@ -79,7 +80,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 		as := NewAuthService(urMock)
 
-		authenticated, err := as.Authenticate("user1@example.com", "password")
+		authenticated, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
 
 		assert.False(s.T(), authenticated)
 		assert.EqualError(s.T(), err, gorm.ErrInvalidDB.Error())
@@ -94,7 +95,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 		as := NewAuthService(urMock)
 
-		authenticataed, err := as.Authenticate("user1@example.com", "password")
+		authenticataed, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
 
 		assert.False(s.T(), authenticataed)
 		assert.EqualError(s.T(), err, bcrypt.ErrHashTooShort.Error())
