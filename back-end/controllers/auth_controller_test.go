@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/suite"
 )
 
 const validEmail = "foo@example.com"
@@ -24,6 +25,16 @@ type apiResponse struct {
 	Msg string
 }
 
+// AuthControllerテストスイート
+type AuthControllerTestSuite struct {
+	suite.Suite
+}
+
+func (m *AuthControllerTestSuite) SetupSuite() {
+	gin.SetMode(gin.TestMode)
+}
+
+// AuthServiceモック
 type authServiceMock struct {
 	mock.Mock
 }
@@ -33,77 +44,140 @@ func (m *authServiceMock) Authenticate(email string, password string) (bool, err
 	return args.Bool(0), args.Error(1)
 }
 
-func TestMain(m *testing.M) {
-	gin.SetMode(gin.TestMode)
-	m.Run()
+func TestAuthController(t *testing.T) {
+	suite.Run(t, new(AuthControllerTestSuite))
 }
 
-func TestInvalidRequest(t *testing.T) {
-	ac := NewAuthController(nil)
+func (s *AuthControllerTestSuite) TestLogin() {
+	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
+		ac := NewAuthController(nil)
 
-	values := url.Values{}
-	values.Set("email", validEmail)
-	values.Add("password", validPassword)
+		values := url.Values{}
+		values.Set("email", validEmail)
+		values.Add("password", validPassword)
 
-	// URLエンコードで送信
-	r := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(r)
-	c.Request, _ = http.NewRequest(http.MethodPost, "/login", strings.NewReader(values.Encode()))
-	c.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		// URLエンコードで送信
+		r := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(r)
+		c.Request, _ = http.NewRequest(http.MethodPost, "/login", strings.NewReader(values.Encode()))
+		c.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	ac.Login(c)
+		ac.Login(c)
 
-	var res apiResponse
-	json.Unmarshal(r.Body.Bytes(), &res)
+		var res apiResponse
+		json.Unmarshal(r.Body.Bytes(), &res)
 
-	assert.Equal(t, http.StatusBadRequest, r.Code)
-	assert.Equal(t, "不正なリクエスト", res.Msg)
-}
+		assert.Equal(s.T(), http.StatusBadRequest, r.Code)
+		assert.Equal(s.T(), "不正なリクエスト", res.Msg)
+	})
 
-func TestLoginWithInvalidValue(t *testing.T) {
-	inputs := []struct {
-		email    string
-		password string
-	}{
-		// メールアドレスのチェックデータ
-		{
-			email:    "",
-			password: validPassword,
-		},
-		{
-			email:    "isNotEmail",
-			password: validPassword,
-		},
-		{
-			email:    createEmailAddress(emailMaxLength + 1),
-			password: validPassword,
-		},
-		// パスワードのチェックデータ
-		{
-			email:    validEmail,
-			password: "",
-		},
-		{
-			email:    validEmail,
-			password: strings.Repeat("a", passwordMinLength-1),
-		},
-		{
-			email:    validEmail,
-			password: strings.Repeat("a", passwordMaxLength+1),
-		},
-		{
-			email:    validEmail,
-			password: "にほんごぱすわーど",
-		},
-	}
+	s.Run("不正な入力値の場合", func() {
+		inputs := []struct {
+			email    string
+			password string
+		}{
+			// メールアドレスのチェックデータ
+			{
+				email:    "",
+				password: validPassword,
+			},
+			{
+				email:    "isNotEmail",
+				password: validPassword,
+			},
+			{
+				email:    createEmailAddress(emailMaxLength + 1),
+				password: validPassword,
+			},
+			// パスワードのチェックデータ
+			{
+				email:    validEmail,
+				password: "",
+			},
+			{
+				email:    validEmail,
+				password: strings.Repeat("a", passwordMinLength-1),
+			},
+			{
+				email:    validEmail,
+				password: strings.Repeat("a", passwordMaxLength+1),
+			},
+			{
+				email:    validEmail,
+				password: "にほんごぱすわーど",
+			},
+		}
 
-	asMock := new(authServiceMock)
-	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, nil)
+		asMock := new(authServiceMock)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, nil)
 
-	ac := NewAuthController(asMock)
+		ac := NewAuthController(asMock)
 
-	for _, in := range inputs {
-		reqBody := createRequestBody(in.email, in.password)
+		for _, in := range inputs {
+			reqBody := createRequestBody(in.email, in.password)
+			r, c := createLoginPostContext(reqBody)
+
+			ac.Login(c)
+
+			var res apiResponse
+			json.Unmarshal(r.Body.Bytes(), &res)
+
+			assert.Equal(s.T(), http.StatusUnauthorized, r.Code)
+			assert.Equal(s.T(), "認証エラー", res.Msg)
+		}
+	})
+
+	s.Run("正常な入力値の場合", func() {
+		inputs := []struct {
+			email    string
+			password string
+		}{
+			// メールアドレスのチェックデータ
+			{
+				email:    createEmailAddress(emailMaxLength),
+				password: validPassword,
+			},
+			{
+				email:    "にほんご@example.com",
+				password: validPassword,
+			},
+			// パスワードのチェックデータ
+			{
+				email:    validEmail,
+				password: strings.Repeat("a", passwordMinLength),
+			},
+			{
+				email:    validEmail,
+				password: strings.Repeat("a", passwordMaxLength),
+			},
+		}
+
+		asMock := new(authServiceMock)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(true, nil)
+
+		ac := NewAuthController(asMock)
+
+		for _, in := range inputs {
+			reqBody := createRequestBody(in.email, in.password)
+			r, c := createLoginPostContext(reqBody)
+
+			ac.Login(c)
+
+			var res apiResponse
+			json.Unmarshal(r.Body.Bytes(), &res)
+
+			assert.Equal(s.T(), http.StatusOK, r.Code)
+			assert.Equal(s.T(), "logged in", res.Msg)
+		}
+	})
+
+	s.Run("認証失敗の場合", func() {
+		asMock := new(authServiceMock)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, nil)
+
+		ac := NewAuthController(asMock)
+
+		reqBody := createRequestBody(validEmail, validPassword)
 		r, c := createLoginPostContext(reqBody)
 
 		ac.Login(c)
@@ -111,43 +185,17 @@ func TestLoginWithInvalidValue(t *testing.T) {
 		var res apiResponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
-		assert.Equal(t, http.StatusUnauthorized, r.Code)
-		assert.Equal(t, "認証エラー", res.Msg)
-	}
-}
+		assert.Equal(s.T(), http.StatusUnauthorized, r.Code)
+		assert.Equal(s.T(), "認証エラー", res.Msg)
+	})
 
-func TestLoginWithValidValue(t *testing.T) {
-	inputs := []struct {
-		email    string
-		password string
-	}{
-		// メールアドレスのチェックデータ
-		{
-			email:    createEmailAddress(emailMaxLength),
-			password: validPassword,
-		},
-		{
-			email:    "にほんご@example.com",
-			password: validPassword,
-		},
-		// パスワードのチェックデータ
-		{
-			email:    validEmail,
-			password: strings.Repeat("a", passwordMinLength),
-		},
-		{
-			email:    validEmail,
-			password: strings.Repeat("a", passwordMaxLength),
-		},
-	}
+	s.Run("予期せぬエラーが発生した場合", func() {
+		asMock := new(authServiceMock)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, errors.New("test exception"))
 
-	asMock := new(authServiceMock)
-	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(true, nil)
+		ac := NewAuthController(asMock)
 
-	ac := NewAuthController(asMock)
-
-	for _, in := range inputs {
-		reqBody := createRequestBody(in.email, in.password)
+		reqBody := createRequestBody(validEmail, validPassword)
 		r, c := createLoginPostContext(reqBody)
 
 		ac.Login(c)
@@ -155,48 +203,12 @@ func TestLoginWithValidValue(t *testing.T) {
 		var res apiResponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
-		assert.Equal(t, http.StatusOK, r.Code)
-		assert.Equal(t, "logged in", res.Msg)
-	}
+		assert.Equal(s.T(), r.Code, http.StatusInternalServerError)
+		assert.Equal(s.T(), "予期せぬエラー", res.Msg)
+	})
 }
 
-func TestLoginAuthenticationFailed(t *testing.T) {
-	asMock := new(authServiceMock)
-	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, nil)
-
-	ac := NewAuthController(asMock)
-
-	reqBody := createRequestBody(validEmail, validPassword)
-	r, c := createLoginPostContext(reqBody)
-
-	ac.Login(c)
-
-	var res apiResponse
-	json.Unmarshal(r.Body.Bytes(), &res)
-
-	assert.Equal(t, http.StatusUnauthorized, r.Code)
-	assert.Equal(t, "認証エラー", res.Msg)
-}
-
-func TestLoginUnexpectedError(t *testing.T) {
-	asMock := new(authServiceMock)
-	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, errors.New("test exception"))
-
-	ac := NewAuthController(asMock)
-
-	reqBody := createRequestBody(validEmail, validPassword)
-	r, c := createLoginPostContext(reqBody)
-
-	ac.Login(c)
-
-	var res apiResponse
-	json.Unmarshal(r.Body.Bytes(), &res)
-
-	assert.Equal(t, r.Code, http.StatusInternalServerError)
-	assert.Equal(t, "予期せぬエラー", res.Msg)
-}
-
-func TestLogout(t *testing.T) {
+func (s *AuthControllerTestSuite) TestLogout() {
 	ac := NewAuthController(nil)
 
 	w := httptest.NewRecorder()
@@ -208,8 +220,8 @@ func TestLogout(t *testing.T) {
 	var res apiResponse
 	json.Unmarshal(w.Body.Bytes(), &res)
 
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "logged out", res.Msg)
+	assert.Equal(s.T(), http.StatusOK, w.Code)
+	assert.Equal(s.T(), "logged out", res.Msg)
 }
 
 // 指定の長さのメールアドレスを生成する
