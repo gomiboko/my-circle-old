@@ -22,7 +22,7 @@ const passwordMinLength = 8
 const passwordMaxLength = 64
 
 type apiResponse struct {
-	Msg string
+	Message string
 }
 
 // AuthControllerテストスイート
@@ -68,7 +68,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusBadRequest, r.Code)
-		assert.Equal(s.T(), "不正なリクエスト", res.Msg)
+		assert.Equal(s.T(), "不正なリクエストです", res.Message)
 	})
 
 	s.Run("不正な入力値の場合", func() {
@@ -123,7 +123,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			json.Unmarshal(r.Body.Bytes(), &res)
 
 			assert.Equal(s.T(), http.StatusUnauthorized, r.Code)
-			assert.Equal(s.T(), "認証エラー", res.Msg)
+			assert.Equal(s.T(), "メールアドレスまたはパスワードが違います", res.Message)
 		}
 	})
 
@@ -162,12 +162,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			r, c := createLoginPostContext(reqBody)
 
 			ac.Login(c)
+			c.Writer.WriteHeaderNow()
 
-			var res apiResponse
-			json.Unmarshal(r.Body.Bytes(), &res)
-
-			assert.Equal(s.T(), http.StatusOK, r.Code)
-			assert.Equal(s.T(), "logged in", res.Msg)
+			assert.Equal(s.T(), http.StatusCreated, r.Code)
+			assert.Equal(s.T(), 0, r.Body.Len())
 		}
 	})
 
@@ -186,7 +184,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusUnauthorized, r.Code)
-		assert.Equal(s.T(), "認証エラー", res.Msg)
+		assert.Equal(s.T(), "メールアドレスまたはパスワードが違います", res.Message)
 	})
 
 	s.Run("予期せぬエラーが発生した場合", func() {
@@ -204,7 +202,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), r.Code, http.StatusInternalServerError)
-		assert.Equal(s.T(), "予期せぬエラー", res.Msg)
+		assert.Equal(s.T(), "予期せぬエラーが発生しました", res.Message)
 	})
 }
 
@@ -221,7 +219,7 @@ func (s *AuthControllerTestSuite) TestLogout() {
 	json.Unmarshal(w.Body.Bytes(), &res)
 
 	assert.Equal(s.T(), http.StatusOK, w.Code)
-	assert.Equal(s.T(), "logged out", res.Msg)
+	assert.Equal(s.T(), "logged out", res.Message)
 }
 
 // 指定の長さのメールアドレスを生成する

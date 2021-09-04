@@ -27,9 +27,7 @@ type LoginForm struct {
 func (ac AuthController) Login(c *gin.Context) {
 	var form LoginForm
 	if err := c.ShouldBindJSON(&form); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "不正なリクエスト",
-		})
+		c.JSON(responseBody400BadRequest())
 		return
 	}
 
@@ -39,28 +37,20 @@ func (ac AuthController) Login(c *gin.Context) {
 	if err != nil {
 		log.Print(err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"msg": "予期せぬエラー",
-		})
+		c.JSON(responseBody500UnexpectedError())
 		return
 	}
 
 	// 認証失敗
 	if !result {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"msg": "認証エラー",
-		})
+		c.JSON(http.StatusUnauthorized, messageResponseBody("メールアドレスまたはパスワードが違います"))
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "logged in",
-	})
+	c.Status(http.StatusCreated)
 }
 
 func (ac AuthController) Logout(c *gin.Context) {
 	// TODO:
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "logged out",
-	})
+	c.JSON(http.StatusOK, messageResponseBody("logged out"))
 }
