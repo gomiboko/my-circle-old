@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/services"
 )
 
@@ -19,13 +20,8 @@ func NewAuthController(as services.AuthService) *AuthController {
 	return ac
 }
 
-type LoginForm struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 func (ac AuthController) Login(c *gin.Context) {
-	var form LoginForm
+	var form forms.LoginForm
 	if err := c.ShouldBindJSON(&form); err != nil {
 		c.JSON(responseBody400BadRequest())
 		return
