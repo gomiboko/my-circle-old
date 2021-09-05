@@ -100,7 +100,7 @@ export default class Login extends Vue {
     } catch(e) {
       // TODO: エラーメッセージの表示方法
       if (axios.isAxiosError(e) && e.response) {
-        alert(e.response.data.msg);
+        alert(e.response.data.message);
       } else {
         alert(`予期せぬエラー(${e})`);
       }
