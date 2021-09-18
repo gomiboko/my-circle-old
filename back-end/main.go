@@ -15,6 +15,10 @@ func main() {
 		panic("failed to connect mycircle database!!")
 	}
 
-	r := server.NewRouter()
+	r, err := server.NewRouter()
+	if err != nil {
+		panic("failed to generate router!!")
+	}
+
 	r.Run()
 }

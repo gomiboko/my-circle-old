@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/services"
@@ -28,7 +29,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 
 	// ログイン認証
-	result, err := ac.as.Authenticate(form.Email, form.Password)
+	userID, err := ac.as.Authenticate(form.Email, form.Password)
 
 	if err != nil {
 		log.Print(err)
@@ -38,15 +39,22 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 
 	// 認証失敗
-	if !result {
+	if userID == nil {
 		c.JSON(http.StatusUnauthorized, messageResponseBody("メールアドレスまたはパスワードが違います"))
 		return
 	}
+
+	session := sessions.Default(c)
+	session.Set("user_id", *userID)
+	session.Save()
 
 	c.Status(http.StatusCreated)
 }
 
 func (ac AuthController) Logout(c *gin.Context) {
 	// TODO:
+	session := sessions.Default(c)
+	session.Clear()
+	session.Save()
 	c.JSON(http.StatusOK, messageResponseBody("logged out"))
 }

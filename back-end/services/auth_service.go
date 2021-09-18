@@ -9,7 +9,7 @@ import (
 )
 
 type AuthService interface {
-	Authenticate(email string, password string) (bool, error)
+	Authenticate(email string, password string) (*uint, error)
 }
 
 type authService struct {
@@ -20,15 +20,15 @@ func NewAuthService(ur repositories.UserRepository) AuthService {
 	return &authService{ur}
 }
 
-func (as *authService) Authenticate(email string, password string) (bool, error) {
+func (as *authService) Authenticate(email string, password string) (*uint, error) {
 	// ユーザ検索
 	user, err := as.ur.GetUser(email)
 	if err != nil {
 		// ユーザが取得できなかった場合、認証失敗
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return false, nil
+			return nil, nil
 		}
-		return false, err
+		return nil, err
 	}
 
 	// パスワード照合
@@ -36,10 +36,10 @@ func (as *authService) Authenticate(email string, password string) (bool, error)
 	if err != nil {
 		// パスワードが異なる場合、認証失敗
 		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
-			return false, nil
+			return nil, nil
 		}
-		return false, err
+		return nil, err
 	}
 
-	return true, nil
+	return &user.ID, nil
 }
