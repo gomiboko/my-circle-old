@@ -10,7 +10,7 @@ services:
       test-db:
         condition: service_healthy
     container_name: mc-test-back
-    command: go test ./...
+    command: go test -cover ./...
 
   test-db:
     build:
