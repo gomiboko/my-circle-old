@@ -9,7 +9,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -39,9 +41,9 @@ type authServiceMock struct {
 	mock.Mock
 }
 
-func (m *authServiceMock) Authenticate(email string, password string) (bool, error) {
+func (m *authServiceMock) Authenticate(email string, password string) (*uint, error) {
 	args := m.Called(email, password)
-	return args.Bool(0), args.Error(1)
+	return args.Get(0).(*uint), args.Error(1)
 }
 
 func TestAuthController(t *testing.T) {
@@ -108,8 +110,9 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			},
 		}
 
+		var userID *uint = nil
 		asMock := new(authServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, nil)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
 		ac := NewAuthController(asMock)
 
@@ -152,8 +155,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			},
 		}
 
+		// AuthServiceモック
+		userID := uint(1)
 		asMock := new(authServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(true, nil)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&userID, nil)
 
 		ac := NewAuthController(asMock)
 
@@ -161,17 +166,26 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			reqBody := createRequestBody(in.email, in.password)
 			r, c := createLoginPostContext(reqBody)
 
+			// sessions.sessionモック
+			sessMock := new(testutils.SessionMock)
+			sessMock.On("Set", mock.AnythingOfType("string"), mock.Anything)
+			sessMock.On("Save").Return(nil)
+			c.Set(sessions.DefaultKey, sessMock)
+
 			ac.Login(c)
 			c.Writer.WriteHeaderNow()
 
 			assert.Equal(s.T(), http.StatusCreated, r.Code)
 			assert.Equal(s.T(), 0, r.Body.Len())
+			sessMock.AssertCalled(s.T(), "Set", mock.AnythingOfType("string"), mock.AnythingOfType("uint"))
+			sessMock.AssertCalled(s.T(), "Save")
 		}
 	})
 
 	s.Run("認証失敗の場合", func() {
+		var userID *uint = nil
 		asMock := new(authServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, nil)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
 		ac := NewAuthController(asMock)
 
@@ -188,8 +202,9 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	})
 
 	s.Run("予期せぬエラーが発生した場合", func() {
+		var userID *uint = nil
 		asMock := new(authServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false, errors.New("test exception"))
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, errors.New("test exception"))
 
 		ac := NewAuthController(asMock)
 
@@ -213,6 +228,13 @@ func (s *AuthControllerTestSuite) TestLogout() {
 	c, _ := gin.CreateTestContext(w)
 	c.Request, _ = http.NewRequest(http.MethodGet, "/logout", nil)
 
+	// sessions.sessionモック
+	sessMock := new(testutils.SessionMock)
+	sessMock.On("Save").Return(nil)
+	sessMock.On("Clear")
+	sessMock.On("Get", mock.Anything).Return(0)
+	c.Set(sessions.DefaultKey, sessMock)
+
 	ac.Logout(c)
 
 	var res apiResponse
@@ -220,6 +242,8 @@ func (s *AuthControllerTestSuite) TestLogout() {
 
 	assert.Equal(s.T(), http.StatusOK, w.Code)
 	assert.Equal(s.T(), "logged out", res.Message)
+	sessMock.AssertCalled(s.T(), "Save")
+	sessMock.AssertCalled(s.T(), "Clear")
 }
 
 // 指定の長さのメールアドレスを生成する

@@ -32,6 +32,7 @@ func TestAuthService(t *testing.T) {
 func (s *AuthServiceTestSuite) TestAuthenticate() {
 	s.Run("認証OKの場合", func() {
 		user := models.User{
+			ID:           1,
 			PasswordHash: testutils.User1PasswordHash,
 		}
 		urMock := new(userRepositoryMock)
@@ -39,9 +40,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 		as := NewAuthService(urMock)
 
-		authenticataed, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
+		userID, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
 
-		assert.True(s.T(), authenticataed)
+		assert.Equal(s.T(), uint(1), *userID)
 		assert.Nil(s.T(), err)
 	})
 
@@ -51,9 +52,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 		as := NewAuthService(urMock)
 
-		authenticated, err := as.Authenticate(testutils.InvalidUserEmail, testutils.User1Password)
+		userID, err := as.Authenticate(testutils.InvalidUserEmail, testutils.User1Password)
 
-		assert.False(s.T(), authenticated)
+		assert.Nil(s.T(), userID)
 		assert.Nil(s.T(), err)
 	})
 
@@ -68,9 +69,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 		as := NewAuthService(urMock)
 
 		// "password"で認証
-		authenticated, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
+		userID, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
 
-		assert.False(s.T(), authenticated)
+		assert.Nil(s.T(), userID)
 		assert.Nil(s.T(), err)
 	})
 
@@ -80,9 +81,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 		as := NewAuthService(urMock)
 
-		authenticated, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
+		userID, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
 
-		assert.False(s.T(), authenticated)
+		assert.Nil(s.T(), userID)
 		assert.EqualError(s.T(), err, gorm.ErrInvalidDB.Error())
 	})
 
@@ -95,9 +96,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 		as := NewAuthService(urMock)
 
-		authenticataed, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
+		userID, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
 
-		assert.False(s.T(), authenticataed)
+		assert.Nil(s.T(), userID)
 		assert.EqualError(s.T(), err, bcrypt.ErrHashTooShort.Error())
 	})
 }
