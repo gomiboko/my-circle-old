@@ -32,6 +32,7 @@ func NewRouter() (*gin.Engine, error) {
 	r.Use(sessions.Sessions("sessionid", store))
 
 	// CORSの設定
+	// (内部で許可されていないOriginの場合は処理を中断して403を返しているので、OriginチェックによるCSRF対策も兼ねる)
 	cfg := cors.DefaultConfig()
 	cfg.AllowOrigins = []string{os.Getenv("FRONTEND_ORIGIN")}
 	cfg.AllowCredentials = true
