@@ -3,61 +3,70 @@
     <validation-observer v-slot="{ invalid }">
       <form>
         <v-row justify-md="center">
-          <v-col md="3">
-            <div class="text-center">My Circle にログイン</div>
+          <v-col md="4">
+            <div class="text-center text-h5">My Circle にログイン</div>
           </v-col>
         </v-row>
-        <v-row justify-md="center">
-          <v-col md="3">
-            <validation-provider
-              rules="required"
-              name="メールアドレス"
-              v-slot="{ errors }"
-            >
-              <v-text-field
-                label="メールアドレス"
-                v-model="email"
-                :error-messages="errors"
-              ></v-text-field>
-            </validation-provider>
-          </v-col>
-        </v-row>
-        <v-row justify-md="center">
-          <v-col md="3">
-            <validation-provider
-              rules="required"
-              name="パスワード"
-              v-slot="{ errors }"
-            >
-              <v-text-field
-                label="パスワード"
-                type="password"
-                v-model="password"
-                :error-messages="errors"
-              ></v-text-field>
-            </validation-provider>
-          </v-col>
-        </v-row>
-        <v-row justify-md="center">
-          <v-col md="3">
-            <!-- TODO: リンク先 -->
-            <router-link to="/" class="link"
-              >パスワードを忘れた場合</router-link
-            >
-          </v-col>
-        </v-row>
-        <v-row justify-md="center">
-          <v-col md="3">
-            <v-btn :disabled="invalid" @click="login" block>ログイン</v-btn>
+
+        <v-row justify="center">
+          <v-col md="4" lg="3" xl="2">
+            <v-card outlined class="pa-4">
+              <v-row>
+                <v-col>
+                  <validation-provider
+                    rules="required"
+                    name="メールアドレス"
+                    v-slot="{ errors }"
+                  >
+                    <v-text-field
+                      label="メールアドレス"
+                      v-model="email"
+                      :error-messages="errors"
+                    ></v-text-field>
+                  </validation-provider>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <validation-provider
+                    rules="required"
+                    name="パスワード"
+                    v-slot="{ errors }"
+                  >
+                    <v-text-field
+                      label="パスワード"
+                      type="password"
+                      v-model="password"
+                      :error-messages="errors"
+                    ></v-text-field>
+                  </validation-provider>
+                </v-col>
+              </v-row>
+              <v-row class="mt-0">
+                <v-col class="pt-0">
+                  <!-- TODO: リンク先 -->
+                  <router-link to="/" class="link text-body-2"
+                    >パスワードを忘れた場合</router-link
+                  >
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-btn :disabled="invalid" @click="login" block>ログイン</v-btn>
+                </v-col>
+              </v-row>
+            </v-card>
           </v-col>
         </v-row>
       </form>
     </validation-observer>
 
-    <v-row>
-      <v-col offset-md="5" md="2" class="text-center">
+    <v-row justify-md="center" class="mt-4">
+      <v-col md="3" class="text-center">
         <!-- TODO: リンク先 -->
-        <router-link to="/" class="link">新規アカウント登録</router-link>
+        <router-link to="/" class="link text-body-2"
+          >新規アカウント登録</router-link
+        >
       </v-col>
     </v-row>
   </div>
