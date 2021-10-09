@@ -54,9 +54,7 @@
               <v-row class="mt-0">
                 <v-col class="pt-0">
                   <!-- TODO: リンク先 -->
-                  <router-link to="/" class="link text-body-2"
-                    >パスワードを忘れた場合</router-link
-                  >
+                  <small-link text="パスワードを忘れた場合" to="/" />
                 </v-col>
               </v-row>
               <v-row>
@@ -75,9 +73,7 @@
     <v-row justify-md="center" class="mt-4">
       <v-col md="3" class="text-center">
         <!-- TODO: リンク先 -->
-        <router-link to="/" class="link text-body-2"
-          >新規アカウント登録</router-link
-        >
+        <small-link text="新規アカウント登録" to="/" />
       </v-col>
     </v-row>
   </div>
@@ -94,6 +90,7 @@ import {
 import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import axios from "axios";
+import SmallLink from "@/components/SmallLink.vue";
 
 extend("required", required);
 localize("ja", ja);
@@ -102,6 +99,7 @@ localize("ja", ja);
   components: {
     ValidationObserver,
     ValidationProvider,
+    SmallLink,
   },
 })
 export default class Login extends Vue {
@@ -135,12 +133,3 @@ export default class Login extends Vue {
   }
 }
 </script>
-
-<style scoped>
-.link {
-  text-decoration: none;
-}
-.link:hover {
-  text-decoration: underline;
-}
-</style>
