@@ -2,6 +2,15 @@
   <div>
     <validation-observer v-slot="{ invalid }">
       <form>
+        <!-- エラーメッセージ -->
+        <v-row v-if="err" justify="center">
+          <v-col md="6">
+            <v-alert type="error" border="left" text dense>
+              {{ err }}
+            </v-alert>
+          </v-col>
+        </v-row>
+
         <v-row justify-md="center">
           <v-col md="4">
             <div class="text-center text-h5">My Circle にログイン</div>
@@ -52,7 +61,9 @@
               </v-row>
               <v-row>
                 <v-col>
-                  <v-btn :disabled="invalid" @click="login" block>ログイン</v-btn>
+                  <v-btn :disabled="invalid" @click="login" block
+                    >ログイン</v-btn
+                  >
                 </v-col>
               </v-row>
             </v-card>
@@ -94,6 +105,7 @@ localize("ja", ja);
   },
 })
 export default class Login extends Vue {
+  private err = "";
   private email = "";
   private password = "";
 
@@ -115,9 +127,9 @@ export default class Login extends Vue {
     } catch (e) {
       // TODO: エラーメッセージの表示方法
       if (axios.isAxiosError(e) && e.response && e.response.data) {
-        alert(e.response.data.message);
+        this.err = e.response.data.message;
       } else {
-        alert(`予期せぬエラー(${e})`);
+        this.err = `予期せぬエラー(${e})`;
       }
     }
   }
