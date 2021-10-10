@@ -5,9 +5,7 @@
         <!-- エラーメッセージ -->
         <v-row v-if="err" justify="center">
           <v-col md="6">
-            <v-alert type="error" border="left" text dense>
-              {{ err }}
-            </v-alert>
+            <message type="error" :message="err" />
           </v-col>
         </v-row>
 
@@ -91,6 +89,7 @@ import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import axios from "axios";
 import SmallLink from "@/components/SmallLink.vue";
+import Message from "@/components/Message.vue";
 
 extend("required", required);
 localize("ja", ja);
@@ -100,6 +99,7 @@ localize("ja", ja);
     ValidationObserver,
     ValidationProvider,
     SmallLink,
+    Message,
   },
 })
 export default class Login extends Vue {
