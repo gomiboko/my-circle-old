@@ -2,12 +2,6 @@
   <div>
     <validation-observer v-slot="{ invalid }">
       <form>
-        <!-- エラーメッセージ -->
-        <v-row v-if="err" justify="center">
-          <v-col md="6">
-            <message type="error" :message="err" />
-          </v-col>
-        </v-row>
 
         <v-row justify-md="center">
           <v-col md="4">
@@ -89,7 +83,7 @@ import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import axios from "axios";
 import SmallLink from "@/components/SmallLink.vue";
-import Message from "@/components/Message.vue";
+import { Message, MessageType, MSG_EVENT } from "@/utils/message";
 
 extend("required", required);
 localize("ja", ja);
@@ -99,11 +93,9 @@ localize("ja", ja);
     ValidationObserver,
     ValidationProvider,
     SmallLink,
-    Message,
   },
 })
 export default class Login extends Vue {
-  private err = "";
   private email = "";
   private password = "";
 
@@ -123,11 +115,12 @@ export default class Login extends Vue {
       // TODO: トップページに遷移
       this.$router.push("/");
     } catch (e) {
-      // TODO: エラーメッセージの表示方法
       if (axios.isAxiosError(e) && e.response && e.response.data) {
-        this.err = e.response.data.message;
+        const msg = new Message(MessageType.Error, e.response.data.message);
+        this.$emit(MSG_EVENT, msg);
       } else {
-        this.err = `予期せぬエラー(${e})`;
+        const msg = new Message(MessageType.Error, `予期せぬエラー(${e})`);
+        this.$emit(MSG_EVENT, msg);
       }
     }
   }

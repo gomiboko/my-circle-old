@@ -35,20 +35,50 @@
 
     <v-main>
       <v-container>
-        <router-view />
+        <!-- メッセージ -->
+        <v-row v-if="message" justify="center">
+          <v-col md="6">
+            <alert :type="messageType" :message="message" />
+          </v-col>
+        </v-row>
+
+        <router-view @msg="showMessage" />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { Vue, Component, Watch } from "vue-property-decorator";
+import { Route } from "vue-router";
+import Alert from "@/components/Alert.vue";
+import { Message } from "@/utils/message";
 
-export default Vue.extend({
-  name: "App",
+@Component({
+  components: {
+    Alert,
+  }
+})
+export default class App extends Vue {
+  private messageType = "";
+  private message = "";
 
-  data: () => ({
-    //
-  }),
-});
+  /**
+   * 画面上部のメッセージ表示領域にメッセージを表示する。
+   */
+  private showMessage(message: Message) {
+    this.messageType = message.type;
+    this.message = message.message;
+  }
+
+  /**
+   * $route オブジェクトのウォッチャー。
+   * ページ遷移時にメッセージをクリアする。
+   */
+  @Watch("$route")
+  private onRouteChanged(to: Route, from: Route) {
+    this.messageType = "";
+    this.message = "";
+  }
+}
 </script>
