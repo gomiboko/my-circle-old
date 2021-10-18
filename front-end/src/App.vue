@@ -52,15 +52,15 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { Route } from "vue-router";
 import Alert from "@/components/Alert.vue";
-import { Message } from "@/utils/message";
+import { Message, MessageType } from "@/utils/message";
 
 @Component({
   components: {
     Alert,
-  }
+  },
 })
 export default class App extends Vue {
-  private messageType = "";
+  private messageType!: MessageType;
   private message = "";
 
   /**
@@ -77,7 +77,6 @@ export default class App extends Vue {
    */
   @Watch("$route")
   private onRouteChanged(to: Route, from: Route) {
-    this.messageType = "";
     this.message = "";
   }
 }
