@@ -24,14 +24,6 @@ describe("Alert.vue", () => {
         expect(wrapper.text()).toBe("テストメッセージ");
       });
     });
-
-    describe("HTMLタグの場合", () => {
-      test("エスケープされること", () => {
-        props.message = "<p>tag</p>";
-        const warpper = shallowMount(Alert, { propsData: props });
-        expect(warpper.text()).toBe("<p>tag</p>");
-      });
-    });
   });
 
   describe("typeプロパティ", () => {
