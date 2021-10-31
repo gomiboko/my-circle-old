@@ -5,7 +5,7 @@ import { MessageType } from "@/utils/message";
 describe("Alert.vue", () => {
   describe("messageプロパティ", () => {
     const props = {
-      type: MessageType.Info,
+      messageType: MessageType.Info,
       message: "",
     };
 
@@ -26,16 +26,16 @@ describe("Alert.vue", () => {
     });
   });
 
-  describe("typeプロパティ", () => {
-    const props = {
-      type: MessageType.Info,
-      message: "test",
-    };
-
-    describe("MessageTypeの各タイプが指定された場合", () => {
+  describe("messageTypeプロパティ", () => {
+    describe("MessageType列挙型の各タイプが指定された場合", () => {
       test("指定されたタイプで表示されること", () => {
+        const props = {
+          messageType: MessageType.Info,
+          message: "test",
+        };
+
         const testType = (t: MessageType) => {
-          props.type = t;
+          props.messageType = t;
           const wrapper = shallowMount(Alert, { propsData: props });
           expect(wrapper.text()).toBe("test");
           expect(wrapper.find("v-alert-stub").attributes("type")).toBe(t);

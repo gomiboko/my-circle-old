@@ -1,5 +1,5 @@
 <template>
-  <v-alert :type="type" border="left" text dense>
+  <v-alert :type="messageType" border="left" text dense>
     {{ message }}
   </v-alert>
 </template>
@@ -11,6 +11,6 @@ import { MessageType } from "@/utils/message";
 @Component
 export default class Alert extends Vue {
   @Prop() private readonly message!: string;
-  @Prop() private readonly type!: MessageType;
+  @Prop() private readonly messageType!: MessageType;
 }
 </script>

@@ -38,7 +38,7 @@
         <!-- メッセージ -->
         <v-row v-if="message" justify="center">
           <v-col md="6">
-            <alert :type="messageType" :message="message" />
+            <alert :message-type="messageType" :message="message" />
           </v-col>
         </v-row>
 
@@ -67,7 +67,7 @@ export default class App extends Vue {
    * 画面上部のメッセージ表示領域にメッセージを表示する。
    */
   private showMessage(message: Message) {
-    this.messageType = message.type;
+    this.messageType = message.messageType;
     this.message = message.message;
   }
 

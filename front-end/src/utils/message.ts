@@ -1,5 +1,5 @@
 export class Message {
-  constructor(public type: MessageType, public message: string) {}
+  constructor(public messageType: MessageType, public message: string) {}
 }
 
 export const enum MessageType {
