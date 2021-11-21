@@ -2,7 +2,7 @@ export class Message {
   constructor(public messageType: MessageType, public message: string) {}
 }
 
-export const enum MessageType {
+export enum MessageType {
   Success = "success",
   Info = "info",
   Warn = "warning",

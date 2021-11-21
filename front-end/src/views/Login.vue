@@ -15,11 +15,13 @@
               <v-row>
                 <v-col>
                   <validation-provider
+                    ref="emailTextFieldProvider"
                     rules="required"
                     name="メールアドレス"
                     v-slot="{ errors }"
                   >
                     <v-text-field
+                      ref="emailTextField"
                       label="メールアドレス"
                       v-model="email"
                       :error-messages="errors"
@@ -30,11 +32,13 @@
               <v-row>
                 <v-col>
                   <validation-provider
+                    ref="passwordTextFieldProvider"
                     rules="required"
                     name="パスワード"
                     v-slot="{ errors }"
                   >
                     <v-text-field
+                      ref="passwordTextField"
                       label="パスワード"
                       type="password"
                       v-model="password"
@@ -51,7 +55,11 @@
               </v-row>
               <v-row>
                 <v-col>
-                  <v-btn :disabled="invalid" @click="login" block
+                  <v-btn
+                    ref="loginButton"
+                    :disabled="invalid"
+                    @click="login"
+                    block
                     >ログイン</v-btn
                   >
                 </v-col>
@@ -81,7 +89,6 @@ import {
 } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
-import axios from "axios";
 import SmallLink from "@/components/SmallLink.vue";
 import { Message, MessageType, MSG_EVENT } from "@/utils/message";
 
@@ -102,7 +109,7 @@ export default class Login extends Vue {
   private async login() {
     const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
     try {
-      await axios.post(
+      await this.$http.post(
         `${baseUrl}/login`,
         {
           email: this.email,
@@ -115,7 +122,7 @@ export default class Login extends Vue {
       // TODO: トップページに遷移
       this.$router.push("/");
     } catch (e) {
-      if (axios.isAxiosError(e) && e.response && e.response.data) {
+      if (this.$http.isAxiosError(e) && e.response && e.response.data) {
         const msg = new Message(MessageType.Error, e.response.data.message);
         this.$emit(MSG_EVENT, msg);
       } else {
