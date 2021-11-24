@@ -1,8 +1,8 @@
-import { shallowMount, mount, createLocalVue } from "@vue/test-utils";
+import { shallowMount, mount } from "@vue/test-utils";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Login from "@/views/Login.vue";
 import VueRouter from "vue-router";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { Message, MSG_EVENT } from "@/utils/message";
 import {
   getValidationProviderErrors,
@@ -11,16 +11,7 @@ import {
   getVeryFirstEventData,
 } from "./test-utils";
 import flushPromises from "flush-promises";
-
-const localVue = createLocalVue();
-
-// VueRouterの設定
-localVue.use(VueRouter);
-
-// Axiosのモック設定
-jest.mock("axios");
-const axiosMock = axios as jest.Mocked<typeof axios>;
-localVue.prototype.$http = axiosMock;
+import { createMockedLocalVue } from "./local-vue";
 
 jest.useFakeTimers();
 
@@ -58,6 +49,7 @@ describe("Login.vue", () => {
     describe("メールアドレステキストボックス", () => {
       describe("空の場合", () => {
         test("エラーメッセージが表示されること", async () => {
+          const { localVue } = createMockedLocalVue();
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
@@ -77,6 +69,7 @@ describe("Login.vue", () => {
 
       describe("値が入力された場合", () => {
         test("エラーメッセージが表示されないこと", async () => {
+          const { localVue } = createMockedLocalVue();
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
@@ -98,6 +91,7 @@ describe("Login.vue", () => {
     describe("パスワードテキストボックス", () => {
       describe("空の場合", () => {
         test("エラーメッセージが表示されること", async () => {
+          const { localVue } = createMockedLocalVue();
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
@@ -117,6 +111,7 @@ describe("Login.vue", () => {
 
       describe("値が入力された場合", () => {
         test("エラーメッセージが表示されないこと", async () => {
+          const { localVue } = createMockedLocalVue();
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
@@ -139,6 +134,8 @@ describe("Login.vue", () => {
   describe("ログインボタン押下", () => {
     describe("ログインが成功した場合", () => {
       test("トップページに遷移すること", async () => {
+        const { localVue, axiosMock } = createMockedLocalVue();
+
         // ログイン成功時のレスポンスはステータスコードのみ
         axiosMock.post.mockResolvedValue(null);
 
@@ -166,6 +163,8 @@ describe("Login.vue", () => {
 
     describe("ログインに失敗した場合", () => {
       test("ログインページにエラーメッセージが表示されること", async () => {
+        const { localVue, axiosMock } = createMockedLocalVue();
+
         axiosMock.post.mockRejectedValue({
           isAxiosError: true,
           response: {
@@ -204,6 +203,8 @@ describe("Login.vue", () => {
 
     describe("予期せぬエラーが発生した場合", () => {
       test("ログインページにエラーメッセージが表示されること", async () => {
+        const { localVue, axiosMock } = createMockedLocalVue();
+
         axiosMock.post.mockRejectedValue(new Error("予期せぬエラーテスト"));
         axiosMock.isAxiosError.mockReturnValue(false);
 
