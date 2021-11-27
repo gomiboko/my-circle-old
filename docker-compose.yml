@@ -20,13 +20,13 @@ services:
       - ./front-end/public:/app/public
     container_name: mc-front-dev-compose
   dev-db:
-    build: ./back-end/db
+    build: ./back-end/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       TZ: ${DB_TIME_ZONE}
     ports:
       - '3306:3306'
     volumes:
-      - ./back-end/db/init:/docker-entrypoint-initdb.d
-      - ./back-end/db/data:/var/lib/mysql
+      - ./back-end/mysql/init:/docker-entrypoint-initdb.d
+      - ./back-end/mysql/data:/var/lib/mysql
     container_name: mc-db-dev-compose

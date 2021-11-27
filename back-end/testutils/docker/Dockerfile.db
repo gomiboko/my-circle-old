@@ -1,0 +1,4 @@
+FROM mysql:8.0.25
+COPY ./mysql/init/1_ddl.sql /docker-entrypoint-initdb.d/
+COPY ./mysql/my.cnf /etc/mysql/conf.d/my.cnf
+CMD [ "mysqld" ]
