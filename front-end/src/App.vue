@@ -50,7 +50,6 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from "vue-property-decorator";
-import { Route } from "vue-router";
 import Alert from "@/components/Alert.vue";
 import { Message, MessageType } from "@/utils/message";
 
@@ -76,7 +75,7 @@ export default class App extends Vue {
    * ページ遷移時にメッセージをクリアする。
    */
   @Watch("$route")
-  private onRouteChanged(to: Route, from: Route) {
+  private onRouteChanged() {
     this.message = "";
   }
 }
