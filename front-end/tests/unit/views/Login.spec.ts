@@ -9,9 +9,9 @@ import {
   flushAll,
   getEventCount,
   getVeryFirstEventData,
-} from "./test-utils";
+} from "../test-utils";
 import flushPromises from "flush-promises";
-import { createMockedLocalVue } from "./local-vue";
+import { createMockedLocalVue } from "../local-vue";
 
 jest.useFakeTimers();
 
