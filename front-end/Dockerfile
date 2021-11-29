@@ -5,5 +5,10 @@ COPY package*.json ./
 RUN npm install
 COPY public/ ./public/
 
+# GitHub Actions で単体テストを実行する為に必要なファイル
+COPY tests/unit/ ./tests/unit/
+COPY jest.config.js ./
+COPY babel.config.js ./
+
 COPY src/ ./src/
 CMD ["npm", "run", "serve"]
