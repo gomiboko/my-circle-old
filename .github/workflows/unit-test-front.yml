@@ -1,0 +1,22 @@
+name: フロントエンド単体テスト
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # 手動での実行を許可
+  workflow_dispatch:
+
+jobs:
+
+  unit_test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: |
+        docker build -t unittest ./front-end/
+        docker run unittest npm run test:unit
