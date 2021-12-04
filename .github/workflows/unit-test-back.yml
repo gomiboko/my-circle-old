@@ -1,0 +1,37 @@
+name: バックエンド単体テスト
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # 手動での実行を許可
+  workflow_dispatch:
+
+jobs:
+
+  unit-test:
+
+    runs-on: ubuntu-latest
+
+    services:
+      test-db:
+        image: mysql:8.0.25
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          TZ: Asia/Tokyo
+        volumes:
+          - ./mysql/init/1_ddl.sql:/docker-entrypoint-initdb.d/
+          - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: |
+        docker build -t unittest ./back-end/ --file ./testutils/docker/Dockerfile.backend
+        docker run unittest go test -cover ./...
