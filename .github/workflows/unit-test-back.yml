@@ -22,8 +22,8 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           TZ: Asia/Tokyo
         volumes:
-          - $PWD/github-workflows/mysql/init:/docker-entrypoint-initdb.d
-          - $PWD/github-workflows/mysql/conf:/etc/mysql/conf.d
+          - $(pwd)/github-workflows/mysql/init:/docker-entrypoint-initdb.d
+          - $(pwd)/github-workflows/mysql/conf:/etc/mysql/conf.d
         options: >-
           --health-cmd "mysqladmin ping"
           --health-interval 10s
