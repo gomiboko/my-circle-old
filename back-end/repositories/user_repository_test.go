@@ -61,6 +61,7 @@ func (s *UserRepositoryTestSuite) TestGetUser() {
 		assert.Equal(s.T(), testutils.User1PasswordHash, user.PasswordHash)
 		assert.Equal(s.T(), createdAt, user.CreatedAt)
 		assert.Equal(s.T(), updatedAt, user.UpdatedAt)
+		assert.Fail(s.T(), "失敗のテスト")
 	})
 
 	s.Run("存在しないメールアドレス場合", func() {
