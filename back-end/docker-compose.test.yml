@@ -10,7 +10,7 @@ services:
       test-db:
         condition: service_healthy
     container_name: mc-test-back
-    command: go test -cover ./...
+    tty: true
 
   test-db:
     build:
@@ -22,7 +22,7 @@ services:
     container_name: mc-test-db
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u root -proot
-      interval: 1m
+      interval: 5s
       timeout: 5s
-      retries: 3
+      retries: 6
       start_period: 30s

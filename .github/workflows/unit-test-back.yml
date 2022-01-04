@@ -1,0 +1,28 @@
+name: バックエンド単体テスト
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'back-end/**'
+      - '.github/workflows/unit-test-back.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'back-end/**'
+      - '.github/workflows/unit-test-back.yml'
+
+  # 手動での実行を許可
+  workflow_dispatch:
+
+jobs:
+
+  unit-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./back-end/execute_test.sh
