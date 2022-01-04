@@ -24,5 +24,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - run: ./back-end/execute_test.sh
+      - uses: actions/checkout@v2
+      - run: ./back-end/execute_test.sh
