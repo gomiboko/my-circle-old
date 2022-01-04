@@ -36,6 +36,7 @@ describe("App.vue", () => {
           expect(
             wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)
           ).toBe("test message");
+          expect(true).toBe(false);
         });
       });
 
