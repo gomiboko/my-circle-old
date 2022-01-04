@@ -2,9 +2,17 @@ name: バックエンド単体テスト
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+    paths:
+      - 'back-end/**'
+      - '.github/workflows/unit-test-back.yml'
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+    paths:
+      - 'back-end/**'
+      - '.github/workflows/unit-test-back.yml'
 
   # 手動での実行を許可
   workflow_dispatch:

@@ -2,9 +2,17 @@ name: フロントエンド単体テスト
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+    paths:
+      - 'front-end/**'
+      - '.github/workflows/unit-test-front.yml'
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+    paths:
+      - 'front-end/**'
+      - '.github/workflows/unit-test-front.yml'
 
   # 手動での実行を許可
   workflow_dispatch:
