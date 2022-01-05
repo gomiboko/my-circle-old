@@ -73,7 +73,7 @@
     <v-row justify-md="center" class="mt-4">
       <v-col md="3" class="text-center">
         <!-- TODO: リンク先 -->
-        <small-link text="新規アカウント登録" to="/" />
+        <small-link text="新規アカウント登録" to="/join" />
       </v-col>
     </v-row>
   </div>
