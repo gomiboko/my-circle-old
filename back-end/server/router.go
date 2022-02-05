@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"os"
 	"strconv"
 
@@ -8,10 +9,13 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/gomiboko/my-circle/controllers"
 	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/repositories"
 	"github.com/gomiboko/my-circle/services"
+	"github.com/gomiboko/my-circle/validations"
 )
 
 func NewRouter() (*gin.Engine, error) {
@@ -38,11 +42,20 @@ func NewRouter() (*gin.Engine, error) {
 	cfg.AllowCredentials = true
 	r.Use(cors.New(cfg))
 
+	// カスタムバリデーションの登録
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("password", validations.Password)
+	} else {
+		return nil, errors.New("カスタムバリデーションの登録に失敗しました")
+	}
+
 	// ルーティング
 	ur := repositories.NewUserRepository(db.GetDB())
 	ac := controllers.NewAuthController(services.NewAuthService(ur))
+	uc := controllers.NewUserController(services.NewUserService(ur))
 	r.POST("/login", ac.Login)
 	r.GET("/logout", ac.Logout)
+	r.POST("/users", uc.Create)
 
 	return r, nil
 }

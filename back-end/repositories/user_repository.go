@@ -7,6 +7,7 @@ import (
 
 type UserRepository interface {
 	GetUser(email string) (*models.User, error)
+	CreateUser(user *models.User) error
 }
 
 type userRepository struct {
@@ -25,4 +26,10 @@ func (ur *userRepository) GetUser(email string) (*models.User, error) {
 	result := ur.DB.Where(&cond).First(&user)
 
 	return &user, result.Error
+}
+
+func (ur *userRepository) CreateUser(user *models.User) error {
+	result := ur.DB.Create(&user)
+
+	return result.Error
 }
