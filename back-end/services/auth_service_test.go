@@ -25,6 +25,11 @@ func (m *userRepositoryMock) GetUser(email string) (*models.User, error) {
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
+func (m *userRepositoryMock) CreateUser(user *models.User) error {
+	args := m.Called(user)
+	return args.Error(0)
+}
+
 func TestAuthService(t *testing.T) {
 	suite.Run(t, new(AuthServiceTestSuite))
 }
