@@ -83,7 +83,7 @@ import {
 } from "vee-validate";
 import { required, min, max, email } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
-import { Message, MessageType, MSG_EVENT } from "@/utils/message";
+import { showError } from "@/utils/message";
 import RequiredTextField from "@/components/RequiredTextField.vue";
 
 extend("required", required);
@@ -133,13 +133,7 @@ export default class Join extends Vue {
       // トップページに繊維
       this.$router.push("/");
     } catch (e) {
-      if (this.$http.isAxiosError(e) && e.response && e.response.data) {
-        const msg = new Message(MessageType.Error, e.response.data.message);
-        this.$emit(MSG_EVENT, msg);
-      } else {
-        const msg = new Message(MessageType.Error, `予期せぬエラー(${e})`);
-        this.$emit(MSG_EVENT, msg);
-      }
+      showError(this, e);
     }
   }
 }

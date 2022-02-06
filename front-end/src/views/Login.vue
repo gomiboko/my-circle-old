@@ -89,7 +89,7 @@ import {
 import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import SmallLink from "@/components/SmallLink.vue";
-import { Message, MessageType, MSG_EVENT } from "@/utils/message";
+import { showError } from "@/utils/message";
 
 extend("required", required);
 localize("ja", ja);
@@ -121,13 +121,7 @@ export default class Login extends Vue {
       // TODO: トップページに遷移
       this.$router.push("/");
     } catch (e) {
-      if (this.$http.isAxiosError(e) && e.response && e.response.data) {
-        const msg = new Message(MessageType.Error, e.response.data.message);
-        this.$emit(MSG_EVENT, msg);
-      } else {
-        const msg = new Message(MessageType.Error, `予期せぬエラー(${e})`);
-        this.$emit(MSG_EVENT, msg);
-      }
+      showError(this, e);
     }
   }
 }
