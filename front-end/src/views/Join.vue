@@ -17,12 +17,11 @@
                   rules="required|max:45"
                   v-slot="{ errors }"
                 >
-                  <v-text-field v-model="username" :error-messages="errors">
-                    <template v-slot:label
-                      >ユーザ名
-                      <sup><span style="color: crimson">*</span></sup></template
-                    >
-                  </v-text-field>
+                  <required-text-field
+                    label="ユーザ名"
+                    v-model="username"
+                    :error-messages="errors"
+                  ></required-text-field>
                 </validation-provider>
               </v-col>
             </v-row>
@@ -33,12 +32,11 @@
                   rules="required|email|max:254"
                   v-slot="{ errors }"
                 >
-                  <v-text-field v-model="email" :error-messages="errors">
-                    <template v-slot:label
-                      >メールアドレス
-                      <sup><span style="color: crimson">*</span></sup></template
-                    >
-                  </v-text-field>
+                  <required-text-field
+                    label="メールアドレス"
+                    v-model="email"
+                    :error-messages="errors"
+                  ></required-text-field>
                 </validation-provider>
               </v-col>
             </v-row>
@@ -49,19 +47,15 @@
                   name="パスワード"
                   v-slot="{ errors }"
                 >
-                  <v-text-field
+                  <required-text-field
+                    label="パスワード"
                     hint="8文字以上"
                     v-model="password"
                     :type="showPassword ? 'text' : 'password'"
                     :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                     :error-messages="errors"
                     @click:append="showPassword = !showPassword"
-                  >
-                    <template v-slot:label
-                      >パスワード
-                      <sup><span style="color: crimson">*</span></sup></template
-                    >
-                  </v-text-field>
+                  ></required-text-field>
                 </validation-provider>
               </v-col>
             </v-row>
@@ -90,6 +84,7 @@ import {
 import { required, min, max, email } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import { Message, MessageType, MSG_EVENT } from "@/utils/message";
+import RequiredTextField from "@/components/RequiredTextField.vue";
 
 extend("required", required);
 extend("min", min);
@@ -111,6 +106,7 @@ localize("ja", ja);
   components: {
     ValidationObserver,
     ValidationProvider,
+    RequiredTextField,
   },
 })
 export default class Join extends Vue {
