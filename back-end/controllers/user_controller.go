@@ -1,13 +1,12 @@
 package controllers
 
 import (
-	"errors"
 	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/go-sql-driver/mysql"
+	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/services"
 )
@@ -35,10 +34,7 @@ func (uc *UserController) Create(c *gin.Context) {
 	// ユーザ登録
 	user, err := uc.us.CreateUser(form)
 	if err != nil {
-		log.Print(err)
-
-		var mysqlErr *mysql.MySQLError
-		if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
+		if db.Is(err, db.ErrDuplicateEntry) {
 			c.JSON(http.StatusConflict, messageResponseBody("登録済みのメールアドレスです"))
 		} else {
 			c.JSON(responseBody500UnexpectedError())
