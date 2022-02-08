@@ -6,8 +6,8 @@ import (
 )
 
 type UserRepository interface {
-	GetUser(email string) (*models.User, error)
-	CreateUser(user *models.User) error
+	Get(email string) (*models.User, error)
+	Create(user *models.User) error
 }
 
 type userRepository struct {
@@ -18,7 +18,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db}
 }
 
-func (ur *userRepository) GetUser(email string) (*models.User, error) {
+func (ur *userRepository) Get(email string) (*models.User, error) {
 	var user models.User
 
 	// email(UQ)で検索
@@ -28,7 +28,7 @@ func (ur *userRepository) GetUser(email string) (*models.User, error) {
 	return &user, result.Error
 }
 
-func (ur *userRepository) CreateUser(user *models.User) error {
+func (ur *userRepository) Create(user *models.User) error {
 	result := ur.DB.Create(&user)
 
 	return result.Error

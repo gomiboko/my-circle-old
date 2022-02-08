@@ -16,8 +16,8 @@ import (
 
 type UserRepositoryTestSuite struct {
 	suite.Suite
-	fixtures *testfixtures.Loader
-	ur       UserRepository
+	fixtures       *testfixtures.Loader
+	userRepository UserRepository
 }
 
 func (s *UserRepositoryTestSuite) SetupSuite() {
@@ -33,21 +33,21 @@ func (s *UserRepositoryTestSuite) SetupSuite() {
 	if err != nil {
 		s.FailNow(err.Error())
 	}
-	s.ur = NewUserRepository(db)
+	s.userRepository = NewUserRepository(db)
 }
 
 func TestUserRepository(t *testing.T) {
 	suite.Run(t, new(UserRepositoryTestSuite))
 }
 
-func (s *UserRepositoryTestSuite) TestGetUser() {
+func (s *UserRepositoryTestSuite) TestGet() {
 	err := s.fixtures.Load()
 	if err != nil {
 		s.FailNow(err.Error())
 	}
 
 	s.Run("存在するメールアドレスの場合", func() {
-		user, err := s.ur.GetUser(testutils.User1Email)
+		user, err := s.userRepository.Get(testutils.User1Email)
 		if err != nil {
 			s.FailNow(err.Error())
 		}
@@ -64,7 +64,7 @@ func (s *UserRepositoryTestSuite) TestGetUser() {
 	})
 
 	s.Run("存在しないメールアドレス場合", func() {
-		user, err := s.ur.GetUser(testutils.InvalidUserEmail)
+		user, err := s.userRepository.Get(testutils.InvalidUserEmail)
 
 		assert.True(s.T(), errors.Is(err, gorm.ErrRecordNotFound))
 		assert.Equal(s.T(), models.User{}, *user)

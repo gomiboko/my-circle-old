@@ -34,7 +34,7 @@ func (us *userService) CreateUser(userForm forms.UserForm) (*models.User, error)
 		PasswordHash: string(hash),
 	}
 
-	err = us.userRepository.CreateUser(&user)
+	err = us.userRepository.Create(&user)
 
 	// パスワードのハッシュ値はログイン認証以外で使わないのでクリア
 	user.PasswordHash = ""

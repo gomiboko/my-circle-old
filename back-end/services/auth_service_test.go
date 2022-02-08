@@ -20,12 +20,12 @@ type userRepositoryMock struct {
 	mock.Mock
 }
 
-func (m *userRepositoryMock) GetUser(email string) (*models.User, error) {
+func (m *userRepositoryMock) Get(email string) (*models.User, error) {
 	args := m.Called(email)
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
-func (m *userRepositoryMock) CreateUser(user *models.User) error {
+func (m *userRepositoryMock) Create(user *models.User) error {
 	args := m.Called(user)
 	return args.Error(0)
 }
@@ -41,7 +41,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 			PasswordHash: testutils.User1PasswordHash,
 		}
 		urMock := new(userRepositoryMock)
-		urMock.On("GetUser", mock.AnythingOfType("string")).Return(&user, nil)
+		urMock.On("Get", mock.AnythingOfType("string")).Return(&user, nil)
 
 		as := NewAuthService(urMock)
 
@@ -53,7 +53,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 	s.Run("存在しないユーザの場合", func() {
 		urMock := new(userRepositoryMock)
-		urMock.On("GetUser", mock.AnythingOfType("string")).Return(new(models.User), gorm.ErrRecordNotFound)
+		urMock.On("Get", mock.AnythingOfType("string")).Return(new(models.User), gorm.ErrRecordNotFound)
 
 		as := NewAuthService(urMock)
 
@@ -69,7 +69,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 			PasswordHash: "$2a$10$5zIf9lXlK6F7eaMB38uRSeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
 		}
 		urMock := new(userRepositoryMock)
-		urMock.On("GetUser", mock.AnythingOfType("string")).Return(&user, nil)
+		urMock.On("Get", mock.AnythingOfType("string")).Return(&user, nil)
 
 		as := NewAuthService(urMock)
 
@@ -82,7 +82,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 	s.Run("DBエラーの場合", func() {
 		urMock := new(userRepositoryMock)
-		urMock.On("GetUser", mock.AnythingOfType("string")).Return(new(models.User), gorm.ErrInvalidDB)
+		urMock.On("Get", mock.AnythingOfType("string")).Return(new(models.User), gorm.ErrInvalidDB)
 
 		as := NewAuthService(urMock)
 
@@ -97,7 +97,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 			PasswordHash: "InvalidBCryptHash",
 		}
 		urMock := new(userRepositoryMock)
-		urMock.On("GetUser", mock.AnythingOfType("string")).Return(&user, nil)
+		urMock.On("Get", mock.AnythingOfType("string")).Return(&user, nil)
 
 		as := NewAuthService(urMock)
 
