@@ -12,12 +12,12 @@ import (
 )
 
 type UserController struct {
-	us services.UserService
+	userService services.UserService
 }
 
 func NewUserController(us services.UserService) *UserController {
 	uc := &UserController{
-		us: us,
+		userService: us,
 	}
 	return uc
 }
@@ -32,7 +32,7 @@ func (uc *UserController) Create(c *gin.Context) {
 	}
 
 	// ユーザ登録
-	user, err := uc.us.CreateUser(form)
+	user, err := uc.userService.CreateUser(form)
 	if err != nil {
 		if db.Is(err, db.ErrDuplicateEntry) {
 			c.JSON(http.StatusConflict, messageResponseBody("登録済みのメールアドレスです"))

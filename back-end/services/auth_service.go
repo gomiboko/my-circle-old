@@ -13,7 +13,7 @@ type AuthService interface {
 }
 
 type authService struct {
-	ur repositories.UserRepository
+	userRepository repositories.UserRepository
 }
 
 func NewAuthService(ur repositories.UserRepository) AuthService {
@@ -22,7 +22,7 @@ func NewAuthService(ur repositories.UserRepository) AuthService {
 
 func (as *authService) Authenticate(email string, password string) (*uint, error) {
 	// ユーザ検索
-	user, err := as.ur.GetUser(email)
+	user, err := as.userRepository.GetUser(email)
 	if err != nil {
 		// ユーザが取得できなかった場合、認証失敗
 		if errors.Is(err, gorm.ErrRecordNotFound) {

@@ -15,7 +15,7 @@ type UserService interface {
 }
 
 type userService struct {
-	ur repositories.UserRepository
+	userRepository repositories.UserRepository
 }
 
 func NewUserService(ur repositories.UserRepository) UserService {
@@ -34,7 +34,7 @@ func (us *userService) CreateUser(userForm forms.UserForm) (*models.User, error)
 		PasswordHash: string(hash),
 	}
 
-	err = us.ur.CreateUser(&user)
+	err = us.userRepository.CreateUser(&user)
 
 	// パスワードのハッシュ値はログイン認証以外で使わないのでクリア
 	user.PasswordHash = ""
