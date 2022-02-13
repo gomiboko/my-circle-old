@@ -34,16 +34,6 @@ func (s *AuthControllerTestSuite) SetupSuite() {
 	gin.SetMode(gin.TestMode)
 }
 
-// AuthServiceモック
-type authServiceMock struct {
-	mock.Mock
-}
-
-func (m *authServiceMock) Authenticate(email string, password string) (*uint, error) {
-	args := m.Called(email, password)
-	return args.Get(0).(*uint), args.Error(1)
-}
-
 func TestAuthController(t *testing.T) {
 	suite.Run(t, new(AuthControllerTestSuite))
 }
@@ -85,7 +75,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		}
 
 		var userID *uint = nil
-		asMock := new(authServiceMock)
+		asMock := new(mocks.AuthServiceMock)
 		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
 		ac := NewAuthController(asMock)
@@ -119,7 +109,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		// AuthServiceモック
 		userID := uint(1)
-		asMock := new(authServiceMock)
+		asMock := new(mocks.AuthServiceMock)
 		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&userID, nil)
 
 		ac := NewAuthController(asMock)
@@ -147,7 +137,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 	s.Run("認証失敗の場合", func() {
 		var userID *uint = nil
-		asMock := new(authServiceMock)
+		asMock := new(mocks.AuthServiceMock)
 		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
 		ac := NewAuthController(asMock)
@@ -169,7 +159,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 	s.Run("予期せぬエラーが発生した場合", func() {
 		var userID *uint = nil
-		asMock := new(authServiceMock)
+		asMock := new(mocks.AuthServiceMock)
 		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, testutils.ErrTest)
 
 		ac := NewAuthController(asMock)
