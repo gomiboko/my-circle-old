@@ -34,7 +34,7 @@ type AuthControllerTestSuite struct {
 	suite.Suite
 }
 
-func (m *AuthControllerTestSuite) SetupSuite() {
+func (s *AuthControllerTestSuite) SetupSuite() {
 	gin.SetMode(gin.TestMode)
 }
 
