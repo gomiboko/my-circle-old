@@ -9,6 +9,15 @@ type SessionMock struct {
 	mock.Mock
 }
 
+func NewSessionMock() *SessionMock {
+	sessMock := new(SessionMock)
+	sessMock.On("Set", mock.AnythingOfType("string"), mock.Anything)
+	sessMock.On("Save").Return(nil)
+	sessMock.On("Clear")
+
+	return sessMock
+}
+
 func (m *SessionMock) Get(key interface{}) interface{} {
 	args := m.Called(key)
 	return args.Get(0)

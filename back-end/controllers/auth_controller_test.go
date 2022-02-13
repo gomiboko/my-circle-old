@@ -137,9 +137,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			r, c := createLoginPostContext(reqBody)
 
 			// sessions.sessionモック
-			sessMock := new(mocks.SessionMock)
-			sessMock.On("Set", mock.AnythingOfType("string"), mock.Anything)
-			sessMock.On("Save").Return(nil)
+			sessMock := mocks.NewSessionMock()
 			c.Set(sessions.DefaultKey, sessMock)
 
 			ac.Login(c)
@@ -199,10 +197,7 @@ func (s *AuthControllerTestSuite) TestLogout() {
 	c.Request, _ = http.NewRequest(http.MethodGet, "/logout", nil)
 
 	// sessions.sessionモック
-	sessMock := new(mocks.SessionMock)
-	sessMock.On("Save").Return(nil)
-	sessMock.On("Clear")
-	sessMock.On("Get", mock.Anything).Return(0)
+	sessMock := mocks.NewSessionMock()
 	c.Set(sessions.DefaultKey, sessMock)
 
 	ac.Logout(c)
