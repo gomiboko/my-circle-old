@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -26,7 +25,6 @@ func (uc *UserController) Create(c *gin.Context) {
 	// 入力チェック
 	var form forms.UserForm
 	if err := c.ShouldBindJSON(&form); err != nil {
-		log.Print(err)
 		c.JSON(responseBody400BadRequest())
 		return
 	}
