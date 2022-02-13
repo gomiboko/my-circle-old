@@ -17,11 +17,13 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-const validEmail = "foo@example.com"
-const validPassword = "password123"
-const emailMaxLength = 254
-const passwordMinLength = 8
-const passwordMaxLength = 64
+const (
+	validEmail        = "foo@example.com"
+	validPassword     = "password123"
+	emailMaxLength    = 254
+	passwordMinLength = 8
+	passwordMaxLength = 64
+)
 
 type apiResponse struct {
 	Message string
@@ -79,35 +81,14 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			password string
 		}{
 			// メールアドレスのチェックデータ
-			{
-				email:    "",
-				password: validPassword,
-			},
-			{
-				email:    "isNotEmail",
-				password: validPassword,
-			},
-			{
-				email:    createEmailAddress(emailMaxLength + 1),
-				password: validPassword,
-			},
+			{password: validPassword, email: ""},
+			{password: validPassword, email: "isNotEmail"},
+			{password: validPassword, email: createEmailAddress(emailMaxLength + 1)},
 			// パスワードのチェックデータ
-			{
-				email:    validEmail,
-				password: "",
-			},
-			{
-				email:    validEmail,
-				password: strings.Repeat("a", passwordMinLength-1),
-			},
-			{
-				email:    validEmail,
-				password: strings.Repeat("a", passwordMaxLength+1),
-			},
-			{
-				email:    validEmail,
-				password: "にほんごぱすわーど",
-			},
+			{email: validEmail, password: ""},
+			{email: validEmail, password: strings.Repeat("a", passwordMinLength-1)},
+			{email: validEmail, password: strings.Repeat("a", passwordMaxLength+1)},
+			{email: validEmail, password: "にほんごぱすわーど"},
 		}
 
 		var userID *uint = nil
@@ -136,23 +117,11 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			password string
 		}{
 			// メールアドレスのチェックデータ
-			{
-				email:    createEmailAddress(emailMaxLength),
-				password: validPassword,
-			},
-			{
-				email:    "にほんご@example.com",
-				password: validPassword,
-			},
+			{password: validPassword, email: createEmailAddress(emailMaxLength)},
+			{password: validPassword, email: "にほんご@example.com"},
 			// パスワードのチェックデータ
-			{
-				email:    validEmail,
-				password: strings.Repeat("a", passwordMinLength),
-			},
-			{
-				email:    validEmail,
-				password: strings.Repeat("a", passwordMaxLength),
-			},
+			{email: validEmail, password: strings.Repeat("a", passwordMinLength)},
+			{email: validEmail, password: strings.Repeat("a", passwordMaxLength)},
 		}
 
 		// AuthServiceモック
