@@ -89,7 +89,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		uc := NewUserController(nil)
 
 		for _, in := range inputs {
-			reqBody, err := createRequestBodyStr(in)
+			reqBody, err := testutils.CreateRequestBodyStr(in)
 			if err != nil {
 				s.FailNow(err.Error())
 			}
@@ -136,7 +136,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 			uc := NewUserController(usMock)
 
-			reqBody, err := createRequestBodyStr(in)
+			reqBody, err := testutils.CreateRequestBodyStr(in)
 			if err != nil {
 				s.FailNow(err.Error())
 			}
@@ -170,7 +170,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		uc := NewUserController(usMock)
 
 		form := forms.UserForm{Username: "test name", Email: validEmail, Password: validPassword}
-		reqBody, err := createRequestBodyStr(form)
+		reqBody, err := testutils.CreateRequestBodyStr(form)
 		if err != nil {
 			s.FailNow(err.Error())
 		}
@@ -201,7 +201,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		uc := NewUserController(usMock)
 
 		form := forms.UserForm{Username: "test name", Email: validEmail, Password: validPassword}
-		reqBody, err := createRequestBodyStr(form)
+		reqBody, err := testutils.CreateRequestBodyStr(form)
 		if err != nil {
 			s.FailNow(err.Error())
 		}
@@ -222,14 +222,6 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		sessMock.AssertNotCalled(s.T(), "Set", mock.AnythingOfType("string"), mock.AnythingOfType("uint"))
 		sessMock.AssertNotCalled(s.T(), "Save")
 	})
-}
-
-func createRequestBodyStr(obj interface{}) (string, error) {
-	if j, err := json.Marshal(obj); err != nil {
-		return "", err
-	} else {
-		return string(j), nil
-	}
 }
 
 func createUserPostContext(reqBody string) (*httptest.ResponseRecorder, *gin.Context) {

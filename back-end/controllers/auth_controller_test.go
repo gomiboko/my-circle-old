@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gomiboko/my-circle/controllers/mocks"
+	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -76,19 +77,16 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	})
 
 	s.Run("不正な入力値の場合", func() {
-		inputs := []struct {
-			email    string
-			password string
-		}{
+		inputs := []forms.LoginForm{
 			// メールアドレスのチェックデータ
-			{password: validPassword, email: ""},
-			{password: validPassword, email: "isNotEmail"},
-			{password: validPassword, email: createEmailAddress(emailMaxLength + 1)},
+			{Password: validPassword, Email: ""},
+			{Password: validPassword, Email: "isNotEmail"},
+			{Password: validPassword, Email: createEmailAddress(emailMaxLength + 1)},
 			// パスワードのチェックデータ
-			{email: validEmail, password: ""},
-			{email: validEmail, password: strings.Repeat("a", passwordMinLength-1)},
-			{email: validEmail, password: strings.Repeat("a", passwordMaxLength+1)},
-			{email: validEmail, password: "にほんごぱすわーど"},
+			{Email: validEmail, Password: ""},
+			{Email: validEmail, Password: strings.Repeat("a", passwordMinLength-1)},
+			{Email: validEmail, Password: strings.Repeat("a", passwordMaxLength+1)},
+			{Email: validEmail, Password: "にほんごぱすわーど"},
 		}
 
 		var userID *uint = nil
@@ -98,7 +96,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		ac := NewAuthController(asMock)
 
 		for _, in := range inputs {
-			reqBody := createRequestBody(in.email, in.password)
+			reqBody, err := testutils.CreateRequestBodyStr(in)
+			if err != nil {
+				s.FailNow(err.Error())
+			}
 			r, c := createLoginPostContext(reqBody)
 
 			ac.Login(c)
@@ -112,16 +113,13 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	})
 
 	s.Run("正常な入力値の場合", func() {
-		inputs := []struct {
-			email    string
-			password string
-		}{
+		inputs := []forms.LoginForm{
 			// メールアドレスのチェックデータ
-			{password: validPassword, email: createEmailAddress(emailMaxLength)},
-			{password: validPassword, email: "にほんご@example.com"},
+			{Password: validPassword, Email: createEmailAddress(emailMaxLength)},
+			{Password: validPassword, Email: "にほんご@example.com"},
 			// パスワードのチェックデータ
-			{email: validEmail, password: strings.Repeat("a", passwordMinLength)},
-			{email: validEmail, password: strings.Repeat("a", passwordMaxLength)},
+			{Email: validEmail, Password: strings.Repeat("a", passwordMinLength)},
+			{Email: validEmail, Password: strings.Repeat("a", passwordMaxLength)},
 		}
 
 		// AuthServiceモック
@@ -132,7 +130,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		ac := NewAuthController(asMock)
 
 		for _, in := range inputs {
-			reqBody := createRequestBody(in.email, in.password)
+			reqBody, err := testutils.CreateRequestBodyStr(in)
+			if err != nil {
+				s.FailNow(err.Error())
+			}
 			r, c := createLoginPostContext(reqBody)
 
 			// sessions.sessionモック
@@ -156,7 +157,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		ac := NewAuthController(asMock)
 
-		reqBody := createRequestBody(validEmail, validPassword)
+		reqBody, err := testutils.CreateRequestBodyStr(forms.LoginForm{Email: validEmail, Password: validPassword})
+		if err != nil {
+			s.FailNow(err.Error())
+		}
 		r, c := createLoginPostContext(reqBody)
 
 		ac.Login(c)
@@ -175,7 +179,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		ac := NewAuthController(asMock)
 
-		reqBody := createRequestBody(validEmail, validPassword)
+		reqBody, err := testutils.CreateRequestBodyStr(forms.LoginForm{Email: validEmail, Password: validPassword})
+		if err != nil {
+			s.FailNow(err.Error())
+		}
 		r, c := createLoginPostContext(reqBody)
 
 		ac.Login(c)
@@ -213,11 +220,6 @@ func (s *AuthControllerTestSuite) TestLogout() {
 // 指定の長さのメールアドレスを生成する
 func createEmailAddress(length int) string {
 	return strings.Repeat("a", length-len("@example.com")) + "@example.com"
-}
-
-// ログインのリクエストボディ文字列を生成する
-func createRequestBody(email string, password string) string {
-	return `{"email":"` + email + `","password":"` + password + `"}`
 }
 
 // ログインリクエストのGinコンテキストを生成する

@@ -2,6 +2,7 @@ package testutils
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
@@ -36,6 +37,14 @@ var (
 		Message: "db.ErrDuplicateEntry test message",
 	}
 )
+
+func CreateRequestBodyStr(obj interface{}) (string, error) {
+	if j, err := json.Marshal(obj); err != nil {
+		return "", err
+	} else {
+		return string(j), nil
+	}
+}
 
 func SetSessionMockToGin(c *gin.Context, sessMock *mocks.SessionMock) {
 	// sessions.Sessions(string, sessions.Store) と同様の処理を実行
