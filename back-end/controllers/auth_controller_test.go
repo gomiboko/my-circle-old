@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -175,7 +174,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	s.Run("予期せぬエラーが発生した場合", func() {
 		var userID *uint = nil
 		asMock := new(authServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, errors.New("test exception"))
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, testutils.ErrTest)
 
 		ac := NewAuthController(asMock)
 
