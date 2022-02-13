@@ -9,7 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/gomiboko/my-circle/controllers/mocks"
 	"github.com/gomiboko/my-circle/testutils"
@@ -138,7 +137,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 			// sessions.sessionモック
 			sessMock := mocks.NewSessionMock()
-			c.Set(sessions.DefaultKey, sessMock)
+			testutils.SetSessionMockToGin(c, sessMock)
 
 			ac.Login(c)
 			c.Writer.WriteHeaderNow()
@@ -198,7 +197,7 @@ func (s *AuthControllerTestSuite) TestLogout() {
 
 	// sessions.sessionモック
 	sessMock := mocks.NewSessionMock()
-	c.Set(sessions.DefaultKey, sessMock)
+	testutils.SetSessionMockToGin(c, sessMock)
 
 	ac.Logout(c)
 

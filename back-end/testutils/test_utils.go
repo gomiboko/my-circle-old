@@ -6,8 +6,11 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
 	"github.com/go-testfixtures/testfixtures/v3"
+	"github.com/gomiboko/my-circle/controllers/mocks"
 	"github.com/gomiboko/my-circle/db"
 	gmysql "gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -33,6 +36,11 @@ var (
 		Message: "db.ErrDuplicateEntry test message",
 	}
 )
+
+func SetSessionMockToGin(c *gin.Context, sessMock *mocks.SessionMock) {
+	// sessions.Sessions(string, sessions.Store) と同様の処理を実行
+	c.Set(sessions.DefaultKey, sessMock)
+}
 
 func GetFixtures(fixturesDirPath string) (*testfixtures.Loader, error) {
 	sqldb, err := sql.Open("mysql", getDSN())

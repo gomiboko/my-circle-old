@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -145,8 +144,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 			// sessions.sessionモック
 			sessMock := mocks.NewSessionMock()
-			// sessions.Sessions(string, sessions.Store) と同様の処理を実行
-			c.Set(sessions.DefaultKey, sessMock)
+			testutils.SetSessionMockToGin(c, sessMock)
 
 			uc.Create(c)
 			c.Writer.WriteHeaderNow()
@@ -180,8 +178,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 		// sessions.sessionモック
 		sessMock := mocks.NewSessionMock()
-		// sessions.Sessions(string, sessions.Store) と同様の処理を実行
-		c.Set(sessions.DefaultKey, sessMock)
+		testutils.SetSessionMockToGin(c, sessMock)
 
 		uc.Create(c)
 		c.Writer.WriteHeaderNow()
@@ -212,8 +209,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 		// sessions.sessionモック
 		sessMock := mocks.NewSessionMock()
-		// sessions.Sessions(string, sessions.Store) と同様の処理を実行
-		c.Set(sessions.DefaultKey, sessMock)
+		testutils.SetSessionMockToGin(c, sessMock)
 
 		uc.Create(c)
 		c.Writer.WriteHeaderNow()
