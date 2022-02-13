@@ -17,6 +17,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type ApiErrorReponse struct {
+	Message string
+}
+
 const (
 	User1Email        = "user1@example.com"
 	User1Password     = "password"

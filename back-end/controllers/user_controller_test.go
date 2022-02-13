@@ -59,7 +59,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 		uc.Create(c)
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusBadRequest, r.Code)
@@ -98,7 +98,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			uc.Create(c)
 			c.Writer.WriteHeaderNow()
 
-			var res apiResponse
+			var res testutils.ApiErrorReponse
 			json.Unmarshal(r.Body.Bytes(), &res)
 
 			assert.Equal(s.T(), http.StatusBadRequest, r.Code)
@@ -183,7 +183,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		uc.Create(c)
 		c.Writer.WriteHeaderNow()
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusConflict, r.Code)
@@ -214,7 +214,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		uc.Create(c)
 		c.Writer.WriteHeaderNow()
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusInternalServerError, r.Code)

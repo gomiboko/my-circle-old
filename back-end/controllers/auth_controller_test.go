@@ -25,10 +25,6 @@ const (
 	passwordMaxLength = 64
 )
 
-type apiResponse struct {
-	Message string
-}
-
 // AuthControllerテストスイート
 type AuthControllerTestSuite struct {
 	suite.Suite
@@ -68,7 +64,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		ac.Login(c)
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusBadRequest, r.Code)
@@ -103,7 +99,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 			ac.Login(c)
 
-			var res apiResponse
+			var res testutils.ApiErrorReponse
 			json.Unmarshal(r.Body.Bytes(), &res)
 
 			assert.Equal(s.T(), http.StatusUnauthorized, r.Code)
@@ -164,7 +160,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		ac.Login(c)
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusUnauthorized, r.Code)
@@ -186,7 +182,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		ac.Login(c)
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), r.Code, http.StatusInternalServerError)
@@ -207,7 +203,7 @@ func (s *AuthControllerTestSuite) TestLogout() {
 
 	ac.Logout(c)
 
-	var res apiResponse
+	var res testutils.ApiErrorReponse
 	json.Unmarshal(w.Body.Bytes(), &res)
 
 	assert.Equal(s.T(), http.StatusOK, w.Code)
