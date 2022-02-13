@@ -57,7 +57,7 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 
 		as := NewAuthService(urMock)
 
-		userID, err := as.Authenticate(testutils.InvalidUserEmail, testutils.User1Password)
+		userID, err := as.Authenticate(testutils.UnregisteredEmail, testutils.User1Password)
 
 		assert.Nil(s.T(), userID)
 		assert.Nil(s.T(), err)

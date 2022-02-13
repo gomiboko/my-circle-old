@@ -7,10 +7,12 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-testfixtures/testfixtures/v3"
+	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/models"
 	"github.com/gomiboko/my-circle/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -41,8 +43,7 @@ func TestUserRepository(t *testing.T) {
 }
 
 func (s *UserRepositoryTestSuite) TestGet() {
-	err := s.fixtures.Load()
-	if err != nil {
+	if err := s.fixtures.Load(); err != nil {
 		s.FailNow(err.Error())
 	}
 
@@ -64,9 +65,44 @@ func (s *UserRepositoryTestSuite) TestGet() {
 	})
 
 	s.Run("存在しないメールアドレス場合", func() {
-		user, err := s.userRepository.Get(testutils.InvalidUserEmail)
+		user, err := s.userRepository.Get(testutils.UnregisteredEmail)
 
 		assert.True(s.T(), errors.Is(err, gorm.ErrRecordNotFound))
 		assert.Equal(s.T(), models.User{}, *user)
+	})
+}
+
+func (s *UserRepositoryTestSuite) TestCreate() {
+	if err := s.fixtures.Load(); err != nil {
+		s.FailNow(err.Error())
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.MinCost)
+	if err != nil {
+		s.FailNow(err.Error())
+	}
+
+	s.Run("メールアドレスが重複する場合", func() {
+		user := &models.User{
+			Name:         "user",
+			Email:        testutils.User1Email,
+			PasswordHash: string(hash),
+		}
+		err := s.userRepository.Create(user)
+
+		assert.NotNil(s.T(), err)
+		assert.True(s.T(), db.Is(err, db.ErrDuplicateEntry))
+	})
+
+	s.Run("メールアドレスが重複しない場合", func() {
+		user := &models.User{
+			Name:         "user",
+			Email:        testutils.UnregisteredEmail,
+			PasswordHash: string(hash),
+		}
+		err := s.userRepository.Create(user)
+
+		assert.Nil(s.T(), err)
+		assert.Greater(s.T(), user.ID, uint(0))
 	})
 }
