@@ -144,7 +144,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			r, c := createUserPostContext(reqBody)
 
 			// sessions.sessionモック
-			sessMock := new(testutils.SessionMock)
+			sessMock := new(mocks.SessionMock)
 			sessMock.On("Set", mock.AnythingOfType("string"), mock.Anything)
 			sessMock.On("Save").Return(nil)
 			// sessions.Sessions(string, sessions.Store) と同様の処理を実行
@@ -181,7 +181,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		r, c := createUserPostContext(reqBody)
 
 		// sessions.sessionモック
-		sessMock := new(testutils.SessionMock)
+		sessMock := new(mocks.SessionMock)
 		sessMock.On("Set", mock.AnythingOfType("string"), mock.Anything)
 		sessMock.On("Save").Return(nil)
 		// sessions.Sessions(string, sessions.Store) と同様の処理を実行
@@ -215,7 +215,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		r, c := createUserPostContext(reqBody)
 
 		// sessions.sessionモック
-		sessMock := new(testutils.SessionMock)
+		sessMock := new(mocks.SessionMock)
 		sessMock.On("Set", mock.AnythingOfType("string"), mock.Anything)
 		sessMock.On("Save").Return(nil)
 		// sessions.Sessions(string, sessions.Store) と同様の処理を実行

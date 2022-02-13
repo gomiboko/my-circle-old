@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/go-sql-driver/mysql"
 	"github.com/go-testfixtures/testfixtures/v3"
 	"github.com/gomiboko/my-circle/db"
-	"github.com/stretchr/testify/mock"
 	gmysql "gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -57,44 +55,4 @@ func GetDB() (*gorm.DB, error) {
 func getDSN() string {
 	return fmt.Sprintf("root:root@tcp(test-db:3306)/mycircle?charset=utf8mb3&parseTime=True&loc=%s",
 		url.QueryEscape("Asia/Tokyo"))
-}
-
-// sessions.sessionのモック
-type SessionMock struct {
-	mock.Mock
-}
-
-func (m *SessionMock) Get(key interface{}) interface{} {
-	args := m.Called(key)
-	return args.Get(0)
-}
-
-func (m *SessionMock) Set(key interface{}, val interface{}) {
-	m.Called(key, val)
-}
-
-func (m *SessionMock) Delete(key interface{}) {
-	m.Called(key)
-}
-
-func (m *SessionMock) Clear() {
-	m.Called()
-}
-
-func (m *SessionMock) AddFlash(value interface{}, vars ...string) {
-	m.Called(value, vars)
-}
-
-func (m *SessionMock) Flashes(vars ...string) []interface{} {
-	args := m.Called(vars)
-	return args.Get(0).([]interface{})
-}
-
-func (m *SessionMock) Options(opt sessions.Options) {
-	m.Called(opt)
-}
-
-func (m *SessionMock) Save() error {
-	args := m.Called()
-	return args.Error(0)
 }

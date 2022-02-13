@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/controllers/mocks"
 	"github.com/gomiboko/my-circle/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -136,7 +137,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			r, c := createLoginPostContext(reqBody)
 
 			// sessions.sessionモック
-			sessMock := new(testutils.SessionMock)
+			sessMock := new(mocks.SessionMock)
 			sessMock.On("Set", mock.AnythingOfType("string"), mock.Anything)
 			sessMock.On("Save").Return(nil)
 			c.Set(sessions.DefaultKey, sessMock)
@@ -198,7 +199,7 @@ func (s *AuthControllerTestSuite) TestLogout() {
 	c.Request, _ = http.NewRequest(http.MethodGet, "/logout", nil)
 
 	// sessions.sessionモック
-	sessMock := new(testutils.SessionMock)
+	sessMock := new(mocks.SessionMock)
 	sessMock.On("Save").Return(nil)
 	sessMock.On("Clear")
 	sessMock.On("Get", mock.Anything).Return(0)
