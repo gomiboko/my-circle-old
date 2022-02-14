@@ -70,7 +70,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		inputs := []forms.UserForm{
 			// ユーザ名のチェックデータ
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: ""},
-			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", 46)},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", testutils.UsernameMaxLength+1)},
 			// メールアドレスのチェックデータ
 			{Username: "test name", Password: testutils.ValidPassword, Email: ""},
 			{Username: "test name", Password: testutils.ValidPassword, Email: "a"},
@@ -110,15 +110,15 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		inputs := []forms.UserForm{
 			// ユーザ名のチェックデータ
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", 1)},
-			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", 45)},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", testutils.UsernameMaxLength)},
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: "にほんご"},
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: "😋"},
 			// メールアドレスのチェックデータ
 			{Username: "test name", Password: testutils.ValidPassword, Email: testutils.CreateEmailAddress(testutils.EmailMaxLength)},
 			{Username: "test name", Password: testutils.ValidPassword, Email: "あ@example.com"},
 			// パスワードのチェックデータ
-			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", 8)},
-			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", 128)},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength)},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength)},
 			{Username: "test name", Email: testutils.ValidEmail, Password: "!@#$%^&*()-_=+[]{}\\|~;:'\",.<>/?`"},
 			{Username: "test name", Email: testutils.ValidEmail, Password: "1234567890"},
 			{Username: "test name", Email: testutils.ValidEmail, Password: "abcdefghijklmnopqrstuvwxyz"},

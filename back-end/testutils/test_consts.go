@@ -27,6 +27,7 @@ const (
 	EmailMaxLength    = 254
 	PasswordMinLength = 8
 	PasswordMaxLength = 128
+	UsernameMaxLength = 45
 )
 
 var (
