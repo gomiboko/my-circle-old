@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -48,6 +49,11 @@ func CreateRequestBodyStr(obj interface{}) (string, error) {
 	} else {
 		return string(j), nil
 	}
+}
+
+// 指定の長さのメールアドレスを生成する
+func CreateEmailAddress(length int) string {
+	return strings.Repeat("a", length-len("@example.com")) + "@example.com"
 }
 
 func SetSessionMockToGin(c *gin.Context, sessMock *mocks.SessionMock) {

@@ -66,7 +66,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			// メールアドレスのチェックデータ
 			{Password: validPassword, Email: ""},
 			{Password: validPassword, Email: "isNotEmail"},
-			{Password: validPassword, Email: createEmailAddress(emailMaxLength + 1)},
+			{Password: validPassword, Email: testutils.CreateEmailAddress(emailMaxLength + 1)},
 			// パスワードのチェックデータ
 			{Email: validEmail, Password: ""},
 			{Email: validEmail, Password: strings.Repeat("a", passwordMinLength-1)},
@@ -100,7 +100,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	s.Run("正常な入力値の場合", func() {
 		inputs := []forms.LoginForm{
 			// メールアドレスのチェックデータ
-			{Password: validPassword, Email: createEmailAddress(emailMaxLength)},
+			{Password: validPassword, Email: testutils.CreateEmailAddress(emailMaxLength)},
 			{Password: validPassword, Email: "にほんご@example.com"},
 			// パスワードのチェックデータ
 			{Email: validEmail, Password: strings.Repeat("a", passwordMinLength)},
@@ -200,11 +200,6 @@ func (s *AuthControllerTestSuite) TestLogout() {
 	assert.Equal(s.T(), "logged out", res.Message)
 	sessMock.AssertCalled(s.T(), "Save")
 	sessMock.AssertCalled(s.T(), "Clear")
-}
-
-// 指定の長さのメールアドレスを生成する
-func createEmailAddress(length int) string {
-	return strings.Repeat("a", length-len("@example.com")) + "@example.com"
 }
 
 // ログインリクエストのGinコンテキストを生成する

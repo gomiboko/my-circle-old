@@ -114,7 +114,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			{Email: validEmail, Password: validPassword, Username: "にほんご"},
 			{Email: validEmail, Password: validPassword, Username: "😋"},
 			// メールアドレスのチェックデータ
-			{Username: "test name", Password: validPassword, Email: createEmailAddress(emailMaxLength)},
+			{Username: "test name", Password: validPassword, Email: testutils.CreateEmailAddress(emailMaxLength)},
 			{Username: "test name", Password: validPassword, Email: "あ@example.com"},
 			// パスワードのチェックデータ
 			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 8)},
