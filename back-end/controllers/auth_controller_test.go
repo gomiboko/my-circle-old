@@ -17,14 +17,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-const (
-	validEmail        = "foo@example.com"
-	validPassword     = "password123"
-	emailMaxLength    = 254
-	passwordMinLength = 8
-	passwordMaxLength = 128
-)
-
 // AuthControllerテストスイート
 type AuthControllerTestSuite struct {
 	suite.Suite
@@ -43,8 +35,8 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		ac := NewAuthController(nil)
 
 		values := url.Values{}
-		values.Set("email", validEmail)
-		values.Add("password", validPassword)
+		values.Set("email", testutils.ValidEmail)
+		values.Add("password", testutils.ValidPassword)
 
 		// URLエンコードで送信
 		r := httptest.NewRecorder()
@@ -64,14 +56,14 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	s.Run("不正な入力値の場合", func() {
 		inputs := []forms.LoginForm{
 			// メールアドレスのチェックデータ
-			{Password: validPassword, Email: ""},
-			{Password: validPassword, Email: "isNotEmail"},
-			{Password: validPassword, Email: testutils.CreateEmailAddress(emailMaxLength + 1)},
+			{Password: testutils.ValidPassword, Email: ""},
+			{Password: testutils.ValidPassword, Email: "isNotEmail"},
+			{Password: testutils.ValidPassword, Email: testutils.CreateEmailAddress(testutils.EmailMaxLength + 1)},
 			// パスワードのチェックデータ
-			{Email: validEmail, Password: ""},
-			{Email: validEmail, Password: strings.Repeat("a", passwordMinLength-1)},
-			{Email: validEmail, Password: strings.Repeat("a", passwordMaxLength+1)},
-			{Email: validEmail, Password: "にほんごぱすわーど"},
+			{Email: testutils.ValidEmail, Password: ""},
+			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1)},
+			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength+1)},
+			{Email: testutils.ValidEmail, Password: "にほんごぱすわーど"},
 		}
 
 		var userID *uint = nil
@@ -100,11 +92,11 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	s.Run("正常な入力値の場合", func() {
 		inputs := []forms.LoginForm{
 			// メールアドレスのチェックデータ
-			{Password: validPassword, Email: testutils.CreateEmailAddress(emailMaxLength)},
-			{Password: validPassword, Email: "にほんご@example.com"},
+			{Password: testutils.ValidPassword, Email: testutils.CreateEmailAddress(testutils.EmailMaxLength)},
+			{Password: testutils.ValidPassword, Email: "にほんご@example.com"},
 			// パスワードのチェックデータ
-			{Email: validEmail, Password: strings.Repeat("a", passwordMinLength)},
-			{Email: validEmail, Password: strings.Repeat("a", passwordMaxLength)},
+			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength)},
+			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength)},
 		}
 
 		// AuthServiceモック
@@ -142,7 +134,8 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		ac := NewAuthController(asMock)
 
-		reqBody, err := testutils.CreateRequestBodyStr(forms.LoginForm{Email: validEmail, Password: validPassword})
+		form := forms.LoginForm{Email: testutils.ValidEmail, Password: testutils.ValidPassword}
+		reqBody, err := testutils.CreateRequestBodyStr(form)
 		if err != nil {
 			s.FailNow(err.Error())
 		}
@@ -164,7 +157,8 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		ac := NewAuthController(asMock)
 
-		reqBody, err := testutils.CreateRequestBodyStr(forms.LoginForm{Email: validEmail, Password: validPassword})
+		form := forms.LoginForm{Email: testutils.ValidEmail, Password: testutils.ValidPassword}
+		reqBody, err := testutils.CreateRequestBodyStr(form)
 		if err != nil {
 			s.FailNow(err.Error())
 		}

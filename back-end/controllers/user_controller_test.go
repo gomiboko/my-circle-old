@@ -48,8 +48,8 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 		values := url.Values{}
 		values.Set("username", "test name")
-		values.Set("email", validEmail)
-		values.Set("password", validPassword)
+		values.Set("email", testutils.ValidEmail)
+		values.Set("password", testutils.ValidPassword)
 
 		// URLエンコードで送信
 		r := httptest.NewRecorder()
@@ -69,21 +69,21 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 	s.Run("不正な入力値の場合", func() {
 		inputs := []forms.UserForm{
 			// ユーザ名のチェックデータ
-			{Email: validEmail, Password: validPassword, Username: ""},
-			{Email: validEmail, Password: validPassword, Username: strings.Repeat("a", 46)},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: ""},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", 46)},
 			// メールアドレスのチェックデータ
-			{Username: "test name", Password: validPassword, Email: ""},
-			{Username: "test name", Password: validPassword, Email: "a"},
-			{Username: "test name", Password: validPassword, Email: "😋@example.com"},
-			{Username: "test name", Password: validPassword, Email: "@example.com"},
+			{Username: "test name", Password: testutils.ValidPassword, Email: ""},
+			{Username: "test name", Password: testutils.ValidPassword, Email: "a"},
+			{Username: "test name", Password: testutils.ValidPassword, Email: "😋@example.com"},
+			{Username: "test name", Password: testutils.ValidPassword, Email: "@example.com"},
 			// パスワードのチェックデータ
-			{Username: "test name", Email: validEmail, Password: ""},
-			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 7)},
-			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 129)},
-			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 7) + testutils.HalfWidthSpace},
-			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 7) + testutils.FullWidthSpace},
-			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 7) + "😋"},
-			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 7) + "あ"},
+			{Username: "test name", Email: testutils.ValidEmail, Password: ""},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1)},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength+1)},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + testutils.HalfWidthSpace},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + testutils.FullWidthSpace},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + "😋"},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + "あ"},
 		}
 
 		uc := NewUserController(nil)
@@ -109,19 +109,19 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 	s.Run("正常な入力値の場合", func() {
 		inputs := []forms.UserForm{
 			// ユーザ名のチェックデータ
-			{Email: validEmail, Password: validPassword, Username: strings.Repeat("a", 1)},
-			{Email: validEmail, Password: validPassword, Username: strings.Repeat("a", 45)},
-			{Email: validEmail, Password: validPassword, Username: "にほんご"},
-			{Email: validEmail, Password: validPassword, Username: "😋"},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", 1)},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", 45)},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: "にほんご"},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: "😋"},
 			// メールアドレスのチェックデータ
-			{Username: "test name", Password: validPassword, Email: testutils.CreateEmailAddress(emailMaxLength)},
-			{Username: "test name", Password: validPassword, Email: "あ@example.com"},
+			{Username: "test name", Password: testutils.ValidPassword, Email: testutils.CreateEmailAddress(testutils.EmailMaxLength)},
+			{Username: "test name", Password: testutils.ValidPassword, Email: "あ@example.com"},
 			// パスワードのチェックデータ
-			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 8)},
-			{Username: "test name", Email: validEmail, Password: strings.Repeat("a", 128)},
-			{Username: "test name", Email: validEmail, Password: "!@#$%^&*()-_=+[]{}\\|~;:'\",.<>/?`"},
-			{Username: "test name", Email: validEmail, Password: "1234567890"},
-			{Username: "test name", Email: validEmail, Password: "abcdefghijklmnopqrstuvwxyz"},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", 8)},
+			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", 128)},
+			{Username: "test name", Email: testutils.ValidEmail, Password: "!@#$%^&*()-_=+[]{}\\|~;:'\",.<>/?`"},
+			{Username: "test name", Email: testutils.ValidEmail, Password: "1234567890"},
+			{Username: "test name", Email: testutils.ValidEmail, Password: "abcdefghijklmnopqrstuvwxyz"},
 		}
 
 		for _, in := range inputs {
@@ -169,7 +169,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 		uc := NewUserController(usMock)
 
-		form := forms.UserForm{Username: "test name", Email: validEmail, Password: validPassword}
+		form := forms.UserForm{Username: "test name", Email: testutils.ValidEmail, Password: testutils.ValidPassword}
 		reqBody, err := testutils.CreateRequestBodyStr(form)
 		if err != nil {
 			s.FailNow(err.Error())
@@ -200,7 +200,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 		uc := NewUserController(usMock)
 
-		form := forms.UserForm{Username: "test name", Email: validEmail, Password: validPassword}
+		form := forms.UserForm{Username: "test name", Email: testutils.ValidEmail, Password: testutils.ValidPassword}
 		reqBody, err := testutils.CreateRequestBodyStr(form)
 		if err != nil {
 			s.FailNow(err.Error())
