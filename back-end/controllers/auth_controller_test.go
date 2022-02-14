@@ -22,7 +22,7 @@ const (
 	validPassword     = "password123"
 	emailMaxLength    = 254
 	passwordMinLength = 8
-	passwordMaxLength = 64
+	passwordMaxLength = 128
 )
 
 // AuthControllerテストスイート
