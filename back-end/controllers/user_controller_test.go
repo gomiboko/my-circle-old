@@ -44,7 +44,10 @@ func TestUserController(t *testing.T) {
 
 func (s *UserControllerTestSuite) TestCreateUser() {
 	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
-		uc := NewUserController(nil)
+		usMock := new(mocks.UserServiceMock)
+		usMock.On("CreateUser", mock.AnythingOfType("forms.UserForm")).Return(&models.User{}, testutils.ErrTest)
+
+		uc := NewUserController(usMock)
 
 		values := url.Values{}
 		values.Set("username", "test name")
@@ -86,7 +89,10 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + "あ"},
 		}
 
-		uc := NewUserController(nil)
+		usMock := new(mocks.UserServiceMock)
+		usMock.On("CreateUser", mock.AnythingOfType("forms.UserForm")).Return(&models.User{}, testutils.ErrTest)
+
+		uc := NewUserController(usMock)
 
 		for _, in := range inputs {
 			reqBody, err := testutils.CreateRequestBodyStr(in)

@@ -32,7 +32,11 @@ func TestAuthController(t *testing.T) {
 
 func (s *AuthControllerTestSuite) TestLogin() {
 	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
-		ac := NewAuthController(nil)
+		var userID *uint = nil
+		asMock := new(mocks.AuthServiceMock)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
+
+		ac := NewAuthController(asMock)
 
 		values := url.Values{}
 		values.Set("email", testutils.ValidEmail)
@@ -175,7 +179,11 @@ func (s *AuthControllerTestSuite) TestLogin() {
 }
 
 func (s *AuthControllerTestSuite) TestLogout() {
-	ac := NewAuthController(nil)
+	var userID *uint = nil
+	asMock := new(mocks.AuthServiceMock)
+	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
+
+	ac := NewAuthController(asMock)
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
