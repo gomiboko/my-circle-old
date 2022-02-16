@@ -34,6 +34,7 @@ func (s *UserControllerTestSuite) SetupSuite() {
 
 	// カスタムバリデータの設定
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("notonlywhitespace", validations.NotOnlyWhitespace)
 		v.RegisterValidation("password", validations.Password)
 	}
 }
@@ -73,6 +74,9 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		inputs := []forms.UserForm{
 			// ユーザ名のチェックデータ
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: ""},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: testutils.HalfWidthSpace},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: testutils.FullWidthSpace},
+			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: testutils.FullWidthSpace + testutils.HalfWidthSpace},
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", testutils.UsernameMaxLength+1)},
 			// メールアドレスのチェックデータ
 			{Username: "test name", Password: testutils.ValidPassword, Email: ""},

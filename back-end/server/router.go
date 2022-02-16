@@ -44,6 +44,7 @@ func NewRouter() (*gin.Engine, error) {
 
 	// カスタムバリデーションの登録
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("notonlywhitespace", validations.NotOnlyWhitespace)
 		v.RegisterValidation("password", validations.Password)
 	} else {
 		return nil, errors.New("カスタムバリデーションの登録に失敗しました")
