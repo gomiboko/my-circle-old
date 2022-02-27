@@ -3,6 +3,17 @@ import { ValidationProvider } from "vee-validate";
 import flushPromises from "flush-promises";
 
 /**
+ * 指定された ref 属性値を持つコンポーネントの input 要素に値を設定する
+ * @param wrapper コンポーネントの Wrapper オブジェクト
+ * @param componentRefName 入力対象コンポーネントの ref 属性値
+ * @param val 入力する値
+ */
+export async function setValue<T extends Vue>(wrapper: Wrapper<T>, componentRefName: string, val: string) {
+  await wrapper.findComponent({ ref: componentRefName }).find("input").setValue(val);
+  await flushPromises();
+}
+
+/**
  * 指定された ref 属性値を持つ validation-provider コンポーネントの errors スロットプロパティを取得する
  * @param wrapper コンポーネントの Wrapper オブジェクト
  * @param providerRefName ref 属性値
@@ -18,7 +29,8 @@ export function getValidationProviderErrors<T extends Vue>(
 }
 
 /**
- * ValidationObserver の状態を更新する為に必要な処理を実行する
+ * ValidationObserver の状態を更新する為に必要な処理を実行する。
+ * 事前に jest.userFakeTimers() を実行しておくこと。
  */
 export async function flushAll(): Promise<void> {
   await flushPromises();
@@ -59,4 +71,13 @@ export function getVeryFirstEventData<T extends Vue | null, U>(
     throw new Error(`イベントデータが存在しません(${eventName})`);
   }
   return eventInfo[0][0] as U;
+}
+
+/**
+ * 指定された文字数のメールアドレスを生成する
+ * @param length メールアドレス全体の文字数
+ * @returns 指定された文字数のメールアドレス
+ */
+export function createEmailAddress(length: number): string {
+  return "a".repeat(length - "@example.com".length) + "@example.com";
 }

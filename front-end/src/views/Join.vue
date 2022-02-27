@@ -13,11 +13,13 @@
             <v-row>
               <v-col>
                 <validation-provider
+                  ref="usernameTextFieldProvider"
                   name="ユーザ名"
                   rules="required|max:45"
                   v-slot="{ errors }"
                 >
                   <required-text-field
+                    ref="usernameTextField"
                     label="ユーザ名"
                     v-model="username"
                     :error-messages="errors"
@@ -28,11 +30,13 @@
             <v-row>
               <v-col>
                 <validation-provider
+                  ref="emailTextFieldProvider"
                   name="メールアドレス"
                   rules="required|email|max:254"
                   v-slot="{ errors }"
                 >
                   <required-text-field
+                    ref="emailTextField"
                     label="メールアドレス"
                     v-model="email"
                     :error-messages="errors"
@@ -43,11 +47,13 @@
             <v-row>
               <v-col>
                 <validation-provider
+                  ref="passwordTextFieldProvider"
                   rules="required|min:8|max:128|password"
                   name="パスワード"
                   v-slot="{ errors }"
                 >
                   <required-text-field
+                    ref="passwordTextField"
                     label="パスワード"
                     hint="8文字以上"
                     v-model="password"
@@ -61,7 +67,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn :disabled="invalid" @click="register" block
+                <v-btn ref="registerButton" :disabled="invalid" @click="register" block
                   >登録する</v-btn
                 >
               </v-col>
