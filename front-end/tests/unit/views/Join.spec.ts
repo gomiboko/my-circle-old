@@ -1,7 +1,14 @@
 import { shallowMount, mount } from "@vue/test-utils";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Join from "@/views/Join.vue";
-import { flushAll, getValidationProviderErrors, setValue, createEmailAddress, getEventCount, getVeryFirstEventData } from "../test-utils";
+import {
+  flushAll,
+  getValidationProviderErrors,
+  setValue,
+  createEmailAddress,
+  getEventCount,
+  getVeryFirstEventData,
+} from "../test-utils";
 import { consts, lengths, paths } from "../test-consts";
 import { createMockedLocalVue } from "../local-vue";
 import VueRouter from "vue-router";
@@ -86,7 +93,7 @@ describe("Join.vue", () => {
   describe("バリデーション", () => {
     let vuetify: Vuetify;
 
-    beforeEach(() => vuetify = new Vuetify());
+    beforeEach(() => (vuetify = new Vuetify()));
 
     const mountWithNewVuetify = () => mount(Join, { vuetify });
 
@@ -118,6 +125,7 @@ describe("Join.vue", () => {
       const EmailIsRequired = "メールアドレスは必須項目です";
       const InvalidEmail = "有効なメールアドレスではありません";
 
+      // prettier-ignore
       test.each([
         ["空の場合", "", 1, EmailIsRequired],
         ["半角スペースが入力された場合", consts.HalfWidthSpace, 1, EmailIsRequired],
@@ -139,6 +147,7 @@ describe("Join.vue", () => {
       const RefPasswordValidationProvider = "passwordTextFieldProvider";
       const InvalidCharacterContained = "パスワードに使用できない文字が含まれています";
 
+      // prettier-ignore
       test.each([
         ["空の場合", "", 1, "パスワードは必須項目です"],
         ["7文字入力された場合", "a".repeat(lengths.PasswordMinLength - 1), 1, "パスワードは8文字以上でなければなりません"],
@@ -153,7 +162,7 @@ describe("Join.vue", () => {
         ["全角アルファベットが入力された場合", `${consts.ValidPassword}${consts.FullWidthA}`, 1, InvalidCharacterContained],
         ["全角数字が入力された場合", `${consts.ValidPassword}${consts.FullWidth1}`, 1, InvalidCharacterContained],
         ["日本語が入力された場合", `${consts.ValidPassword}あ`, 1, InvalidCharacterContained],
-        ["絵文字が入力された場合", `${consts.ValidPassword}😋`, 1, InvalidCharacterContained]
+        ["絵文字が入力された場合", `${consts.ValidPassword}😋`, 1, InvalidCharacterContained],
       ])("%s", async (explanation, input, errCnt, errMsg) => {
         const wrapper = mountWithNewVuetify();
         await setValue(wrapper, RefPasswordTextField, input);
@@ -179,10 +188,10 @@ describe("Join.vue", () => {
                 Email: consts.ValidEmail,
                 PasswordHash: "",
                 CreatedAt: "2022-02-27T06:48:47.277Z",
-                UpdatedAt: "2022-02-27T06:48:47.277Z"
-              }
-            }
-          }
+                UpdatedAt: "2022-02-27T06:48:47.277Z",
+              },
+            },
+          },
         });
 
         const router = new VueRouter();

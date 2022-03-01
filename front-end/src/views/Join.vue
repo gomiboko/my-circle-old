@@ -67,9 +67,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn ref="registerButton" :disabled="invalid" @click="register" block
-                  >登録する</v-btn
-                >
+                <v-btn ref="registerButton" :disabled="invalid" @click="register" block>登録する</v-btn>
               </v-col>
             </v-row>
           </v-col>
@@ -81,12 +79,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import {
-  ValidationObserver,
-  ValidationProvider,
-  extend,
-  localize,
-} from "vee-validate";
+import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
 import { required, min, max, email } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import { showError } from "@/utils/message";

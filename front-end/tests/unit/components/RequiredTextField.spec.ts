@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import RequiredTextField from "@/components/RequiredTextField.vue"
+import RequiredTextField from "@/components/RequiredTextField.vue";
 
 describe("RequiredTextField.vue", () => {
   describe("labelプロパティ", () => {

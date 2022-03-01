@@ -8,7 +8,11 @@ import flushPromises from "flush-promises";
  * @param componentRefName 入力対象コンポーネントの ref 属性値
  * @param val 入力する値
  */
-export async function setValue<T extends Vue>(wrapper: Wrapper<T>, componentRefName: string, val: string) {
+export async function setValue<T extends Vue>(
+  wrapper: Wrapper<T>,
+  componentRefName: string,
+  val: string
+): Promise<void> {
   await wrapper.findComponent({ ref: componentRefName }).find("input").setValue(val);
   await flushPromises();
 }
@@ -19,13 +23,8 @@ export async function setValue<T extends Vue>(wrapper: Wrapper<T>, componentRefN
  * @param providerRefName ref 属性値
  * @returns errors スロットプロパティ
  */
-export function getValidationProviderErrors<T extends Vue>(
-  wrapper: Wrapper<T>,
-  providerRefName: string
-): string[] {
-  return (
-    wrapper.vm.$refs[providerRefName] as InstanceType<typeof ValidationProvider>
-  ).errors;
+export function getValidationProviderErrors<T extends Vue>(wrapper: Wrapper<T>, providerRefName: string): string[] {
+  return (wrapper.vm.$refs[providerRefName] as InstanceType<typeof ValidationProvider>).errors;
 }
 
 /**
@@ -44,10 +43,7 @@ export async function flushAll(): Promise<void> {
  * @param eventName イベント名
  * @returns イベント発生回数
  */
-export function getEventCount<T extends Vue | null>(
-  wrapper: Wrapper<T>,
-  eventName: string
-): number {
+export function getEventCount<T extends Vue | null>(wrapper: Wrapper<T>, eventName: string): number {
   const eventInfo = wrapper.emitted()[eventName];
   if (!eventInfo) {
     return 0;
@@ -62,10 +58,7 @@ export function getEventCount<T extends Vue | null>(
  * @param eventName イベント名
  * @returns イベントデータ
  */
-export function getVeryFirstEventData<T extends Vue | null, U>(
-  wrapper: Wrapper<T>,
-  eventName: string
-): U {
+export function getVeryFirstEventData<T extends Vue | null, U>(wrapper: Wrapper<T>, eventName: string): U {
   const eventInfo = wrapper.emitted()[eventName];
   if (!eventInfo) {
     throw new Error(`イベントデータが存在しません(${eventName})`);

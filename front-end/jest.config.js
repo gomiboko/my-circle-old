@@ -4,7 +4,5 @@ module.exports = {
   transform: {
     "vee-validate/dist/rules": "babel-jest",
   },
-  transformIgnorePatterns: [
-    "<rootDir>/node_modules/(?!vee-validate/dist/rules)",
-  ],
+  transformIgnorePatterns: ["<rootDir>/node_modules/(?!vee-validate/dist/rules)"],
 };

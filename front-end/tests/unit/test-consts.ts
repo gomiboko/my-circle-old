@@ -35,4 +35,4 @@ export const paths = {
   Login: "/login",
   /** アカウント作成画面 */
   Join: "/join",
-}
+};
