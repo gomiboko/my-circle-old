@@ -146,25 +146,25 @@ describe("Login.vue", () => {
 
         const router = new VueRouter();
         router.push("/login");
-        const w = mount(Login, { localVue, router });
+        const wrapper = mount(Login, { localVue, router });
 
-        const emailTextWrapper = w.findComponent({ ref: "emailTextField" });
-        const passTextWrapper = w.findComponent({ ref: "passwordTextField" });
+        const emailTextWrapper = wrapper.findComponent({ ref: "emailTextField" });
+        const passTextWrapper = wrapper.findComponent({ ref: "passwordTextField" });
         await setValue(emailTextWrapper, "wrong_user");
         await setValue(passTextWrapper, "wrong_password");
         await flushAll();
 
-        const loginBtnWrapper = w.findComponent({ ref: "loginButton" });
+        const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
         await loginBtnWrapper.find("button").trigger("click");
         await flushPromises();
 
         // メッセージ表示のカスタムイベントが1回発生していること
-        expect(getEventCount(w, MSG_EVENT)).toBe(1);
+        expect(getEventCount(wrapper, MSG_EVENT)).toBe(1);
         // 「予期せぬエラー」のメッセージでないこと
-        const eventData = getVeryFirstEventData<Login, Message>(w, MSG_EVENT);
+        const eventData = getVeryFirstEventData<Login, Message>(wrapper, MSG_EVENT);
         expect(eventData.message).not.toContain("予期せぬエラー");
         // ページ遷移していないこと
-        expect(w.vm.$route.path).toBe("/login");
+        expect(wrapper.vm.$route.path).toBe("/login");
       });
     });
 
@@ -177,25 +177,25 @@ describe("Login.vue", () => {
 
         const router = new VueRouter();
         router.push("/login");
-        const w = mount(Login, { localVue, router });
+        const wrapper = mount(Login, { localVue, router });
 
-        const emailTextWrapper = w.findComponent({ ref: "emailTextField" });
-        const passTextWrapper = w.findComponent({ ref: "passwordTextField" });
+        const emailTextWrapper = wrapper.findComponent({ ref: "emailTextField" });
+        const passTextWrapper = wrapper.findComponent({ ref: "passwordTextField" });
         await setValue(emailTextWrapper, "foo@example.com");
         await setValue(passTextWrapper, "password");
         await flushAll();
 
-        const loginBtnWrapper = w.findComponent({ ref: "loginButton" });
+        const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
         await loginBtnWrapper.find("button").trigger("click");
         await flushPromises();
 
         // メッセージ表示のカスタムイベントが1回発生していること
-        expect(getEventCount(w, MSG_EVENT)).toBe(1);
+        expect(getEventCount(wrapper, MSG_EVENT)).toBe(1);
         // 「予期せぬエラー」のメッセージであること
-        const eventData = getVeryFirstEventData<Login, Message>(w, MSG_EVENT);
+        const eventData = getVeryFirstEventData<Login, Message>(wrapper, MSG_EVENT);
         expect(eventData.message).toContain("予期せぬエラー");
         // ページ遷移していないこと
-        expect(w.vm.$route.path).toBe("/login");
+        expect(wrapper.vm.$route.path).toBe("/login");
       });
     });
   });
