@@ -18,9 +18,11 @@ const (
 const (
 	UnregisteredEmail = "not-exist@example.com"
 	ValidEmail        = "foo@example.com"
-	ValidPassword     = "password123"
+	ValidPassword     = "password"
 	FullWidthSpace    = "　"
 	HalfWidthSpace    = " "
+	HalfWidthSymbol   = "`~!@#$%^&*()-_=+[]{}\\|;:'\",./<>?"
+	FullWidthA        = "Ａ"
 )
 
 const (

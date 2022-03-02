@@ -76,21 +76,22 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: ""},
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: testutils.HalfWidthSpace},
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: testutils.FullWidthSpace},
-			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: testutils.FullWidthSpace + testutils.HalfWidthSpace},
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", testutils.UsernameMaxLength+1)},
 			// メールアドレスのチェックデータ
 			{Username: "test name", Password: testutils.ValidPassword, Email: ""},
+			{Username: "test name", Password: testutils.ValidPassword, Email: testutils.HalfWidthSpace},
+			{Username: "test name", Password: testutils.ValidPassword, Email: testutils.FullWidthSpace},
 			{Username: "test name", Password: testutils.ValidPassword, Email: "a"},
-			{Username: "test name", Password: testutils.ValidPassword, Email: "😋@example.com"},
-			{Username: "test name", Password: testutils.ValidPassword, Email: "@example.com"},
+			{Username: "test name", Password: testutils.ValidPassword, Email: testutils.CreateEmailAddress(testutils.EmailMaxLength + 1)},
 			// パスワードのチェックデータ
 			{Username: "test name", Email: testutils.ValidEmail, Password: ""},
 			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1)},
 			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength+1)},
-			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + testutils.HalfWidthSpace},
-			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + testutils.FullWidthSpace},
-			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + "😋"},
-			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1) + "あ"},
+			{Username: "test name", Email: testutils.ValidEmail, Password: testutils.ValidPassword + testutils.HalfWidthSpace},
+			{Username: "test name", Email: testutils.ValidEmail, Password: testutils.ValidPassword + testutils.FullWidthSpace},
+			{Username: "test name", Email: testutils.ValidEmail, Password: testutils.ValidPassword + testutils.FullWidthA},
+			{Username: "test name", Email: testutils.ValidEmail, Password: testutils.ValidPassword + "😋"},
+			{Username: "test name", Email: testutils.ValidEmail, Password: testutils.ValidPassword + "あ"},
 		}
 
 		usMock := new(mocks.UserServiceMock)
@@ -121,15 +122,12 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			// ユーザ名のチェックデータ
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", 1)},
 			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: strings.Repeat("a", testutils.UsernameMaxLength)},
-			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: "にほんご"},
-			{Email: testutils.ValidEmail, Password: testutils.ValidPassword, Username: "😋"},
 			// メールアドレスのチェックデータ
 			{Username: "test name", Password: testutils.ValidPassword, Email: testutils.CreateEmailAddress(testutils.EmailMaxLength)},
-			{Username: "test name", Password: testutils.ValidPassword, Email: "あ@example.com"},
 			// パスワードのチェックデータ
 			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength)},
 			{Username: "test name", Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength)},
-			{Username: "test name", Email: testutils.ValidEmail, Password: "!@#$%^&*()-_=+[]{}\\|~;:'\",.<>/?`"},
+			{Username: "test name", Email: testutils.ValidEmail, Password: testutils.HalfWidthSymbol},
 			{Username: "test name", Email: testutils.ValidEmail, Password: "1234567890"},
 			{Username: "test name", Email: testutils.ValidEmail, Password: "abcdefghijklmnopqrstuvwxyz"},
 		}
