@@ -125,7 +125,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
-        await loginBtnWrapper.find("button").trigger("click");
+        await loginBtnWrapper.trigger("click");
         await flushPromises();
 
         expect(wrapper.vm.$route.path).toBe("/");
