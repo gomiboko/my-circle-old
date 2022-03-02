@@ -59,9 +59,7 @@ describe("SmallLink.vue", () => {
           localVue,
           propsData: props,
         });
-        expect(wrapper.find("router-link-stub").attributes("to")).toBe(
-          "/test/path"
-        );
+        expect(wrapper.find("router-link-stub").attributes("to")).toBe("/test/path");
       });
     });
   });

@@ -2,7 +2,6 @@
   <div>
     <validation-observer v-slot="{ invalid }">
       <form>
-
         <v-row justify-md="center">
           <v-col md="4">
             <div class="text-center text-h5">My Circle にログイン</div>
@@ -55,13 +54,7 @@
               </v-row>
               <v-row>
                 <v-col>
-                  <v-btn
-                    ref="loginButton"
-                    :disabled="invalid"
-                    @click="login"
-                    block
-                    >ログイン</v-btn
-                  >
+                  <v-btn ref="loginButton" :disabled="invalid" @click="login" block>ログイン</v-btn>
                 </v-col>
               </v-row>
             </v-card>
@@ -80,12 +73,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import {
-  ValidationObserver,
-  ValidationProvider,
-  extend,
-  localize,
-} from "vee-validate";
+import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import SmallLink from "@/components/SmallLink.vue";

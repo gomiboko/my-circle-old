@@ -4,12 +4,7 @@ import Login from "@/views/Login.vue";
 import VueRouter from "vue-router";
 import { AxiosError } from "axios";
 import { Message, MSG_EVENT } from "@/utils/message";
-import {
-  getValidationProviderErrors,
-  flushAll,
-  getEventCount,
-  getVeryFirstEventData,
-} from "../test-utils";
+import { getValidationProviderErrors, flushAll, getEventCount, getVeryFirstEventData } from "../test-utils";
 import flushPromises from "flush-promises";
 import { createMockedLocalVue } from "../local-vue";
 
@@ -53,16 +48,10 @@ describe("Login.vue", () => {
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
-          await wrapper
-            .findComponent({ ref: "emailTextField" })
-            .find("input")
-            .setValue("");
+          await wrapper.findComponent({ ref: "emailTextField" }).find("input").setValue("");
           await flushPromises();
 
-          const errors = getValidationProviderErrors(
-            wrapper,
-            "emailTextFieldProvider"
-          );
+          const errors = getValidationProviderErrors(wrapper, "emailTextFieldProvider");
           expect(errors.length).toBe(1);
         });
       });
@@ -73,16 +62,10 @@ describe("Login.vue", () => {
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
-          await wrapper
-            .findComponent({ ref: "emailTextField" })
-            .find("input")
-            .setValue("a");
+          await wrapper.findComponent({ ref: "emailTextField" }).find("input").setValue("a");
           await flushPromises();
 
-          const errors = getValidationProviderErrors(
-            wrapper,
-            "emailTextFieldProvider"
-          );
+          const errors = getValidationProviderErrors(wrapper, "emailTextFieldProvider");
           expect(errors.length).toBe(0);
         });
       });
@@ -95,16 +78,10 @@ describe("Login.vue", () => {
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
-          await wrapper
-            .findComponent({ ref: "passwordTextField" })
-            .find("input")
-            .setValue("");
+          await wrapper.findComponent({ ref: "passwordTextField" }).find("input").setValue("");
           await flushPromises();
 
-          const errors = getValidationProviderErrors(
-            wrapper,
-            "passwordTextFieldProvider"
-          );
+          const errors = getValidationProviderErrors(wrapper, "passwordTextFieldProvider");
           expect(errors.length).toBe(1);
         });
       });
@@ -115,16 +92,10 @@ describe("Login.vue", () => {
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
-          await wrapper
-            .findComponent({ ref: "passwordTextField" })
-            .find("input")
-            .setValue("a");
+          await wrapper.findComponent({ ref: "passwordTextField" }).find("input").setValue("a");
           await flushPromises();
 
-          const errors = getValidationProviderErrors(
-            wrapper,
-            "passwordTextFieldProvider"
-          );
+          const errors = getValidationProviderErrors(wrapper, "passwordTextFieldProvider");
           expect(errors.length).toBe(0);
         });
       });
@@ -143,14 +114,8 @@ describe("Login.vue", () => {
         router.push("/login");
         const wrapper = mount(Login, { localVue, router });
 
-        await wrapper
-          .findComponent({ ref: "emailTextField" })
-          .find("input")
-          .setValue("foo@example.com");
-        await wrapper
-          .findComponent({ ref: "passwordTextField" })
-          .find("input")
-          .setValue("password");
+        await wrapper.findComponent({ ref: "emailTextField" }).find("input").setValue("foo@example.com");
+        await wrapper.findComponent({ ref: "passwordTextField" }).find("input").setValue("password");
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
@@ -177,14 +142,8 @@ describe("Login.vue", () => {
         router.push("/login");
         const w = mount(Login, { localVue, router });
 
-        await w
-          .findComponent({ ref: "emailTextField" })
-          .find("input")
-          .setValue("wrong_user");
-        await w
-          .findComponent({ ref: "passwordTextField" })
-          .find("input")
-          .setValue("wrong_password");
+        await w.findComponent({ ref: "emailTextField" }).find("input").setValue("wrong_user");
+        await w.findComponent({ ref: "passwordTextField" }).find("input").setValue("wrong_password");
         await flushAll();
 
         const loginBtnWrapper = w.findComponent({ ref: "loginButton" });
@@ -212,14 +171,8 @@ describe("Login.vue", () => {
         router.push("/login");
         const w = mount(Login, { localVue, router });
 
-        await w
-          .findComponent({ ref: "emailTextField" })
-          .find("input")
-          .setValue("foo@example.com");
-        await w
-          .findComponent({ ref: "passwordTextField" })
-          .find("input")
-          .setValue("password");
+        await w.findComponent({ ref: "emailTextField" }).find("input").setValue("foo@example.com");
+        await w.findComponent({ ref: "passwordTextField" }).find("input").setValue("password");
         await flushAll();
 
         const loginBtnWrapper = w.findComponent({ ref: "loginButton" });
