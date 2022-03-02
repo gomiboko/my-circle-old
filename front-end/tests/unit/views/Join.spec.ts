@@ -111,7 +111,8 @@ describe("Join.vue", () => {
         ["46文字入力された場合", "a".repeat(lengths.UserNameMaxLength + 1), 1, "ユーザ名は45文字以内にしてください"],
       ])("%s", async (explanation, input, errCnt, errMsg) => {
         const wrapper = mountWithNewVuetify();
-        await setValue(wrapper, RefUsernameTextField, input);
+        const usernameTextWrapper = wrapper.findComponent({ ref: RefUsernameTextField });
+        await setValue(usernameTextWrapper, input);
 
         const errors = getValidationProviderErrors(wrapper, RefUsernameValidationProvider);
         expect(errors.length).toBe(errCnt);
@@ -135,7 +136,8 @@ describe("Join.vue", () => {
         ["255文字のメールアドレスが入力された場合", createEmailAddress(lengths.EmailMaxLength + 1), 1, "メールアドレスは254文字以内にしてください"],
       ])("%s", async (explanation, input, errCnt, errMsg) => {
         const wrapper = mountWithNewVuetify();
-        await setValue(wrapper, RefEmailTextField, input);
+        const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
+        await setValue(emailTextWrapper, input);
 
         const errors = getValidationProviderErrors(wrapper, RefEmailValidationProvider);
         expect(errors.length).toBe(errCnt);
@@ -165,7 +167,8 @@ describe("Join.vue", () => {
         ["絵文字が入力された場合", `${consts.ValidPassword}😋`, 1, InvalidCharacterContained],
       ])("%s", async (explanation, input, errCnt, errMsg) => {
         const wrapper = mountWithNewVuetify();
-        await setValue(wrapper, RefPasswordTextField, input);
+        const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
+        await setValue(passTextWrapper, input);
 
         const errors = getValidationProviderErrors(wrapper, RefPasswordValidationProvider);
         expect(errors.length).toBe(errCnt);
