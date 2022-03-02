@@ -155,7 +155,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
-        await loginBtnWrapper.find("button").trigger("click");
+        await loginBtnWrapper.trigger("click");
         await flushPromises();
 
         // メッセージ表示のカスタムイベントが1回発生していること
@@ -186,7 +186,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
-        await loginBtnWrapper.find("button").trigger("click");
+        await loginBtnWrapper.trigger("click");
         await flushPromises();
 
         // メッセージ表示のカスタムイベントが1回発生していること
