@@ -18,7 +18,7 @@ describe("Login.vue", () => {
       });
       await flushAll();
 
-      const loginBtnWrapper = wrapper.find("v-btn-stub");
+      const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
 
       // 初期表示時
       expect(loginBtnWrapper.attributes("disabled")).toBeTruthy();

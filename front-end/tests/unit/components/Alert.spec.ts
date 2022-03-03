@@ -38,7 +38,7 @@ describe("Alert.vue", () => {
           props.messageType = t;
           const wrapper = shallowMount(Alert, { propsData: props });
           expect(wrapper.text()).toBe("test");
-          expect(wrapper.find("v-alert-stub").attributes("type")).toBe(t);
+          expect(wrapper.findComponent({ name: "v-alert" }).attributes("type")).toBe(t);
         };
 
         testType(MessageType.Info);

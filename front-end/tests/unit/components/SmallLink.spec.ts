@@ -48,7 +48,7 @@ describe("SmallLink.vue", () => {
           localVue,
           propsData: props,
         });
-        expect(wrapper.find("router-link-stub").attributes("to")).toBe("");
+        expect(wrapper.findComponent({ name: "router-link" }).attributes("to")).toBe("");
       });
     });
 
@@ -59,7 +59,7 @@ describe("SmallLink.vue", () => {
           localVue,
           propsData: props,
         });
-        expect(wrapper.find("router-link-stub").attributes("to")).toBe("/test/path");
+        expect(wrapper.findComponent({ name: "router-link" }).attributes("to")).toBe("/test/path");
       });
     });
   });

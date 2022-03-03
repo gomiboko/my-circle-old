@@ -10,8 +10,8 @@ const MESSAGE_DATA_NAME = "message";
 // Alert.vue の message プロパティ名
 const MESSAGE_PROPS_NAME = "message";
 
-// router-view コンポーネントのスタブ要素名
-const ROUTER_VIEW_STUB_NAME = "router-view-stub";
+// router-view コンポーネント名
+const ROUTER_VIEW_NAME = "router-view";
 
 const localVue = createLocalVue();
 localVue.use(VueRouter);
@@ -31,7 +31,7 @@ describe("App.vue", () => {
           const wrapper = shallowMount(App, { localVue });
 
           const msg = new Message(MessageType.Info, "test message");
-          await wrapper.find(ROUTER_VIEW_STUB_NAME).trigger(MSG_EVENT, msg);
+          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
 
           expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
         });
@@ -42,7 +42,7 @@ describe("App.vue", () => {
           const wrapper = shallowMount(App, { localVue });
 
           const msg = new Message(MessageType.Info, "");
-          await wrapper.find(ROUTER_VIEW_STUB_NAME).trigger(MSG_EVENT, msg);
+          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
 
           expect(wrapper.findComponent(Alert).exists()).toBeFalsy();
         });
@@ -56,12 +56,12 @@ describe("App.vue", () => {
 
           // メッセージ表示
           const msg = new Message(MessageType.Info, "test message");
-          await wrapper.find(ROUTER_VIEW_STUB_NAME).trigger(MSG_EVENT, msg);
+          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
           expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
           // 表示中のメッセージとは異なるメッセージでイベントを発火
           msg.message = "updated message";
-          await wrapper.find(ROUTER_VIEW_STUB_NAME).trigger(MSG_EVENT, msg);
+          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
 
           expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("updated message");
         });
@@ -73,11 +73,11 @@ describe("App.vue", () => {
 
           // メッセージ表示
           const msg = new Message(MessageType.Info, "test message");
-          await wrapper.find(ROUTER_VIEW_STUB_NAME).trigger(MSG_EVENT, msg);
+          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
           expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
           msg.message = "";
-          await wrapper.find(ROUTER_VIEW_STUB_NAME).trigger(MSG_EVENT, msg);
+          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
 
           expect(wrapper.findComponent(Alert).exists()).toBeFalsy();
         });
@@ -92,7 +92,7 @@ describe("App.vue", () => {
 
         // メッセージ表示
         const msg = new Message(MessageType.Info, "test message");
-        await wrapper.find(ROUTER_VIEW_STUB_NAME).trigger(MSG_EVENT, msg);
+        await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
         expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
         // ページ遷移時の処理(messageデータオブジェクトに空文字を設定)を実行
