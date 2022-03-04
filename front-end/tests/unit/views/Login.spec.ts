@@ -7,6 +7,13 @@ import { Message, MSG_EVENT } from "@/utils/message";
 import { getValidationProviderErrors, flushAll, getEventCount, getVeryFirstEventData, setValue } from "../test-utils";
 import flushPromises from "flush-promises";
 import { createMockedLocalVue } from "../local-vue";
+import { consts, paths } from "../test-consts";
+
+const RefEmailTextField = "emailTextField";
+const RefPasswordTextField = "passwordTextField";
+const RefLoginButton = "loginButton";
+const RefEmailTextFieldProvider = "emailTextFieldProvider";
+const RefPasswordTextFieldProvider = "passwordTextFieldProvider";
 
 jest.useFakeTimers();
 
@@ -18,7 +25,7 @@ describe("Login.vue", () => {
       });
       await flushAll();
 
-      const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
+      const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
 
       // 初期表示時
       expect(loginBtnWrapper.attributes("disabled")).toBeTruthy();
@@ -48,11 +55,11 @@ describe("Login.vue", () => {
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
-          const emailTextWrapper = wrapper.findComponent({ ref: "emailTextField" });
+          const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
           await setValue(emailTextWrapper, "");
           await flushPromises();
 
-          const errors = getValidationProviderErrors(wrapper, "emailTextFieldProvider");
+          const errors = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
           expect(errors.length).toBe(1);
         });
       });
@@ -63,11 +70,11 @@ describe("Login.vue", () => {
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
-          const emailTextWrapper = wrapper.findComponent({ ref: "emailTextField" });
+          const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
           await setValue(emailTextWrapper, "a");
           await flushPromises();
 
-          const errors = getValidationProviderErrors(wrapper, "emailTextFieldProvider");
+          const errors = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
           expect(errors.length).toBe(0);
         });
       });
@@ -80,11 +87,11 @@ describe("Login.vue", () => {
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
-          const passTextWrapper = wrapper.findComponent({ ref: "passwordTextField" });
+          const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
           await setValue(passTextWrapper, "");
           await flushPromises();
 
-          const errors = getValidationProviderErrors(wrapper, "passwordTextFieldProvider");
+          const errors = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
           expect(errors.length).toBe(1);
         });
       });
@@ -95,11 +102,11 @@ describe("Login.vue", () => {
           const router = new VueRouter();
           const wrapper = mount(Login, { localVue, router });
 
-          const passTextWrapper = wrapper.findComponent({ ref: "passwordTextField" });
+          const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
           await setValue(passTextWrapper, "a");
           await flushPromises();
 
-          const errors = getValidationProviderErrors(wrapper, "passwordTextFieldProvider");
+          const errors = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
           expect(errors.length).toBe(0);
         });
       });
@@ -115,20 +122,20 @@ describe("Login.vue", () => {
         axiosMock.post.mockResolvedValue(null);
 
         const router = new VueRouter();
-        router.push("/login");
+        router.push(paths.Login);
         const wrapper = mount(Login, { localVue, router });
 
-        const emailTextWrapper = wrapper.findComponent({ ref: "emailTextField" });
-        const passTextWrapper = wrapper.findComponent({ ref: "passwordTextField" });
-        await setValue(emailTextWrapper, "foo@example.com");
-        await setValue(passTextWrapper, "password");
+        const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
+        const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
+        await setValue(emailTextWrapper, consts.ValidEmail);
+        await setValue(passTextWrapper, consts.ValidPassword);
         await flushAll();
 
-        const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
+        const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
         await loginBtnWrapper.trigger("click");
         await flushPromises();
 
-        expect(wrapper.vm.$route.path).toBe("/");
+        expect(wrapper.vm.$route.path).toBe(paths.Root);
       });
     });
 
@@ -145,16 +152,16 @@ describe("Login.vue", () => {
         axiosMock.isAxiosError.mockReturnValue(true);
 
         const router = new VueRouter();
-        router.push("/login");
+        router.push(paths.Login);
         const wrapper = mount(Login, { localVue, router });
 
-        const emailTextWrapper = wrapper.findComponent({ ref: "emailTextField" });
-        const passTextWrapper = wrapper.findComponent({ ref: "passwordTextField" });
+        const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
+        const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
         await setValue(emailTextWrapper, "wrong_user");
         await setValue(passTextWrapper, "wrong_password");
         await flushAll();
 
-        const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
+        const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
         await loginBtnWrapper.trigger("click");
         await flushPromises();
 
@@ -164,7 +171,7 @@ describe("Login.vue", () => {
         const eventData = getVeryFirstEventData<Login, Message>(wrapper, MSG_EVENT);
         expect(eventData.message).not.toContain("予期せぬエラー");
         // ページ遷移していないこと
-        expect(wrapper.vm.$route.path).toBe("/login");
+        expect(wrapper.vm.$route.path).toBe(paths.Login);
       });
     });
 
@@ -176,16 +183,16 @@ describe("Login.vue", () => {
         axiosMock.isAxiosError.mockReturnValue(false);
 
         const router = new VueRouter();
-        router.push("/login");
+        router.push(paths.Login);
         const wrapper = mount(Login, { localVue, router });
 
-        const emailTextWrapper = wrapper.findComponent({ ref: "emailTextField" });
-        const passTextWrapper = wrapper.findComponent({ ref: "passwordTextField" });
-        await setValue(emailTextWrapper, "foo@example.com");
-        await setValue(passTextWrapper, "password");
+        const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
+        const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
+        await setValue(emailTextWrapper, consts.ValidEmail);
+        await setValue(passTextWrapper, consts.ValidPassword);
         await flushAll();
 
-        const loginBtnWrapper = wrapper.findComponent({ ref: "loginButton" });
+        const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
         await loginBtnWrapper.trigger("click");
         await flushPromises();
 
@@ -195,7 +202,7 @@ describe("Login.vue", () => {
         const eventData = getVeryFirstEventData<Login, Message>(wrapper, MSG_EVENT);
         expect(eventData.message).toContain("予期せぬエラー");
         // ページ遷移していないこと
-        expect(wrapper.vm.$route.path).toBe("/login");
+        expect(wrapper.vm.$route.path).toBe(paths.Login);
       });
     });
   });
