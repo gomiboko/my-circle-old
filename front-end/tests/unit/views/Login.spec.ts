@@ -179,7 +179,7 @@ describe("Login.vue", () => {
       test("ログインページにエラーメッセージが表示されること", async () => {
         const { localVue, axiosMock } = createMockedLocalVue();
 
-        axiosMock.post.mockRejectedValue(new Error("予期せぬエラーテスト"));
+        axiosMock.post.mockRejectedValue(new Error("エラーテスト"));
         axiosMock.isAxiosError.mockReturnValue(false);
 
         const router = new VueRouter();
