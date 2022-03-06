@@ -33,7 +33,7 @@
       <v-container>
         <!-- メッセージ -->
         <v-row v-if="message" justify="center">
-          <v-col md="6">
+          <v-col :md="msgColSize">
             <alert :message-type="messageType" :message="message" />
           </v-col>
         </v-row>
@@ -48,6 +48,7 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import Alert from "@/components/Alert.vue";
 import { Message, MessageType } from "@/utils/message";
+import { AppMsgSize } from "@/utils/consts";
 
 @Component({
   components: {
@@ -57,13 +58,17 @@ import { Message, MessageType } from "@/utils/message";
 export default class App extends Vue {
   private messageType!: MessageType;
   private message = "";
+  private msgColSize = AppMsgSize.Col6;
 
   /**
    * 画面上部のメッセージ表示領域にメッセージを表示する。
+   * @param message メッセージ
+   * @param msgColSize メッセージ表示サイズ
    */
-  private showMessage(message: Message) {
+  private showMessage(message: Message, colSize?: number) {
     this.messageType = message.messageType;
     this.message = message.message;
+    this.msgColSize = colSize || AppMsgSize.Col6;
   }
 
   /**
