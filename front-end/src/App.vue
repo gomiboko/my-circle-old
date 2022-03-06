@@ -34,7 +34,7 @@
         <!-- メッセージ -->
         <v-row v-if="message" justify="center">
           <v-col :md="msgColSize">
-            <alert :message-type="messageType" :message="message" />
+            <app-message :message-type="messageType" :message="message" />
           </v-col>
         </v-row>
 
@@ -46,13 +46,13 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from "vue-property-decorator";
-import Alert from "@/components/Alert.vue";
+import AppMessage from "@/components/AppMessage.vue";
 import { Message, MessageType } from "@/utils/message";
 import { AppMsgSize } from "@/utils/consts";
 
 @Component({
   components: {
-    Alert,
+    AppMessage,
   },
 })
 export default class App extends Vue {

@@ -2,12 +2,12 @@ import { shallowMount, createLocalVue } from "@vue/test-utils";
 import VueRouter from "vue-router";
 import App from "@/App.vue";
 import { Message, MessageType, MSG_EVENT } from "@/utils/message";
-import Alert from "@/components/Alert.vue";
+import AppMessage from "@/components/AppMessage.vue";
 
 // App.vue の message データオブジェクト名
 const MESSAGE_DATA_NAME = "message";
 
-// Alert.vue の message プロパティ名
+// AppMessage.vue の message プロパティ名
 const MESSAGE_PROPS_NAME = "message";
 
 // router-view コンポーネント名
@@ -20,7 +20,7 @@ describe("App.vue", () => {
   describe("初期表示", () => {
     test("メッセージが表示されていないこと", () => {
       const wrapper = shallowMount(App, { localVue });
-      expect(wrapper.findComponent(Alert).exists()).toBeFalsy();
+      expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
     });
   });
 
@@ -33,8 +33,8 @@ describe("App.vue", () => {
           const msg = new Message(MessageType.Info, "test message");
           await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
 
-          expect(wrapper.findComponent(Alert).exists()).toBeTruthy();
-          expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
+          expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
+          expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
         });
       });
 
@@ -45,7 +45,7 @@ describe("App.vue", () => {
           const msg = new Message(MessageType.Info, "");
           await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
 
-          expect(wrapper.findComponent(Alert).exists()).toBeFalsy();
+          expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
         });
       });
     });
@@ -58,15 +58,15 @@ describe("App.vue", () => {
           // メッセージ表示
           const msg = new Message(MessageType.Info, "test message");
           await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
-          expect(wrapper.findComponent(Alert).exists()).toBeTruthy();
-          expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
+          expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
+          expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
           // 表示中のメッセージとは異なるメッセージでイベントを発火
           msg.message = "updated message";
           await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
 
-          expect(wrapper.findComponent(Alert).exists()).toBeTruthy();
-          expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("updated message");
+          expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
+          expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("updated message");
         });
       });
 
@@ -77,13 +77,13 @@ describe("App.vue", () => {
           // メッセージ表示
           const msg = new Message(MessageType.Info, "test message");
           await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
-          expect(wrapper.findComponent(Alert).exists()).toBeTruthy();
-          expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
+          expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
+          expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
           msg.message = "";
           await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
 
-          expect(wrapper.findComponent(Alert).exists()).toBeFalsy();
+          expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
         });
       });
     });
@@ -97,13 +97,13 @@ describe("App.vue", () => {
         // メッセージ表示
         const msg = new Message(MessageType.Info, "test message");
         await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
-        expect(wrapper.findComponent(Alert).exists()).toBeTruthy();
-        expect(wrapper.findComponent(Alert).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
+        expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
+        expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
         // ページ遷移時の処理(messageデータオブジェクトに空文字を設定)を実行
         await wrapper.setData({ [MESSAGE_DATA_NAME]: "" });
 
-        expect(wrapper.findComponent(Alert).exists()).toBeFalsy();
+        expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
       });
     });
 
@@ -114,7 +114,7 @@ describe("App.vue", () => {
         // ページ遷移時の処理(messageデータオブジェクトに空文字を設定)を実行
         await wrapper.setData({ [MESSAGE_DATA_NAME]: "" });
 
-        expect(wrapper.findComponent(Alert).exists()).toBeFalsy();
+        expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
       });
     });
   });
