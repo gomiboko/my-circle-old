@@ -2,5 +2,5 @@
 
 ## 単体テスト
 ```
-testutils/execute_test.sh local
+execute_test.sh local
 ```

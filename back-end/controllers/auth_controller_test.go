@@ -2,48 +2,28 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/controllers/mocks"
+	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
-const validEmail = "foo@example.com"
-const validPassword = "password123"
-const emailMaxLength = 254
-const passwordMinLength = 8
-const passwordMaxLength = 64
-
-type apiResponse struct {
-	Message string
-}
-
 // AuthControllerテストスイート
 type AuthControllerTestSuite struct {
 	suite.Suite
 }
 
-func (m *AuthControllerTestSuite) SetupSuite() {
+func (s *AuthControllerTestSuite) SetupSuite() {
 	gin.SetMode(gin.TestMode)
-}
-
-// AuthServiceモック
-type authServiceMock struct {
-	mock.Mock
-}
-
-func (m *authServiceMock) Authenticate(email string, password string) (*uint, error) {
-	args := m.Called(email, password)
-	return args.Get(0).(*uint), args.Error(1)
 }
 
 func TestAuthController(t *testing.T) {
@@ -52,11 +32,15 @@ func TestAuthController(t *testing.T) {
 
 func (s *AuthControllerTestSuite) TestLogin() {
 	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
-		ac := NewAuthController(nil)
+		var userID *uint = nil
+		asMock := new(mocks.AuthServiceMock)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
+
+		ac := NewAuthController(asMock)
 
 		values := url.Values{}
-		values.Set("email", validEmail)
-		values.Add("password", validPassword)
+		values.Set("email", testutils.ValidEmail)
+		values.Add("password", testutils.ValidPassword)
 
 		// URLエンコードで送信
 		r := httptest.NewRecorder()
@@ -66,7 +50,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 		ac.Login(c)
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusBadRequest, r.Code)
@@ -74,55 +58,34 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	})
 
 	s.Run("不正な入力値の場合", func() {
-		inputs := []struct {
-			email    string
-			password string
-		}{
+		inputs := []forms.LoginForm{
 			// メールアドレスのチェックデータ
-			{
-				email:    "",
-				password: validPassword,
-			},
-			{
-				email:    "isNotEmail",
-				password: validPassword,
-			},
-			{
-				email:    createEmailAddress(emailMaxLength + 1),
-				password: validPassword,
-			},
+			{Password: testutils.ValidPassword, Email: ""},
+			{Password: testutils.ValidPassword, Email: "isNotEmail"},
+			{Password: testutils.ValidPassword, Email: testutils.CreateEmailAddress(testutils.EmailMaxLength + 1)},
 			// パスワードのチェックデータ
-			{
-				email:    validEmail,
-				password: "",
-			},
-			{
-				email:    validEmail,
-				password: strings.Repeat("a", passwordMinLength-1),
-			},
-			{
-				email:    validEmail,
-				password: strings.Repeat("a", passwordMaxLength+1),
-			},
-			{
-				email:    validEmail,
-				password: "にほんごぱすわーど",
-			},
+			{Email: testutils.ValidEmail, Password: ""},
+			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength-1)},
+			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength+1)},
+			{Email: testutils.ValidEmail, Password: "にほんごぱすわーど"},
 		}
 
 		var userID *uint = nil
-		asMock := new(authServiceMock)
+		asMock := new(mocks.AuthServiceMock)
 		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
 		ac := NewAuthController(asMock)
 
 		for _, in := range inputs {
-			reqBody := createRequestBody(in.email, in.password)
+			reqBody, err := testutils.CreateRequestBodyStr(in)
+			if err != nil {
+				s.FailNow(err.Error())
+			}
 			r, c := createLoginPostContext(reqBody)
 
 			ac.Login(c)
 
-			var res apiResponse
+			var res testutils.ApiErrorReponse
 			json.Unmarshal(r.Body.Bytes(), &res)
 
 			assert.Equal(s.T(), http.StatusUnauthorized, r.Code)
@@ -131,46 +94,32 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	})
 
 	s.Run("正常な入力値の場合", func() {
-		inputs := []struct {
-			email    string
-			password string
-		}{
+		inputs := []forms.LoginForm{
 			// メールアドレスのチェックデータ
-			{
-				email:    createEmailAddress(emailMaxLength),
-				password: validPassword,
-			},
-			{
-				email:    "にほんご@example.com",
-				password: validPassword,
-			},
+			{Password: testutils.ValidPassword, Email: testutils.CreateEmailAddress(testutils.EmailMaxLength)},
+			{Password: testutils.ValidPassword, Email: "にほんご@example.com"},
 			// パスワードのチェックデータ
-			{
-				email:    validEmail,
-				password: strings.Repeat("a", passwordMinLength),
-			},
-			{
-				email:    validEmail,
-				password: strings.Repeat("a", passwordMaxLength),
-			},
+			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMinLength)},
+			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength)},
 		}
 
 		// AuthServiceモック
 		userID := uint(1)
-		asMock := new(authServiceMock)
+		asMock := new(mocks.AuthServiceMock)
 		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&userID, nil)
 
 		ac := NewAuthController(asMock)
 
 		for _, in := range inputs {
-			reqBody := createRequestBody(in.email, in.password)
+			reqBody, err := testutils.CreateRequestBodyStr(in)
+			if err != nil {
+				s.FailNow(err.Error())
+			}
 			r, c := createLoginPostContext(reqBody)
 
 			// sessions.sessionモック
-			sessMock := new(testutils.SessionMock)
-			sessMock.On("Set", mock.AnythingOfType("string"), mock.Anything)
-			sessMock.On("Save").Return(nil)
-			c.Set(sessions.DefaultKey, sessMock)
+			sessMock := mocks.NewSessionMock()
+			testutils.SetSessionMockToGin(c, sessMock)
 
 			ac.Login(c)
 			c.Writer.WriteHeaderNow()
@@ -184,17 +133,21 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 	s.Run("認証失敗の場合", func() {
 		var userID *uint = nil
-		asMock := new(authServiceMock)
+		asMock := new(mocks.AuthServiceMock)
 		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
 		ac := NewAuthController(asMock)
 
-		reqBody := createRequestBody(validEmail, validPassword)
+		form := forms.LoginForm{Email: testutils.ValidEmail, Password: testutils.ValidPassword}
+		reqBody, err := testutils.CreateRequestBodyStr(form)
+		if err != nil {
+			s.FailNow(err.Error())
+		}
 		r, c := createLoginPostContext(reqBody)
 
 		ac.Login(c)
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusUnauthorized, r.Code)
@@ -203,17 +156,21 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 	s.Run("予期せぬエラーが発生した場合", func() {
 		var userID *uint = nil
-		asMock := new(authServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, errors.New("test exception"))
+		asMock := new(mocks.AuthServiceMock)
+		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, testutils.ErrTest)
 
 		ac := NewAuthController(asMock)
 
-		reqBody := createRequestBody(validEmail, validPassword)
+		form := forms.LoginForm{Email: testutils.ValidEmail, Password: testutils.ValidPassword}
+		reqBody, err := testutils.CreateRequestBodyStr(form)
+		if err != nil {
+			s.FailNow(err.Error())
+		}
 		r, c := createLoginPostContext(reqBody)
 
 		ac.Login(c)
 
-		var res apiResponse
+		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), r.Code, http.StatusInternalServerError)
@@ -222,38 +179,29 @@ func (s *AuthControllerTestSuite) TestLogin() {
 }
 
 func (s *AuthControllerTestSuite) TestLogout() {
-	ac := NewAuthController(nil)
+	var userID *uint = nil
+	asMock := new(mocks.AuthServiceMock)
+	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
+
+	ac := NewAuthController(asMock)
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request, _ = http.NewRequest(http.MethodGet, "/logout", nil)
 
 	// sessions.sessionモック
-	sessMock := new(testutils.SessionMock)
-	sessMock.On("Save").Return(nil)
-	sessMock.On("Clear")
-	sessMock.On("Get", mock.Anything).Return(0)
-	c.Set(sessions.DefaultKey, sessMock)
+	sessMock := mocks.NewSessionMock()
+	testutils.SetSessionMockToGin(c, sessMock)
 
 	ac.Logout(c)
 
-	var res apiResponse
+	var res testutils.ApiErrorReponse
 	json.Unmarshal(w.Body.Bytes(), &res)
 
 	assert.Equal(s.T(), http.StatusOK, w.Code)
 	assert.Equal(s.T(), "logged out", res.Message)
 	sessMock.AssertCalled(s.T(), "Save")
 	sessMock.AssertCalled(s.T(), "Clear")
-}
-
-// 指定の長さのメールアドレスを生成する
-func createEmailAddress(length int) string {
-	return strings.Repeat("a", length-len("@example.com")) + "@example.com"
-}
-
-// ログインのリクエストボディ文字列を生成する
-func createRequestBody(email string, password string) string {
-	return `{"email":"` + email + `","password":"` + password + `"}`
 }
 
 // ログインリクエストのGinコンテキストを生成する

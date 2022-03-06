@@ -11,12 +11,12 @@ import (
 )
 
 type AuthController struct {
-	as services.AuthService
+	authService services.AuthService
 }
 
 func NewAuthController(as services.AuthService) *AuthController {
 	ac := &AuthController{
-		as: as,
+		authService: as,
 	}
 	return ac
 }
@@ -29,7 +29,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 
 	// ログイン認証
-	userID, err := ac.as.Authenticate(form.Email, form.Password)
+	userID, err := ac.authService.Authenticate(form.Email, form.Password)
 
 	if err != nil {
 		log.Print(err)

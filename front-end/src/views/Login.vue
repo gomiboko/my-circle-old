@@ -2,7 +2,6 @@
   <div>
     <validation-observer v-slot="{ invalid }">
       <form>
-
         <v-row justify-md="center">
           <v-col md="4">
             <div class="text-center text-h5">My Circle にログイン</div>
@@ -55,13 +54,7 @@
               </v-row>
               <v-row>
                 <v-col>
-                  <v-btn
-                    ref="loginButton"
-                    :disabled="invalid"
-                    @click="login"
-                    block
-                    >ログイン</v-btn
-                  >
+                  <v-btn ref="loginButton" :disabled="invalid" @click="login" block>ログイン</v-btn>
                 </v-col>
               </v-row>
             </v-card>
@@ -72,8 +65,7 @@
 
     <v-row justify-md="center" class="mt-4">
       <v-col md="3" class="text-center">
-        <!-- TODO: リンク先 -->
-        <small-link text="新規アカウント登録" to="/" />
+        <small-link text="新規アカウント登録" to="/join" />
       </v-col>
     </v-row>
   </div>
@@ -81,16 +73,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import {
-  ValidationObserver,
-  ValidationProvider,
-  extend,
-  localize,
-} from "vee-validate";
+import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import SmallLink from "@/components/SmallLink.vue";
-import { Message, MessageType, MSG_EVENT } from "@/utils/message";
+import { showError } from "@/utils/message";
 
 extend("required", required);
 localize("ja", ja);
@@ -122,13 +109,7 @@ export default class Login extends Vue {
       // TODO: トップページに遷移
       this.$router.push("/");
     } catch (e) {
-      if (this.$http.isAxiosError(e) && e.response && e.response.data) {
-        const msg = new Message(MessageType.Error, e.response.data.message);
-        this.$emit(MSG_EVENT, msg);
-      } else {
-        const msg = new Message(MessageType.Error, `予期せぬエラー(${e})`);
-        this.$emit(MSG_EVENT, msg);
-      }
+      showError(this, e);
     }
   }
 }

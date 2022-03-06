@@ -2,22 +2,40 @@ package testutils
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"github.com/go-testfixtures/testfixtures/v3"
-	"github.com/stretchr/testify/mock"
+	"github.com/gomiboko/my-circle/controllers/mocks"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-const User1Email = "user1@example.com"
-const User1Password = "password"
-const User1PasswordHash = "$2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG"
-const User1Name = "user1"
+type ApiErrorReponse struct {
+	Message string
+}
 
-const InvalidUserEmail = "not-exist@example.com"
+func CreateRequestBodyStr(obj interface{}) (string, error) {
+	if j, err := json.Marshal(obj); err != nil {
+		return "", err
+	} else {
+		return string(j), nil
+	}
+}
+
+// 指定の長さのメールアドレスを生成する
+func CreateEmailAddress(length int) string {
+	return strings.Repeat("a", length-len("@example.com")) + "@example.com"
+}
+
+func SetSessionMockToGin(c *gin.Context, sessMock *mocks.SessionMock) {
+	// sessions.Sessions(string, sessions.Store) と同様の処理を実行
+	c.Set(sessions.DefaultKey, sessMock)
+}
 
 func GetFixtures(fixturesDirPath string) (*testfixtures.Loader, error) {
 	sqldb, err := sql.Open("mysql", getDSN())
@@ -40,44 +58,4 @@ func GetDB() (*gorm.DB, error) {
 func getDSN() string {
 	return fmt.Sprintf("root:root@tcp(test-db:3306)/mycircle?charset=utf8mb3&parseTime=True&loc=%s",
 		url.QueryEscape("Asia/Tokyo"))
-}
-
-// sessions.sessionのモック
-type SessionMock struct {
-	mock.Mock
-}
-
-func (m *SessionMock) Get(key interface{}) interface{} {
-	args := m.Called(key)
-	return args.Get(0)
-}
-
-func (m *SessionMock) Set(key interface{}, val interface{}) {
-	m.Called(key, val)
-}
-
-func (m *SessionMock) Delete(key interface{}) {
-	m.Called(key)
-}
-
-func (m *SessionMock) Clear() {
-	m.Called()
-}
-
-func (m *SessionMock) AddFlash(value interface{}, vars ...string) {
-	m.Called(value, vars)
-}
-
-func (m *SessionMock) Flashes(vars ...string) []interface{} {
-	args := m.Called(vars)
-	return args.Get(0).([]interface{})
-}
-
-func (m *SessionMock) Options(opt sessions.Options) {
-	m.Called(opt)
-}
-
-func (m *SessionMock) Save() error {
-	args := m.Called()
-	return args.Error(0)
 }
