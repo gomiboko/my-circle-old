@@ -1,7 +1,7 @@
 import { shallowMount, createLocalVue } from "@vue/test-utils";
 import VueRouter from "vue-router";
 import App from "@/App.vue";
-import { Message, MessageType, MSG_EVENT } from "@/utils/message";
+import { Message, MessageType } from "@/utils/message";
 import AppMessage from "@/components/AppMessage.vue";
 import { AppMsgSize } from "@/utils/consts";
 import flushPromises from "flush-promises";
@@ -13,8 +13,8 @@ const MESSAGE_DATA_NAME = "message";
 // AppMessage.vue の message プロパティ名
 const MESSAGE_PROPS_NAME = "message";
 
-// router-view コンポーネント名
-const ROUTER_VIEW_NAME = "router-view";
+// メッセージ表示イベントハンドラ名
+const MSG_EVENT_HANDLER_NAME = "showMessage";
 
 const localVue = createLocalVue();
 localVue.use(VueRouter);
@@ -34,7 +34,8 @@ describe("App.vue", () => {
           const wrapper = shallowMount(App, { localVue });
 
           const msg = new Message(MessageType.Info, "test message");
-          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
+          execMethod(wrapper, MSG_EVENT_HANDLER_NAME, msg);
+          await flushPromises();
 
           expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
           expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
@@ -46,7 +47,8 @@ describe("App.vue", () => {
           const wrapper = shallowMount(App, { localVue });
 
           const msg = new Message(MessageType.Info, "");
-          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
+          execMethod(wrapper, MSG_EVENT_HANDLER_NAME, msg);
+          await flushPromises();
 
           expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
         });
@@ -60,13 +62,15 @@ describe("App.vue", () => {
 
           // メッセージ表示
           const msg = new Message(MessageType.Info, "test message");
-          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
+          execMethod(wrapper, MSG_EVENT_HANDLER_NAME, msg);
+          await flushPromises();
           expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
           expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
           // 表示中のメッセージとは異なるメッセージでイベントを発火
           msg.message = "updated message";
-          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
+          execMethod(wrapper, MSG_EVENT_HANDLER_NAME, msg);
+          await flushPromises();
 
           expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
           expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("updated message");
@@ -79,12 +83,14 @@ describe("App.vue", () => {
 
           // メッセージ表示
           const msg = new Message(MessageType.Info, "test message");
-          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
+          execMethod(wrapper, MSG_EVENT_HANDLER_NAME, msg);
+          await flushPromises();
           expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
           expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
           msg.message = "";
-          await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
+          execMethod(wrapper, MSG_EVENT_HANDLER_NAME, msg);
+          await flushPromises();
 
           expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
         });
@@ -101,7 +107,7 @@ describe("App.vue", () => {
       const wrapper = shallowMount(App, { localVue });
 
       const msg = new Message(MessageType.Info, "test message");
-      execMethod(wrapper, "showMessage", msg, inputSize);
+      execMethod(wrapper, MSG_EVENT_HANDLER_NAME, msg, inputSize);
       await flushPromises();
 
       expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
@@ -117,7 +123,8 @@ describe("App.vue", () => {
 
         // メッセージ表示
         const msg = new Message(MessageType.Info, "test message");
-        await wrapper.findComponent({ name: ROUTER_VIEW_NAME }).trigger(MSG_EVENT, msg);
+        execMethod(wrapper, MSG_EVENT_HANDLER_NAME, msg);
+        await flushPromises();
         expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
         expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
