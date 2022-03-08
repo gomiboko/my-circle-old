@@ -84,6 +84,7 @@ import { required, min, max, email } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import { showError } from "@/utils/message";
 import RequiredTextField from "@/components/RequiredTextField.vue";
+import { AppMsgSize } from "@/utils/consts";
 
 extend("required", required);
 extend("min", min);
@@ -132,7 +133,7 @@ export default class Join extends Vue {
       // トップページに繊維
       this.$router.push("/");
     } catch (e) {
-      showError(this, e);
+      showError(this, e, AppMsgSize.Col4);
     }
   }
 }

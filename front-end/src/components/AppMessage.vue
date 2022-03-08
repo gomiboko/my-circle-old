@@ -9,7 +9,7 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 import { MessageType } from "@/utils/message";
 
 @Component
-export default class Alert extends Vue {
+export default class AppMessage extends Vue {
   @Prop() private readonly message!: string;
   @Prop() private readonly messageType!: MessageType;
 }

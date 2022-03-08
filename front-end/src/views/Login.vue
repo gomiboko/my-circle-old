@@ -78,6 +78,7 @@ import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import SmallLink from "@/components/SmallLink.vue";
 import { showError } from "@/utils/message";
+import { AppMsgSize } from "@/utils/consts";
 
 extend("required", required);
 localize("ja", ja);
@@ -109,7 +110,7 @@ export default class Login extends Vue {
       // TODO: トップページに遷移
       this.$router.push("/");
     } catch (e) {
-      showError(this, e);
+      showError(this, e, AppMsgSize.Col4);
     }
   }
 }

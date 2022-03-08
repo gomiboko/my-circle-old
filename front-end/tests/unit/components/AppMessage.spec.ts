@@ -1,8 +1,8 @@
 import { shallowMount } from "@vue/test-utils";
-import Alert from "@/components/Alert.vue";
+import AppMessage from "@/components/AppMessage.vue";
 import { MessageType } from "@/utils/message";
 
-describe("Alert.vue", () => {
+describe("AppMessage.vue", () => {
   describe("messageプロパティ", () => {
     const props = {
       messageType: MessageType.Info,
@@ -12,7 +12,7 @@ describe("Alert.vue", () => {
     describe("空の場合", () => {
       test("メッセージが表示されないこと", () => {
         props.message = "";
-        const wrapper = shallowMount(Alert, { propsData: props });
+        const wrapper = shallowMount(AppMessage, { propsData: props });
         expect(wrapper.text()).toBe("");
       });
     });
@@ -20,7 +20,7 @@ describe("Alert.vue", () => {
     describe("空でない場合", () => {
       test("設定されている値が表示されること", () => {
         props.message = "テストメッセージ";
-        const wrapper = shallowMount(Alert, { propsData: props });
+        const wrapper = shallowMount(AppMessage, { propsData: props });
         expect(wrapper.text()).toBe("テストメッセージ");
       });
     });
@@ -36,7 +36,7 @@ describe("Alert.vue", () => {
 
         const testType = (t: MessageType) => {
           props.messageType = t;
-          const wrapper = shallowMount(Alert, { propsData: props });
+          const wrapper = shallowMount(AppMessage, { propsData: props });
           expect(wrapper.text()).toBe("test");
           expect(wrapper.findComponent({ name: "v-alert" }).attributes("type")).toBe(t);
         };
