@@ -13,6 +13,22 @@ export async function setValue<T extends Vue>(wrapper: Wrapper<T>, val: string):
 }
 
 /**
+ * 指定されたコンポーネントのメソッドを実行する
+ * @param wrapper コンポーネントの Wrapper オブジェクト
+ * @param methodName 実行するメソッド名
+ * @param args メソッドの引数
+ */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function execMethod<T extends Vue | null>(
+  wrapper: Wrapper<T, Element>,
+  methodName: string,
+  ...args: any[]
+): void {
+  (wrapper.vm as any)[methodName](...args);
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+/**
  * 指定された ref 属性値を持つ validation-provider コンポーネントの errors スロットプロパティを取得する
  * @param wrapper コンポーネントの Wrapper オブジェクト
  * @param providerRefName ref 属性値

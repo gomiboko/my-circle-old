@@ -33,7 +33,7 @@
       <v-container>
         <!-- メッセージ -->
         <v-row v-if="message" justify="center">
-          <v-col :md="msgColSize">
+          <v-col ref="appMessageColumn" :md="msgColSize">
             <app-message :message-type="messageType" :message="message" />
           </v-col>
         </v-row>

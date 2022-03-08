@@ -3,6 +3,9 @@ import VueRouter from "vue-router";
 import App from "@/App.vue";
 import { Message, MessageType, MSG_EVENT } from "@/utils/message";
 import AppMessage from "@/components/AppMessage.vue";
+import { AppMsgSize } from "@/utils/consts";
+import flushPromises from "flush-promises";
+import { execMethod } from "./test-utils";
 
 // App.vue の message データオブジェクト名
 const MESSAGE_DATA_NAME = "message";
@@ -86,6 +89,24 @@ describe("App.vue", () => {
           expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
         });
       });
+    });
+  });
+
+  describe("メッセージ表示領域の大きさ", () => {
+    test.each([
+      ["指定がない場合", undefined, "6"],
+      ["デフォルトと同じ大きさが指定された場合", AppMsgSize.Col6, "6"],
+      ["デフォルトと異なる大きさが指定された場合", AppMsgSize.Col4, "4"],
+    ])("%s", async (explanation, inputSize, expectedSize) => {
+      const wrapper = shallowMount(App, { localVue });
+
+      const msg = new Message(MessageType.Info, "test message");
+      execMethod(wrapper, "showMessage", msg, inputSize);
+      await flushPromises();
+
+      expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
+      expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
+      expect(wrapper.findComponent({ ref: "appMessageColumn" }).attributes("md")).toBe(expectedSize);
     });
   });
 
