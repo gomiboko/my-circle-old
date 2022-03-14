@@ -67,7 +67,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn ref="registerButton" :disabled="invalid" @click="register" block>登録する</v-btn>
+                <v-btn ref="registerButton" :disabled="invalid" @click="register" color="primary" block>登録する</v-btn>
               </v-col>
             </v-row>
           </v-col>
