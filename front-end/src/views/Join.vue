@@ -88,7 +88,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
-import { required, min, max, email } from "vee-validate/dist/rules";
+import { required, min, max } from "vee-validate/dist/rules";
+import { customEmail, password } from "@/utils/validations";
 import ja from "vee-validate/dist/locale/ja.json";
 import { showError } from "@/utils/message";
 import RequiredTextField from "@/components/RequiredTextField.vue";
@@ -97,17 +98,8 @@ import { AppMsgSize } from "@/utils/consts";
 extend("required", required);
 extend("min", min);
 extend("max", max);
-extend("email", {
-  ...email,
-  // デフォルトのメッセージだと不自然になるので上書き
-  message: "有効なメールアドレスではありません",
-});
-extend("password", {
-  validate(value) {
-    return /^[a-zA-Z0-9!@#$%^&*()-_=+[\]{}\\|~;:'",.<>/?`]*$/.test(value);
-  },
-  message: "{_field_}に使用できない文字が含まれています",
-});
+extend("email", customEmail);
+extend("password", password);
 localize("ja", ja);
 
 @Component({
