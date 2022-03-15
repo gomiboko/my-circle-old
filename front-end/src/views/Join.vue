@@ -1,6 +1,6 @@
 <template>
   <div>
-    <validation-observer v-slot="{ invalid }">
+    <validation-observer ref="observer">
       <form>
         <v-row justify-md="center">
           <v-col md="4">
@@ -67,7 +67,15 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn ref="registerButton" :disabled="invalid" @click="register" color="primary" block>登録する</v-btn>
+                <v-btn
+                  ref="registerButton"
+                  @click="register"
+                  :loading="loading"
+                  :disabled="loading"
+                  color="primary"
+                  block
+                  >登録する</v-btn
+                >
               </v-col>
             </v-row>
           </v-col>
@@ -114,8 +122,19 @@ export default class Join extends Vue {
   private email = "";
   private password = "";
   private showPassword = false;
+  private loading = false;
 
   private async register() {
+    this.loading = true;
+
+    const observer = this.$refs.observer as InstanceType<typeof ValidationObserver>;
+    observer.reset();
+
+    if (!(await observer.validate())) {
+      this.loading = false;
+      return;
+    }
+
     const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
     try {
       await this.$http.post(
@@ -134,6 +153,7 @@ export default class Join extends Vue {
       this.$router.push("/");
     } catch (e) {
       showError(this, e, AppMsgSize.Col4);
+      this.loading = false;
     }
   }
 }
