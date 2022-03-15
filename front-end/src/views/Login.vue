@@ -1,6 +1,6 @@
 <template>
   <div>
-    <validation-observer v-slot="{ invalid }">
+    <validation-observer ref="observer">
       <form>
         <v-row justify-md="center">
           <v-col md="4">
@@ -53,7 +53,9 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn ref="loginButton" :disabled="invalid" @click="login" color="primary" block>ログイン</v-btn>
+                <v-btn ref="loginButton" @click="login" :loading="loggingIn" :disabled="loggingIn" color="primary" block
+                  >ログイン</v-btn
+                >
               </v-col>
             </v-row>
           </v-col>
@@ -97,8 +99,19 @@ localize("ja", ja);
 export default class Login extends Vue {
   private email = "";
   private password = "";
+  private loggingIn = false;
 
   private async login() {
+    this.loggingIn = true;
+
+    const observer = this.$refs.observer as InstanceType<typeof ValidationObserver>;
+    observer.reset();
+
+    if (!(await observer.validate())) {
+      this.loggingIn = false;
+      return;
+    }
+
     const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
     try {
       await this.$http.post(
@@ -115,6 +128,7 @@ export default class Login extends Vue {
       this.$router.push("/");
     } catch (e) {
       showError(this, e, AppMsgSize.Col4);
+      this.loggingIn = false;
     }
   }
 
