@@ -53,7 +53,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn ref="loginButton" @click="login" :loading="loading" :disabled="loggingIn" color="primary" block
+                <v-btn ref="loginButton" @click="login" :loading="loading" :disabled="loading" color="primary" block
                   >ログイン</v-btn
                 >
               </v-col>
