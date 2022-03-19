@@ -17,45 +17,16 @@ import flushPromises from "flush-promises";
 import { AxiosError } from "axios";
 import { Message, MSG_EVENT } from "@/utils/message";
 
+const RefUsernameTextField = "usernameTextField";
 const RefPasswordTextField = "passwordTextField";
 const RefRegisterButton = "registerButton";
+const RefUsernameValidationProvider = "usernameTextFieldProvider";
+const RefEmailValidationProvider = "emailTextFieldProvider";
+const RefPasswordValidationProvider = "passwordTextFieldProvider";
 
 jest.useFakeTimers();
 
 describe("Join.vue", () => {
-  describe("登録ボタンの活性制御", () => {
-    test("必須項目の入力状態によって活性制御されること", async () => {
-      const wrapper = shallowMount(Join, {
-        stubs: { ValidationObserver, ValidationProvider },
-      });
-      await flushAll();
-
-      const registerBtnWrapper = wrapper.findComponent({ ref: RefRegisterButton });
-
-      // 初期表示時
-      expect(registerBtnWrapper.attributes("disabled")).toBeTruthy();
-
-      // 必須項目の一部が入力された場合
-      await wrapper.setData({ username: consts.ValidUsername });
-      await flushAll();
-      expect(registerBtnWrapper.attributes("disabled")).toBeTruthy();
-
-      await wrapper.setData({ email: consts.ValidEmail });
-      await flushAll();
-      expect(registerBtnWrapper.attributes("disabled")).toBeTruthy();
-
-      // 必須項目が全て入力された場合
-      await wrapper.setData({ password: consts.ValidPassword });
-      await flushAll();
-      expect(registerBtnWrapper.attributes("disabled")).toBeFalsy();
-
-      // 必須項目の一部が削除された場合
-      await wrapper.setData({ username: "" });
-      await flushAll();
-      expect(registerBtnWrapper.attributes("disabled")).toBeTruthy();
-    });
-  });
-
   describe("パスワードテキストボックスのアイコン表示", () => {
     describe("初期表示", () => {
       test("パスワード非表示のアイコンとなっていること", async () => {
@@ -98,8 +69,6 @@ describe("Join.vue", () => {
     const mountWithNewVuetify = () => mount(Join, { vuetify });
 
     describe("ユーザ名テキストボックス", () => {
-      const RefUsernameTextField = "usernameTextField";
-      const RefUsernameValidationProvider = "usernameTextFieldProvider";
       const UsernameIsRequired = "ユーザ名は必須項目です";
 
       test.each([
@@ -122,7 +91,6 @@ describe("Join.vue", () => {
 
     describe("メールアドレステキストボックス", () => {
       const RefEmailTextField = "emailTextField";
-      const RefEmailValidationProvider = "emailTextFieldProvider";
       const EmailIsRequired = "メールアドレスは必須項目です";
       const InvalidEmail = "有効なメールアドレスではありません";
 
@@ -146,7 +114,6 @@ describe("Join.vue", () => {
     });
 
     describe("パスワードテキストボックス", () => {
-      const RefPasswordValidationProvider = "passwordTextFieldProvider";
       const InvalidCharacterContained = "パスワードに使用できない文字が含まれています";
 
       // prettier-ignore
@@ -178,6 +145,77 @@ describe("Join.vue", () => {
   });
 
   describe("登録ボタン押下", () => {
+    describe("入力値エラーがある場合", () => {
+      test("エラーメッセージが表示されること", async () => {
+        const { localVue, axiosMock } = createMockedLocalVue();
+
+        axiosMock.post.mockResolvedValue(null);
+
+        const router = new VueRouter();
+        router.push(paths.Join);
+
+        const wrapper = shallowMount(Join, {
+          localVue,
+          router,
+          stubs: { ValidationObserver, ValidationProvider },
+        });
+
+        // 全て未入力で登録ボタン押下
+        wrapper.findComponent({ ref: RefRegisterButton }).vm.$emit("click");
+        await flushPromises();
+
+        const usernameErrs = getValidationProviderErrors(wrapper, RefUsernameValidationProvider);
+        const emailErrs = getValidationProviderErrors(wrapper, RefEmailValidationProvider);
+        const passErrs = getValidationProviderErrors(wrapper, RefPasswordValidationProvider);
+        expect(wrapper.vm.$route.path).toBe(paths.Join);
+        expect(usernameErrs.length).toBe(1);
+        expect(emailErrs.length).toBe(1);
+        expect(passErrs.length).toBe(1);
+      });
+
+      describe("一部の入力値エラーが解消された場合", () => {
+        test("エラーメッセージが非表示となること", async () => {
+          const { localVue, axiosMock } = createMockedLocalVue();
+
+          axiosMock.post.mockResolvedValue(null);
+
+          const router = new VueRouter();
+          router.push(paths.Join);
+
+          const vuetify = new Vuetify();
+
+          // テキストボックスに値を入力する必要があるのでshallowMountではなくmount
+          const wrapper = mount(Join, { localVue, router, vuetify });
+
+          // 全て未入力で登録ボタンを押下し、エラーメッセージを表示させる
+          const registerBtnWrapper = wrapper.findComponent({ ref: RefRegisterButton });
+          registerBtnWrapper.vm.$emit("click");
+          await flushPromises();
+          let usernameErrs = getValidationProviderErrors(wrapper, RefUsernameValidationProvider);
+          let emailErrs = getValidationProviderErrors(wrapper, RefEmailValidationProvider);
+          let passErrs = getValidationProviderErrors(wrapper, RefPasswordValidationProvider);
+          expect(usernameErrs.length).toBe(1);
+          expect(emailErrs.length).toBe(1);
+          expect(passErrs.length).toBe(1);
+
+          // ユーザ名に適切な値を入力し、登録ボタンを押下
+          const usernameTextWrapper = wrapper.findComponent({ ref: RefUsernameTextField });
+          await setValue(usernameTextWrapper, consts.ValidUsername);
+          await flushAll();
+          registerBtnWrapper.vm.$emit("click");
+          await flushPromises();
+
+          usernameErrs = getValidationProviderErrors(wrapper, RefUsernameValidationProvider);
+          emailErrs = getValidationProviderErrors(wrapper, RefEmailValidationProvider);
+          passErrs = getValidationProviderErrors(wrapper, RefPasswordValidationProvider);
+          expect(wrapper.vm.$route.path).toBe(paths.Join);
+          expect(usernameErrs.length).toBe(0);
+          expect(emailErrs.length).toBe(1);
+          expect(passErrs.length).toBe(1);
+        });
+      });
+    });
+
     describe("登録に成功した場合", () => {
       test("トップページに遷移すること", async () => {
         const { localVue, axiosMock } = createMockedLocalVue();
