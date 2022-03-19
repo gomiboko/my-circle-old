@@ -135,7 +135,7 @@ describe("Login.vue", () => {
         const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
         await setValue(emailTextWrapper, consts.ValidEmail);
         await flushAll();
-        await loginBtnWrapper.trigger("click");
+        loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
         emailErrs = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
@@ -164,7 +164,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
-        await loginBtnWrapper.trigger("click");
+        loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
         expect(wrapper.vm.$route.path).toBe(paths.Root);
@@ -194,7 +194,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
-        await loginBtnWrapper.trigger("click");
+        loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
         // メッセージ表示のカスタムイベントが1回発生していること
@@ -225,7 +225,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
-        await loginBtnWrapper.trigger("click");
+        loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
         // メッセージ表示のカスタムイベントが1回発生していること
