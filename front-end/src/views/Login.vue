@@ -71,7 +71,7 @@
 
     <v-row justify-md="center" class="mt-4">
       <v-col md="4" lg="3" xl="2">
-        <v-btn @click="gotoJoin" color="primary" outlined block>新規アカウント登録</v-btn>
+        <v-btn ref="registerAccountButton" @click="gotoJoin" color="primary" outlined block>新規アカウント登録</v-btn>
       </v-col>
     </v-row>
   </div>
