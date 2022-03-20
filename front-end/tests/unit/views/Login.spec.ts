@@ -20,66 +20,40 @@ jest.useFakeTimers();
 describe("Login.vue", () => {
   describe("バリデーション", () => {
     describe("メールアドレステキストボックス", () => {
-      describe("空の場合", () => {
-        test("エラーメッセージが表示されること", async () => {
-          const { localVue } = createMockedLocalVue();
-          const router = new VueRouter();
-          const wrapper = mount(Login, { localVue, router });
+      test.each([
+        ["空の場合", "", 1, "メールアドレスは必須項目です"],
+        ["値が入力された場合", "a", 0, undefined],
+      ])("%s", async (explanation, input, errCnt, errMsg) => {
+        const { localVue } = createMockedLocalVue();
+        const router = new VueRouter();
+        const wrapper = mount(Login, { localVue, router });
 
-          const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
-          await setValue(emailTextWrapper, "");
-          await flushPromises();
+        const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
+        await setValue(emailTextWrapper, input);
+        await flushPromises();
 
-          const errors = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
-          expect(errors.length).toBe(1);
-        });
-      });
-
-      describe("値が入力された場合", () => {
-        test("エラーメッセージが表示されないこと", async () => {
-          const { localVue } = createMockedLocalVue();
-          const router = new VueRouter();
-          const wrapper = mount(Login, { localVue, router });
-
-          const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
-          await setValue(emailTextWrapper, "a");
-          await flushPromises();
-
-          const errors = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
-          expect(errors.length).toBe(0);
-        });
+        const errors = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
+        expect(errors.length).toBe(errCnt);
+        expect(errors[0]).toBe(errMsg);
       });
     });
 
     describe("パスワードテキストボックス", () => {
-      describe("空の場合", () => {
-        test("エラーメッセージが表示されること", async () => {
-          const { localVue } = createMockedLocalVue();
-          const router = new VueRouter();
-          const wrapper = mount(Login, { localVue, router });
+      test.each([
+        ["空の場合", "", 1, "パスワードは必須項目です"],
+        ["値が入力された場合", "a", 0, undefined],
+      ])("%s", async (explanation, input, errCnt, errMsg) => {
+        const { localVue } = createMockedLocalVue();
+        const router = new VueRouter();
+        const wrapper = mount(Login, { localVue, router });
 
-          const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
-          await setValue(passTextWrapper, "");
-          await flushPromises();
+        const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
+        await setValue(passTextWrapper, input);
+        await flushPromises();
 
-          const errors = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
-          expect(errors.length).toBe(1);
-        });
-      });
-
-      describe("値が入力された場合", () => {
-        test("エラーメッセージが表示されないこと", async () => {
-          const { localVue } = createMockedLocalVue();
-          const router = new VueRouter();
-          const wrapper = mount(Login, { localVue, router });
-
-          const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
-          await setValue(passTextWrapper, "a");
-          await flushPromises();
-
-          const errors = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
-          expect(errors.length).toBe(0);
-        });
+        const errors = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
+        expect(errors.length).toBe(errCnt);
+        expect(errors[0]).toBe(errMsg);
       });
     });
   });
