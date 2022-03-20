@@ -18,102 +18,108 @@ const RefPasswordTextFieldProvider = "passwordTextFieldProvider";
 jest.useFakeTimers();
 
 describe("Login.vue", () => {
-  describe("ログインボタンの活性制御", () => {
-    test("必須項目の入力状態によって活性制御されること", async () => {
-      const wrapper = shallowMount(Login, {
-        stubs: { ValidationObserver, ValidationProvider },
-      });
-      await flushAll();
-
-      const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
-
-      // 初期表示時
-      expect(loginBtnWrapper.attributes("disabled")).toBeTruthy();
-
-      // 必須項目の一部が入力された場合
-      await wrapper.setData({ email: "a" });
-      await flushAll();
-      expect(loginBtnWrapper.attributes("disabled")).toBeTruthy();
-
-      // 必須項目が全て入力された場合
-      await wrapper.setData({ password: "b" });
-      await flushAll();
-      expect(loginBtnWrapper.attributes("disabled")).toBeFalsy();
-
-      // 必須項目の一部が削除された場合
-      await wrapper.setData({ password: "" });
-      await flushAll();
-      expect(loginBtnWrapper.attributes("disabled")).toBeTruthy();
-    });
-  });
-
   describe("バリデーション", () => {
     describe("メールアドレステキストボックス", () => {
-      describe("空の場合", () => {
-        test("エラーメッセージが表示されること", async () => {
-          const { localVue } = createMockedLocalVue();
-          const router = new VueRouter();
-          const wrapper = mount(Login, { localVue, router });
+      test.each([
+        ["空の場合", "", 1, "メールアドレスは必須項目です"],
+        ["値が入力された場合", "a", 0, undefined],
+      ])("%s", async (explanation, input, errCnt, errMsg) => {
+        const { localVue } = createMockedLocalVue();
+        const router = new VueRouter();
+        const wrapper = mount(Login, { localVue, router });
 
-          const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
-          await setValue(emailTextWrapper, "");
-          await flushPromises();
+        const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
+        await setValue(emailTextWrapper, input);
+        await flushPromises();
 
-          const errors = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
-          expect(errors.length).toBe(1);
-        });
-      });
-
-      describe("値が入力された場合", () => {
-        test("エラーメッセージが表示されないこと", async () => {
-          const { localVue } = createMockedLocalVue();
-          const router = new VueRouter();
-          const wrapper = mount(Login, { localVue, router });
-
-          const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
-          await setValue(emailTextWrapper, "a");
-          await flushPromises();
-
-          const errors = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
-          expect(errors.length).toBe(0);
-        });
+        const errors = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
+        expect(errors.length).toBe(errCnt);
+        expect(errors[0]).toBe(errMsg);
       });
     });
 
     describe("パスワードテキストボックス", () => {
-      describe("空の場合", () => {
-        test("エラーメッセージが表示されること", async () => {
-          const { localVue } = createMockedLocalVue();
-          const router = new VueRouter();
-          const wrapper = mount(Login, { localVue, router });
+      test.each([
+        ["空の場合", "", 1, "パスワードは必須項目です"],
+        ["値が入力された場合", "a", 0, undefined],
+      ])("%s", async (explanation, input, errCnt, errMsg) => {
+        const { localVue } = createMockedLocalVue();
+        const router = new VueRouter();
+        const wrapper = mount(Login, { localVue, router });
 
-          const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
-          await setValue(passTextWrapper, "");
-          await flushPromises();
+        const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
+        await setValue(passTextWrapper, input);
+        await flushPromises();
 
-          const errors = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
-          expect(errors.length).toBe(1);
-        });
-      });
-
-      describe("値が入力された場合", () => {
-        test("エラーメッセージが表示されないこと", async () => {
-          const { localVue } = createMockedLocalVue();
-          const router = new VueRouter();
-          const wrapper = mount(Login, { localVue, router });
-
-          const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
-          await setValue(passTextWrapper, "a");
-          await flushPromises();
-
-          const errors = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
-          expect(errors.length).toBe(0);
-        });
+        const errors = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
+        expect(errors.length).toBe(errCnt);
+        expect(errors[0]).toBe(errMsg);
       });
     });
   });
 
   describe("ログインボタン押下", () => {
+    describe("入力値エラーがある場合", () => {
+      test("エラーメッセージが表示されること", async () => {
+        const { localVue, axiosMock } = createMockedLocalVue();
+
+        axiosMock.post.mockResolvedValue(null);
+
+        const router = new VueRouter();
+        router.push(paths.Login);
+        const wrapper = shallowMount(Login, {
+          localVue,
+          router,
+          stubs: { ValidationObserver, ValidationProvider },
+        });
+
+        // 全て未入力でログインボタン押下
+        const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
+        loginBtnWrapper.vm.$emit("click");
+        await flushPromises();
+
+        const emailErrs = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
+        const passErrs = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
+        expect(wrapper.vm.$route.path).toBe(paths.Login);
+        expect(emailErrs.length).toBe(1);
+        expect(passErrs.length).toBe(1);
+      });
+    });
+
+    describe("一部の入力値エラーが解消された場合", () => {
+      test("エラーメッセージが非表示となること", async () => {
+        const { localVue, axiosMock } = createMockedLocalVue();
+
+        axiosMock.post.mockResolvedValue(null);
+
+        const router = new VueRouter();
+        router.push(paths.Login);
+        const wrapper = mount(Login, { localVue, router });
+
+        // 全て未入力でログインボタンを押下し、エラーメッセージを表示させる
+        const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
+        loginBtnWrapper.vm.$emit("click");
+        await flushPromises();
+        let emailErrs = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
+        let passErrs = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
+        expect(emailErrs.length).toBe(1);
+        expect(passErrs.length).toBe(1);
+
+        // メールアドレスに適切な値を入力し、ログインボタンを押下
+        const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
+        await setValue(emailTextWrapper, consts.ValidEmail);
+        await flushAll();
+        loginBtnWrapper.vm.$emit("click");
+        await flushPromises();
+
+        emailErrs = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
+        passErrs = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
+        expect(wrapper.vm.$route.path).toBe(paths.Login);
+        expect(emailErrs.length).toBe(0);
+        expect(passErrs.length).toBe(1);
+      });
+    });
+
     describe("ログインが成功した場合", () => {
       test("トップページに遷移すること", async () => {
         const { localVue, axiosMock } = createMockedLocalVue();
@@ -132,7 +138,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
-        await loginBtnWrapper.trigger("click");
+        loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
         expect(wrapper.vm.$route.path).toBe(paths.Root);
@@ -162,7 +168,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
-        await loginBtnWrapper.trigger("click");
+        loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
         // メッセージ表示のカスタムイベントが1回発生していること
@@ -193,7 +199,7 @@ describe("Login.vue", () => {
         await flushAll();
 
         const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
-        await loginBtnWrapper.trigger("click");
+        loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
         // メッセージ表示のカスタムイベントが1回発生していること
@@ -204,6 +210,22 @@ describe("Login.vue", () => {
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Login);
       });
+    });
+  });
+
+  describe("新規アカウント登録ボタン押下", () => {
+    test("ユーザ登録画面が表示されること", async () => {
+      const { localVue } = createMockedLocalVue();
+
+      const router = new VueRouter();
+      router.push(paths.Login);
+
+      const wrapper = shallowMount(Login, { localVue, router });
+
+      const regAccountBtnWrapper = wrapper.findComponent({ ref: "registerAccountButton" });
+      regAccountBtnWrapper.vm.$emit("click");
+
+      expect(wrapper.vm.$route.path).toBe(paths.Join);
     });
   });
 });
