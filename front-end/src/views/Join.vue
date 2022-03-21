@@ -1,7 +1,7 @@
 <template>
   <div>
     <validation-observer ref="observer">
-      <form>
+      <form @keypress.enter="register">
         <v-row justify-md="center">
           <v-col md="4">
             <div class="text-center text-h5">アカウント作成</div>
@@ -58,10 +58,15 @@
                     hint="8文字以上"
                     v-model="password"
                     :type="showPassword ? 'text' : 'password'"
-                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                     :error-messages="errors"
-                    @click:append="showPassword = !showPassword"
-                  ></required-text-field>
+                  >
+                    <!-- v-text-field の append-icon プロパティだと tabindex が指定できないのでアイコンスロットを使用する -->
+                    <template v-slot:append>
+                      <v-icon @click="showPassword = !showPassword" tabindex="-1">
+                        {{ showPassword ? "mdi-eye" : "mdi-eye-off" }}
+                      </v-icon>
+                    </template>
+                  </required-text-field>
                 </validation-provider>
               </v-col>
             </v-row>

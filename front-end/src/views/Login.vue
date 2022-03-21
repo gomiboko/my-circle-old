@@ -1,7 +1,7 @@
 <template>
   <div>
     <validation-observer ref="observer">
-      <form>
+      <form @keypress.enter="login">
         <v-row justify-md="center">
           <v-col md="4">
             <div class="text-center text-h5">My Circle にログイン</div>

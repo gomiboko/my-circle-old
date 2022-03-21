@@ -30,33 +30,31 @@ describe("Join.vue", () => {
   describe("パスワードテキストボックスのアイコン表示", () => {
     describe("初期表示", () => {
       test("パスワード非表示のアイコンとなっていること", async () => {
-        const wrapper = shallowMount(Join, {
-          stubs: { ValidationObserver, ValidationProvider },
-        });
+        const wrapper = mount(Join, { vuetify: new Vuetify() });
         await flushAll();
 
-        expect(wrapper.findComponent({ ref: RefPasswordTextField }).attributes("append-icon")).toBe("mdi-eye-off");
+        const iconWrapper = wrapper.findComponent({ ref: RefPasswordTextField }).findComponent({ name: "VIcon" });
+
+        expect(iconWrapper.attributes("class")).toContain("mdi-eye-off");
       });
     });
 
     describe("アイコンクリック時", () => {
       test("非表示アイコンと表示アイコンが切り替わること", async () => {
-        const wrapper = shallowMount(Join, {
-          stubs: { ValidationObserver, ValidationProvider },
-        });
+        const wrapper = mount(Join, { vuetify: new Vuetify() });
         await flushAll();
 
-        const passTextField = wrapper.findComponent({ ref: RefPasswordTextField });
+        const iconWrapper = wrapper.findComponent({ ref: RefPasswordTextField }).findComponent({ name: "VIcon" });
 
         // アイコンをクリックすると表示アイコンになること
-        passTextField.vm.$emit("click:append");
+        iconWrapper.vm.$emit("click");
         await flushPromises();
-        expect(passTextField.attributes("append-icon")).toBe("mdi-eye");
+        expect(iconWrapper.attributes("class")).toContain("mdi-eye");
 
         // 再度アイコンをクリックすると非表示アイコンになること
-        passTextField.vm.$emit("click:append");
+        iconWrapper.vm.$emit("click");
         await flushPromises();
-        expect(passTextField.attributes("append-icon")).toBe("mdi-eye-off");
+        expect(iconWrapper.attributes("class")).toContain("mdi-eye-off");
       });
     });
   });
