@@ -3,6 +3,9 @@
     <template v-slot:label
       >{{ label }} <sup><span style="color: crimson">*</span></sup></template
     >
+    <template v-slot:append>
+      <slot name="append"></slot>
+    </template>
   </v-text-field>
 </template>
 
