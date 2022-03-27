@@ -9,4 +9,5 @@ type User struct {
 	PasswordHash string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+	Circles      []Circle `gorm:"many2many:users_circles;"`
 }
