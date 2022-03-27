@@ -11,12 +11,12 @@
     </div>
     <!-- サークル未参加の場合 -->
     <div v-else-if="me.Circles.length === 0">
-      <v-row justify="center" align="end" style="height: 150px;">
+      <v-row justify="center" align="end" style="height: 150px">
         <v-col>
           <div class="text-center text-h6">まだサークルに参加していません</div>
         </v-col>
       </v-row>
-      <v-row align="end" style="height: 100px;">
+      <v-row align="end" style="height: 100px">
         <v-col>
           <div class="text-center">サークルを作ろう！</div>
         </v-col>
@@ -26,7 +26,7 @@
           <v-btn color="primary" block>サークル作成</v-btn>
         </v-col>
       </v-row>
-      <v-row align="end" style="height: 100px;">
+      <v-row align="end" style="height: 100px">
         <v-col>
           <div class="text-center">サークルに参加しよう！</div>
         </v-col>
