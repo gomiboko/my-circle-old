@@ -1,6 +1,5 @@
-export type Circle = {
-  ID: number;
+import { Updatable } from "./bases/updatable";
+
+export interface Circle extends Updatable {
   Name: string;
-  CreatedAt: Date;
-  UpdatedAt: Date;
-};
+}

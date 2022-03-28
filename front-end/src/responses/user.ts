@@ -1,9 +1,7 @@
+import { Updatable } from "./bases/updatable";
 import { Circle } from "./circle";
 
-export type User = {
-  ID: number;
+export interface User extends Updatable {
   Name: string;
-  CreatedAt: Date;
-  UpdatedAt: Date;
   Circles: Circle[];
-};
+}
