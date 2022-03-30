@@ -39,6 +39,7 @@ const (
 	HalfWidthSpace    = " "
 	HalfWidthSymbol   = "`~!@#$%^&*()-_=+[]{}\\|;:'\",./<>?"
 	FullWidthA        = "Ａ"
+	UnexpectedErrMsg  = "予期せぬエラーが発生しました"
 )
 
 const (

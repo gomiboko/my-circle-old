@@ -174,7 +174,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), r.Code, http.StatusInternalServerError)
-		assert.Equal(s.T(), "予期せぬエラーが発生しました", res.Message)
+		assert.Equal(s.T(), testutils.UnexpectedErrMsg, res.Message)
 	})
 }
 

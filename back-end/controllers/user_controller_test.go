@@ -226,7 +226,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusInternalServerError, r.Code)
-		assert.Equal(s.T(), "予期せぬエラーが発生しました", res.Message)
+		assert.Equal(s.T(), testutils.UnexpectedErrMsg, res.Message)
 		sessMock.AssertNotCalled(s.T(), "Set", mock.AnythingOfType("string"), mock.AnythingOfType("uint"))
 		sessMock.AssertNotCalled(s.T(), "Save")
 	})
