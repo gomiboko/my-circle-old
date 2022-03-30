@@ -56,6 +56,7 @@ func (uc *UserController) GetHomeInfo(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(responseBody500UnexpectedError())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"user": user})
