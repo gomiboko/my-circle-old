@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"strings"
 
@@ -35,6 +37,15 @@ func CreateEmailAddress(length int) string {
 func SetSessionMockToGin(c *gin.Context, sessMock *mocks.SessionMock) {
 	// sessions.Sessions(string, sessions.Store) と同様の処理を実行
 	c.Set(sessions.DefaultKey, sessMock)
+}
+
+func CreateGetContext(path string) (*httptest.ResponseRecorder, *gin.Context) {
+	r := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(r)
+	c.Request, _ = http.NewRequest(http.MethodGet, path, nil)
+	c.Request.Header.Set("Content-Type", "application/json")
+
+	return r, c
 }
 
 func GetFixtures(fixturesDirPath string) (*testfixtures.Loader, error) {
