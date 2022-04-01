@@ -43,7 +43,7 @@ func (ur *userRepository) GetHomeInfo(userId uint) (*models.User, error) {
 		Preload("Circles", func(db *gorm.DB) *gorm.DB {
 			return db.Order("name")
 		}).
-		Table("Users").
+		Table("users").
 		Select("id, name, created_at, updated_at").
 		First(&user)
 
