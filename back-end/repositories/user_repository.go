@@ -44,7 +44,7 @@ func (ur *userRepository) GetHomeInfo(userId uint) (*models.User, error) {
 			return db.Order("name")
 		}).
 		Table("users").
-		Select("id, name, created_at, updated_at").
+		Select("id, name, email, created_at, updated_at").
 		First(&user)
 
 	return &user, result.Error
