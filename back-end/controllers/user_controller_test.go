@@ -44,6 +44,8 @@ func TestUserController(t *testing.T) {
 }
 
 func (s *UserControllerTestSuite) TestCreateUser() {
+	const reqPath = "/users"
+
 	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
 		usMock := new(mocks.UserServiceMock)
 		usMock.On("CreateUser", mock.AnythingOfType("forms.UserForm")).Return(&models.User{}, testutils.ErrTest)
@@ -104,7 +106,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			if err != nil {
 				s.FailNow(err.Error())
 			}
-			r, c := createUserPostContext(reqBody)
+			r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 			uc.Create(c)
 			c.Writer.WriteHeaderNow()
@@ -148,7 +150,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			if err != nil {
 				s.FailNow(err.Error())
 			}
-			r, c := createUserPostContext(reqBody)
+			r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 			// sessions.sessionモック
 			sessMock := mocks.NewSessionMock()
@@ -182,7 +184,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		if err != nil {
 			s.FailNow(err.Error())
 		}
-		r, c := createUserPostContext(reqBody)
+		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 		// sessions.sessionモック
 		sessMock := mocks.NewSessionMock()
@@ -213,7 +215,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		if err != nil {
 			s.FailNow(err.Error())
 		}
-		r, c := createUserPostContext(reqBody)
+		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 		// sessions.sessionモック
 		sessMock := mocks.NewSessionMock()
@@ -282,13 +284,4 @@ func (s *UserControllerTestSuite) TestGetHomeInfo() {
 		assert.Equal(s.T(), http.StatusInternalServerError, r.Code)
 		assert.Equal(s.T(), "予期せぬエラーが発生しました", res.Message)
 	})
-}
-
-func createUserPostContext(reqBody string) (*httptest.ResponseRecorder, *gin.Context) {
-	r := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(r)
-	c.Request, _ = http.NewRequest(http.MethodPost, "/users", strings.NewReader(reqBody))
-	c.Request.Header.Set("Content-Type", "application/json")
-
-	return r, c
 }

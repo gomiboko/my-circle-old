@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -39,13 +40,14 @@ func SetSessionMockToGin(c *gin.Context, sessMock *mocks.SessionMock) {
 	c.Set(sessions.DefaultKey, sessMock)
 }
 
+// GETリクエスト用のGinコンテキストを生成する
 func CreateGetContext(path string) (*httptest.ResponseRecorder, *gin.Context) {
-	r := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(r)
-	c.Request, _ = http.NewRequest(http.MethodGet, path, nil)
-	c.Request.Header.Set("Content-Type", "application/json")
+	return createRequestContext(http.MethodGet, path, nil)
+}
 
-	return r, c
+// POSTリクエスト用のGinコンテキストを生成する
+func CreatePostContext(path, reqBody string) (*httptest.ResponseRecorder, *gin.Context) {
+	return createRequestContext(http.MethodPost, path, strings.NewReader(reqBody))
 }
 
 func GetFixtures(fixturesDirPath string) (*testfixtures.Loader, error) {
@@ -64,6 +66,18 @@ func GetFixtures(fixturesDirPath string) (*testfixtures.Loader, error) {
 
 func GetDB() (*gorm.DB, error) {
 	return gorm.Open(mysql.Open(getDSN()), &gorm.Config{})
+}
+
+func createRequestContext(httpMethod, path string, reqBody io.Reader) (*httptest.ResponseRecorder, *gin.Context) {
+	r := httptest.NewRecorder()
+
+	c, _ := gin.CreateTestContext(r)
+	c.Request, _ = http.NewRequest(httpMethod, path, reqBody)
+	if httpMethod == http.MethodPost {
+		c.Request.Header.Set("Content-Type", "application/json")
+	}
+
+	return r, c
 }
 
 func getDSN() string {
