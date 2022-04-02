@@ -40,7 +40,7 @@
     <!-- サークル情報が取得できた場合 -->
     <div v-else>
       <!-- TODO: 仮 -->
-      <div>{{ "参加サークル数：" + me.Circles.length }}</div>
+      <div ref="circleCount">{{ "参加サークル数：" + me.Circles.length }}</div>
       <li v-for="c in me.Circles" :key="c.ID">
         {{ c.Name }}
       </li>
