@@ -123,7 +123,6 @@ export default class Login extends Vue {
           withCredentials: true,
         }
       );
-      // TODO: トップページに遷移
       this.$router.push("/");
     } catch (e) {
       showError(this, e, AppMsgSize.Col4);
