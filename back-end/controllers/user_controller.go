@@ -47,3 +47,17 @@ func (uc *UserController) Create(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"user": user})
 }
+
+func (uc *UserController) GetHomeInfo(c *gin.Context) {
+	session := sessions.Default(c)
+	userId := session.Get("user_id").(uint)
+
+	user, err := uc.userService.GetHomeInfo(userId)
+
+	if err != nil {
+		c.JSON(responseBody500UnexpectedError())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": user})
+}

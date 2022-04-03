@@ -31,6 +31,8 @@ func TestAuthController(t *testing.T) {
 }
 
 func (s *AuthControllerTestSuite) TestLogin() {
+	const reqPath = "/login"
+
 	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
 		var userID *uint = nil
 		asMock := new(mocks.AuthServiceMock)
@@ -45,7 +47,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		// URLエンコードで送信
 		r := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(r)
-		c.Request, _ = http.NewRequest(http.MethodPost, "/login", strings.NewReader(values.Encode()))
+		c.Request, _ = http.NewRequest(http.MethodPost, reqPath, strings.NewReader(values.Encode()))
 		c.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 		ac.Login(c)
@@ -81,7 +83,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			if err != nil {
 				s.FailNow(err.Error())
 			}
-			r, c := createLoginPostContext(reqBody)
+			r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 			ac.Login(c)
 
@@ -115,7 +117,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			if err != nil {
 				s.FailNow(err.Error())
 			}
-			r, c := createLoginPostContext(reqBody)
+			r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 			// sessions.sessionモック
 			sessMock := mocks.NewSessionMock()
@@ -143,7 +145,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		if err != nil {
 			s.FailNow(err.Error())
 		}
-		r, c := createLoginPostContext(reqBody)
+		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 		ac.Login(c)
 
@@ -166,15 +168,15 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		if err != nil {
 			s.FailNow(err.Error())
 		}
-		r, c := createLoginPostContext(reqBody)
+		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 		ac.Login(c)
 
 		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
-		assert.Equal(s.T(), r.Code, http.StatusInternalServerError)
-		assert.Equal(s.T(), "予期せぬエラーが発生しました", res.Message)
+		assert.Equal(s.T(), http.StatusInternalServerError, r.Code)
+		assert.Equal(s.T(), testutils.UnexpectedErrMsg, res.Message)
 	})
 }
 
@@ -185,9 +187,7 @@ func (s *AuthControllerTestSuite) TestLogout() {
 
 	ac := NewAuthController(asMock)
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Request, _ = http.NewRequest(http.MethodGet, "/logout", nil)
+	r, c := testutils.CreateGetContext("/logout")
 
 	// sessions.sessionモック
 	sessMock := mocks.NewSessionMock()
@@ -196,20 +196,10 @@ func (s *AuthControllerTestSuite) TestLogout() {
 	ac.Logout(c)
 
 	var res testutils.ApiErrorReponse
-	json.Unmarshal(w.Body.Bytes(), &res)
+	json.Unmarshal(r.Body.Bytes(), &res)
 
-	assert.Equal(s.T(), http.StatusOK, w.Code)
+	assert.Equal(s.T(), http.StatusOK, r.Code)
 	assert.Equal(s.T(), "logged out", res.Message)
 	sessMock.AssertCalled(s.T(), "Save")
 	sessMock.AssertCalled(s.T(), "Clear")
-}
-
-// ログインリクエストのGinコンテキストを生成する
-func createLoginPostContext(reqBody string) (*httptest.ResponseRecorder, *gin.Context) {
-	r := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(r)
-	c.Request, _ = http.NewRequest(http.MethodPost, "/login", strings.NewReader(reqBody))
-	c.Request.Header.Set("Content-Type", "application/json")
-
-	return r, c
 }

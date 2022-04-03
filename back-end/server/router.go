@@ -56,7 +56,11 @@ func NewRouter() (*gin.Engine, error) {
 	uc := controllers.NewUserController(services.NewUserService(ur))
 	r.POST("/login", ac.Login)
 	r.GET("/logout", ac.Logout)
-	r.POST("/users", uc.Create)
+	users := r.Group("/users")
+	{
+		users.POST("", uc.Create)
+		users.GET("/me", uc.GetHomeInfo)
+	}
 
 	return r, nil
 }

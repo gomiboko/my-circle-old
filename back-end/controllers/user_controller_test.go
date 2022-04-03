@@ -21,7 +21,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type usersPostResponse struct {
+type userResponse struct {
 	User models.User
 }
 
@@ -44,6 +44,8 @@ func TestUserController(t *testing.T) {
 }
 
 func (s *UserControllerTestSuite) TestCreateUser() {
+	const reqPath = "/users"
+
 	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
 		usMock := new(mocks.UserServiceMock)
 		usMock.On("CreateUser", mock.AnythingOfType("forms.UserForm")).Return(&models.User{}, testutils.ErrTest)
@@ -104,7 +106,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			if err != nil {
 				s.FailNow(err.Error())
 			}
-			r, c := createUserPostContext(reqBody)
+			r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 			uc.Create(c)
 			c.Writer.WriteHeaderNow()
@@ -148,7 +150,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			if err != nil {
 				s.FailNow(err.Error())
 			}
-			r, c := createUserPostContext(reqBody)
+			r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 			// sessions.sessionモック
 			sessMock := mocks.NewSessionMock()
@@ -157,7 +159,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			uc.Create(c)
 			c.Writer.WriteHeaderNow()
 
-			var res usersPostResponse
+			var res userResponse
 			json.Unmarshal(r.Body.Bytes(), &res)
 
 			assert.Equal(s.T(), http.StatusCreated, r.Code)
@@ -182,7 +184,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		if err != nil {
 			s.FailNow(err.Error())
 		}
-		r, c := createUserPostContext(reqBody)
+		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 		// sessions.sessionモック
 		sessMock := mocks.NewSessionMock()
@@ -213,7 +215,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		if err != nil {
 			s.FailNow(err.Error())
 		}
-		r, c := createUserPostContext(reqBody)
+		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
 		// sessions.sessionモック
 		sessMock := mocks.NewSessionMock()
@@ -226,17 +228,60 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusInternalServerError, r.Code)
-		assert.Equal(s.T(), "予期せぬエラーが発生しました", res.Message)
+		assert.Equal(s.T(), testutils.UnexpectedErrMsg, res.Message)
 		sessMock.AssertNotCalled(s.T(), "Set", mock.AnythingOfType("string"), mock.AnythingOfType("uint"))
 		sessMock.AssertNotCalled(s.T(), "Save")
 	})
 }
 
-func createUserPostContext(reqBody string) (*httptest.ResponseRecorder, *gin.Context) {
-	r := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(r)
-	c.Request, _ = http.NewRequest(http.MethodPost, "/users", strings.NewReader(reqBody))
-	c.Request.Header.Set("Content-Type", "application/json")
+func (s *UserControllerTestSuite) TestGetHomeInfo() {
+	s.Run("ログイン中のユーザ情報が取得できた場合", func() {
+		circles := []models.Circle{{ID: 1}}
+		user := models.User{ID: 2, Circles: circles}
+		usMock := new(mocks.UserServiceMock)
+		usMock.On("GetHomeInfo", mock.AnythingOfType("uint")).Return(&user, nil)
 
-	return r, c
+		uc := NewUserController(usMock)
+
+		r, c := testutils.CreateGetContext("/users/me")
+
+		sessMock := mocks.NewSessionMock()
+		sessMock.On("Get", mock.AnythingOfType("string")).Return(interface{}(uint(2)))
+		testutils.SetSessionMockToGin(c, sessMock)
+
+		uc.GetHomeInfo(c)
+		c.Writer.WriteHeaderNow()
+
+		var res userResponse
+		json.Unmarshal(r.Body.Bytes(), &res)
+
+		assert.Equal(s.T(), http.StatusOK, r.Code)
+		assert.Equal(s.T(), uint(2), res.User.ID)
+		assert.Equal(s.T(), 1, len(res.User.Circles))
+		assert.Equal(s.T(), uint(1), res.User.Circles[0].ID)
+	})
+
+	s.Run("予期せぬエラーが発生した場合", func() {
+		circles := []models.Circle{{ID: 1}}
+		user := models.User{ID: 1, Circles: circles}
+		usMock := new(mocks.UserServiceMock)
+		usMock.On("GetHomeInfo", mock.AnythingOfType("uint")).Return(&user, testutils.ErrTest)
+
+		uc := NewUserController(usMock)
+
+		r, c := testutils.CreateGetContext("/users/me")
+
+		sessMock := mocks.NewSessionMock()
+		sessMock.On("Get", mock.AnythingOfType("string")).Return(interface{}(uint(1)))
+		testutils.SetSessionMockToGin(c, sessMock)
+
+		uc.GetHomeInfo(c)
+		c.Writer.WriteHeaderNow()
+
+		var res testutils.ApiErrorReponse
+		json.Unmarshal(r.Body.Bytes(), &res)
+
+		assert.Equal(s.T(), http.StatusInternalServerError, r.Code)
+		assert.Equal(s.T(), "予期せぬエラーが発生しました", res.Message)
+	})
 }

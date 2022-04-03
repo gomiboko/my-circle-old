@@ -2,8 +2,8 @@
   <div>
     <validation-observer ref="observer">
       <form @keypress.enter="register">
-        <v-row justify-md="center">
-          <v-col md="4">
+        <v-row justify="center">
+          <v-col md="4" lg="3" xl="2">
             <div class="text-center text-h5">アカウント作成</div>
           </v-col>
         </v-row>

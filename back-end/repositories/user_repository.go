@@ -8,6 +8,7 @@ import (
 type UserRepository interface {
 	Get(email string) (*models.User, error)
 	Create(user *models.User) error
+	GetHomeInfo(userId uint) (*models.User, error)
 }
 
 type userRepository struct {
@@ -32,4 +33,19 @@ func (ur *userRepository) Create(user *models.User) error {
 	result := ur.DB.Create(&user)
 
 	return result.Error
+}
+
+func (ur *userRepository) GetHomeInfo(userId uint) (*models.User, error) {
+	var user models.User
+
+	cond := models.User{ID: userId}
+	result := ur.DB.Where(&cond).
+		Preload("Circles", func(db *gorm.DB) *gorm.DB {
+			return db.Order("name")
+		}).
+		Table("users").
+		Select("id, name, email, created_at, updated_at").
+		First(&user)
+
+	return &user, result.Error
 }

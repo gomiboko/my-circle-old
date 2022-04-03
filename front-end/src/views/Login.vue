@@ -2,8 +2,8 @@
   <div>
     <validation-observer ref="observer">
       <form @keypress.enter="login">
-        <v-row justify-md="center">
-          <v-col md="4">
+        <v-row justify="center">
+          <v-col md="4" lg="3" xl="2">
             <div class="text-center text-h5">My Circle にログイン</div>
           </v-col>
         </v-row>
