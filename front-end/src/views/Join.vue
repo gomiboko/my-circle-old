@@ -132,10 +132,9 @@ export default class Join extends Vue {
       return;
     }
 
-    const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
     try {
       await this.$http.post(
-        `${baseUrl}/users`,
+        "/users",
         {
           username: this.username,
           email: this.email,

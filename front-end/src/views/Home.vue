@@ -60,7 +60,7 @@ export default class Home extends Vue {
 
   private async created() {
     try {
-      const res = await this.$http.get(`${process.env.VUE_APP_BACKEND_BASE_URL}/users/me`, { withCredentials: true });
+      const res = await this.$http.get("/users/me", { withCredentials: true });
       this.me = res.data.user as User;
       this.loading = false;
     } catch (e) {

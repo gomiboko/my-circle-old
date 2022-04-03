@@ -112,10 +112,9 @@ export default class Login extends Vue {
       return;
     }
 
-    const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
     try {
       await this.$http.post(
-        `${baseUrl}/login`,
+        "/login",
         {
           email: this.email,
           password: this.password,
