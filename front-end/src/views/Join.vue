@@ -96,9 +96,8 @@ import { ValidationObserver, ValidationProvider, extend, localize } from "vee-va
 import { required, min, max } from "vee-validate/dist/rules";
 import { customEmail, password } from "@/utils/validations";
 import ja from "vee-validate/dist/locale/ja.json";
-import { showError } from "@/utils/message";
 import RequiredTextField from "@/components/RequiredTextField.vue";
-import { AppMsgSize } from "@/utils/consts";
+import { AppMessageSize } from "@/utils/app-message";
 
 extend("required", required);
 extend("min", min);
@@ -120,6 +119,10 @@ export default class Join extends Vue {
   private password = "";
   private showPassword = false;
   private loading = false;
+
+  private created() {
+    this.$appMsg.setSize(AppMessageSize.Small);
+  }
 
   private async register() {
     this.loading = true;
@@ -147,8 +150,7 @@ export default class Join extends Vue {
 
       // トップページに繊維
       this.$router.push("/");
-    } catch (e) {
-      showError(this, e, AppMsgSize.Col4);
+    } finally {
       this.loading = false;
     }
   }

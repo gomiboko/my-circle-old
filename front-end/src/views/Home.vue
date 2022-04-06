@@ -49,9 +49,9 @@
 </template>
 
 <script lang="ts">
-import { showError } from "@/utils/message";
 import { Component, Vue } from "vue-property-decorator";
 import { User } from "@/responses/user";
+import { AppMessageSize } from "@/utils/app-message";
 
 @Component
 export default class Home extends Vue {
@@ -59,12 +59,13 @@ export default class Home extends Vue {
   private me?: User;
 
   private async created() {
+    this.$appMsg.setSize(AppMessageSize.Medium);
+
     try {
       const res = await this.$http.get("/users/me", { withCredentials: true });
       this.me = res.data.user as User;
       this.loading = false;
-    } catch (e) {
-      showError(this, e);
+    } finally {
       this.loading = false;
     }
   }

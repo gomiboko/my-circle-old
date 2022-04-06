@@ -83,8 +83,7 @@ import { ValidationObserver, ValidationProvider, extend, localize } from "vee-va
 import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import SmallLink from "@/components/SmallLink.vue";
-import { showError } from "@/utils/message";
-import { AppMsgSize } from "@/utils/consts";
+import { AppMessageSize } from "@/utils/app-message";
 
 extend("required", required);
 localize("ja", ja);
@@ -100,6 +99,10 @@ export default class Login extends Vue {
   private email = "";
   private password = "";
   private loading = false;
+
+  private created() {
+    this.$appMsg.setSize(AppMessageSize.Small);
+  }
 
   private async login() {
     this.loading = true;
@@ -124,8 +127,7 @@ export default class Login extends Vue {
         }
       );
       this.$router.push("/");
-    } catch (e) {
-      showError(this, e, AppMsgSize.Col4);
+    } finally {
       this.loading = false;
     }
   }

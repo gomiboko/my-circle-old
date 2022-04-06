@@ -32,13 +32,13 @@
     <v-main>
       <v-container>
         <!-- メッセージ -->
-        <v-row v-if="message" justify="center">
-          <v-col ref="appMessageColumn" :md="msgColSize">
-            <app-message :message-type="messageType" :message="message" />
+        <v-row v-if="$appMsg.message" justify="center">
+          <v-col ref="appMessageColumn" :md="$appMsg.md" :lg="$appMsg.lg" :xl="$appMsg.xl">
+            <app-message :messageType="$appMsg.type" :message="$appMsg.message" />
           </v-col>
         </v-row>
 
-        <router-view @msg="showMessage" />
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
@@ -47,8 +47,6 @@
 <script lang="ts">
 import { Vue, Component, Watch } from "vue-property-decorator";
 import AppMessage from "@/components/AppMessage.vue";
-import { Message, MessageType } from "@/utils/message";
-import { AppMsgSize } from "@/utils/consts";
 
 @Component({
   components: {
@@ -56,28 +54,13 @@ import { AppMsgSize } from "@/utils/consts";
   },
 })
 export default class App extends Vue {
-  private messageType!: MessageType;
-  private message = "";
-  private msgColSize = AppMsgSize.Col6;
-
-  /**
-   * 画面上部のメッセージ表示領域にメッセージを表示する。
-   * @param message メッセージ
-   * @param msgColSize メッセージ表示サイズ
-   */
-  private showMessage(message: Message, colSize?: number) {
-    this.messageType = message.messageType;
-    this.message = message.message;
-    this.msgColSize = colSize || AppMsgSize.Col6;
-  }
-
   /**
    * $route オブジェクトのウォッチャー。
    * ページ遷移時にメッセージをクリアする。
    */
   @Watch("$route")
   private onRouteChanged() {
-    this.message = "";
+    this.$appMsg.message = "";
   }
 }
 </script>
