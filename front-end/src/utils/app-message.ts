@@ -45,9 +45,9 @@ export class AppMessage {
   public setSize(size: AppMessageSize): void {
     switch (size) {
       case AppMessageSize.Small:
-        this._md = 4;
-        this._lg = 3;
-        this._xl = 2;
+        this._md = 6;
+        this._lg = 5;
+        this._xl = 3;
         break;
       case AppMessageSize.Medium:
         this._md = 8;
