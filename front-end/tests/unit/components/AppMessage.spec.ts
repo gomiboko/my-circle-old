@@ -1,11 +1,11 @@
 import { shallowMount } from "@vue/test-utils";
 import AppMessage from "@/components/AppMessage.vue";
-import { MessageType } from "@/utils/message";
+import { AppMessageType } from "@/utils/app-message";
 
 describe("AppMessage.vue", () => {
   describe("messageプロパティ", () => {
     const props = {
-      messageType: MessageType.Info,
+      messageType: AppMessageType.Info,
       message: "",
     };
 
@@ -30,21 +30,21 @@ describe("AppMessage.vue", () => {
     describe("MessageType列挙型の各タイプが指定された場合", () => {
       test("指定されたタイプで表示されること", () => {
         const props = {
-          messageType: MessageType.Info,
+          messageType: AppMessageType.Info,
           message: "test",
         };
 
-        const testType = (t: MessageType) => {
+        const testType = (t: AppMessageType) => {
           props.messageType = t;
           const wrapper = shallowMount(AppMessage, { propsData: props });
           expect(wrapper.text()).toBe("test");
           expect(wrapper.findComponent({ name: "v-alert" }).attributes("type")).toBe(t);
         };
 
-        testType(MessageType.Info);
-        testType(MessageType.Success);
-        testType(MessageType.Warn);
-        testType(MessageType.Error);
+        testType(AppMessageType.Info);
+        testType(AppMessageType.Success);
+        testType(AppMessageType.Warn);
+        testType(AppMessageType.Error);
       });
     });
   });

@@ -36,3 +36,7 @@ export const paths = {
   /** アカウント作成画面 */
   Join: "/join",
 };
+
+export const messages = {
+  UnexpectedErrorHasOccurred: "予期せぬエラーが発生しました",
+};

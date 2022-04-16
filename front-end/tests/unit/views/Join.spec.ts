@@ -1,21 +1,15 @@
 import { shallowMount, mount } from "@vue/test-utils";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Join from "@/views/Join.vue";
-import {
-  flushAll,
-  getValidationProviderErrors,
-  setValue,
-  createEmailAddress,
-  getEventCount,
-  getVeryFirstEventData,
-} from "../test-utils";
-import { consts, lengths, paths } from "../test-consts";
+import { flushAll, getValidationProviderErrors, setValue, createEmailAddress, initAppMsg } from "../test-utils";
+import { consts, lengths, messages, paths } from "../test-consts";
 import { createMockedLocalVue } from "../local-vue";
 import VueRouter from "vue-router";
 import Vuetify from "vuetify";
 import flushPromises from "flush-promises";
 import { AxiosError } from "axios";
-import { Message, MSG_EVENT } from "@/utils/message";
+import { AppMessageType } from "@/utils/app-message";
+import { errorHandler } from "@/utils/global-error-handler";
 
 const RefUsernameTextField = "usernameTextField";
 const RefPasswordTextField = "passwordTextField";
@@ -25,6 +19,10 @@ const RefEmailValidationProvider = "emailTextFieldProvider";
 const RefPasswordValidationProvider = "passwordTextFieldProvider";
 
 jest.useFakeTimers();
+
+beforeEach(() => {
+  initAppMsg();
+});
 
 describe("Join.vue", () => {
   describe("パスワードテキストボックスのアイコン表示", () => {
@@ -255,6 +253,7 @@ describe("Join.vue", () => {
     describe("登録に失敗した場合", () => {
       test("アカウント作成ページにエラーメッセージが表示されること", async () => {
         const { localVue, axiosMock } = createMockedLocalVue();
+        localVue.config.errorHandler = errorHandler;
 
         axiosMock.post.mockRejectedValue({
           isAxiosError: true,
@@ -280,11 +279,9 @@ describe("Join.vue", () => {
         wrapper.findComponent({ ref: RefRegisterButton }).vm.$emit("click");
         await flushPromises();
 
-        // メッセージ表示のカスタムイベントが1回発生していること
-        expect(getEventCount(wrapper, MSG_EVENT)).toBe(1);
-        // 「予期せぬエラー」のメッセージでないこと
-        const eventData = getVeryFirstEventData<Join, Message>(wrapper, MSG_EVENT);
-        expect(eventData.message).not.toContain("予期せぬエラー");
+        expect(wrapper.vm.$data["loading"]).toBe(false);
+        expect(wrapper.vm.$appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$appMsg.message).toBe("登録失敗テスト");
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Join);
       });
@@ -293,6 +290,7 @@ describe("Join.vue", () => {
     describe("予期せぬエラーが発生した場合", () => {
       test("アカウント作成ページにエラーメッセージが表示されること", async () => {
         const { localVue, axiosMock } = createMockedLocalVue();
+        localVue.config.errorHandler = errorHandler;
 
         axiosMock.post.mockRejectedValue(new Error("エラーテスト"));
         axiosMock.isAxiosError.mockReturnValue(false);
@@ -313,11 +311,9 @@ describe("Join.vue", () => {
         wrapper.findComponent({ ref: RefRegisterButton }).vm.$emit("click");
         await flushPromises();
 
-        // メッセージ表示のカスタムイベントが1回発生していること
-        expect(getEventCount(wrapper, MSG_EVENT)).toBe(1);
-        // 「予期せぬエラー」のメッセージであること
-        const eventData = getVeryFirstEventData<Join, Message>(wrapper, MSG_EVENT);
-        expect(eventData.message).toContain("予期せぬエラー");
+        expect(wrapper.vm.$data["loading"]).toBe(false);
+        expect(wrapper.vm.$appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Join);
       });
