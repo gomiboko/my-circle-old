@@ -36,4 +36,10 @@ const router = new VueRouter({
   routes,
 });
 
+// ナビゲーションガード
+router.beforeEach((to, from, next) => {
+  Vue.prototype.$appMsg.message = "";
+  next();
+});
+
 export default router;

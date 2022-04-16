@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import AppMessage from "@/components/AppMessage.vue";
 
 @Component({
@@ -53,14 +53,5 @@ import AppMessage from "@/components/AppMessage.vue";
     AppMessage,
   },
 })
-export default class App extends Vue {
-  /**
-   * $route オブジェクトのウォッチャー。
-   * ページ遷移時にメッセージをクリアする。
-   */
-  @Watch("$route")
-  private onRouteChanged() {
-    this.$appMsg.message = "";
-  }
-}
+export default class App extends Vue {}
 </script>

@@ -1,11 +1,12 @@
 import { shallowMount, createLocalVue } from "@vue/test-utils";
-import VueRouter from "vue-router";
+import VueRouter, { NavigationGuardNext, Route } from "vue-router";
 import App from "@/App.vue";
 import AppMessage from "@/components/AppMessage.vue";
 import flushPromises from "flush-promises";
 import { AppMessageSize } from "@/utils/app-message";
 import { paths } from "./test-consts";
 import { initAppMsg } from "./test-utils";
+import Vue from "vue";
 
 // AppMessage.vue の message プロパティ名
 const MESSAGE_PROPS_NAME = "message";
@@ -114,6 +115,7 @@ describe("App.vue", () => {
       test("メッセージが非表示になること", async () => {
         const router = new VueRouter();
         router.push(paths.Login);
+        router.beforeEach(beforeEachGuard);
         const wrapper = shallowMount(App, { localVue, router });
 
         // メッセージ表示
@@ -134,6 +136,7 @@ describe("App.vue", () => {
       test("メッセージが非表示のままであること", async () => {
         const router = new VueRouter();
         router.push(paths.Login);
+        router.beforeEach(beforeEachGuard);
         const wrapper = shallowMount(App, { localVue, router });
 
         // ページ遷移
@@ -145,3 +148,14 @@ describe("App.vue", () => {
     });
   });
 });
+
+/**
+ * Vue Router のナビゲーションガード関数
+ * @param to 遷移先のルート情報
+ * @param from 繊維元のルート情報
+ * @param next ナビゲーションの為のコールバック関数
+ */
+function beforeEachGuard(to: Route, from: Route, next: NavigationGuardNext<Vue>) {
+  Vue.prototype.$appMsg.message = "";
+  next();
+}
