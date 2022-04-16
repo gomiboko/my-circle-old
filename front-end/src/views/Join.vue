@@ -148,7 +148,7 @@ export default class Join extends Vue {
         }
       );
 
-      // トップページに繊維
+      // トップページに遷移
       this.$router.push("/");
     } finally {
       this.loading = false;
