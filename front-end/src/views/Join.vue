@@ -97,7 +97,7 @@ import { required, min, max } from "vee-validate/dist/rules";
 import { customEmail, password } from "@/utils/validations";
 import ja from "vee-validate/dist/locale/ja.json";
 import RequiredTextField from "@/components/RequiredTextField.vue";
-import { AppMessageSize } from "@/utils/app-message";
+import { AppMessageSize } from "@/store/app-message";
 
 extend("required", required);
 extend("min", min);
@@ -121,7 +121,7 @@ export default class Join extends Vue {
   private loading = false;
 
   private created() {
-    this.$appMsg.setSize(AppMessageSize.Small);
+    this.$state.appMsg.setSize(AppMessageSize.Small);
   }
 
   private async register() {

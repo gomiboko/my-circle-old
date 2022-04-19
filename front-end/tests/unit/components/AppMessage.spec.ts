@@ -1,6 +1,6 @@
 import { shallowMount } from "@vue/test-utils";
 import AppMessage from "@/components/AppMessage.vue";
-import { AppMessageType } from "@/utils/app-message";
+import { AppMessageType } from "@/store/app-message";
 
 describe("AppMessage.vue", () => {
   describe("messageプロパティ", () => {

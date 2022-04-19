@@ -1,9 +1,9 @@
-import { AppMessage } from "@/utils/app-message";
+import { State } from "@/store/store";
 import { AxiosStatic } from "axios";
 
 declare module "vue/types/vue" {
   interface Vue {
     $http: AxiosStatic;
-    $appMsg: AppMessage;
+    $state: State;
   }
 }

@@ -32,9 +32,9 @@
     <v-main>
       <v-container>
         <!-- メッセージ -->
-        <v-row v-if="$appMsg.message" justify="center">
-          <v-col ref="appMessageColumn" :md="$appMsg.md" :lg="$appMsg.lg" :xl="$appMsg.xl">
-            <app-message :messageType="$appMsg.type" :message="$appMsg.message" />
+        <v-row v-if="$state.appMsg.message" justify="center">
+          <v-col ref="appMessageColumn" :md="$state.appMsg.md" :lg="$state.appMsg.lg" :xl="$state.appMsg.xl">
+            <app-message :messageType="$state.appMsg.type" :message="$state.appMsg.message" />
           </v-col>
         </v-row>
 

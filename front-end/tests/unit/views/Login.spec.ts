@@ -8,7 +8,8 @@ import flushPromises from "flush-promises";
 import { createMockedLocalVue } from "../local-vue";
 import { consts, messages, paths } from "../test-consts";
 import { errorHandler } from "@/utils/global-error-handler";
-import { AppMessageType } from "@/utils/app-message";
+import { AppMessageType } from "@/store/app-message";
+// import { AppMessageType } from "@/utils/app-message";
 
 const RefEmailTextField = "emailTextField";
 const RefPasswordTextField = "passwordTextField";
@@ -178,8 +179,8 @@ describe("Login.vue", () => {
         await flushPromises();
 
         expect(wrapper.vm.$data["loading"]).toBe(false);
-        expect(wrapper.vm.$appMsg.type).toBe(AppMessageType.Error);
-        expect(wrapper.vm.$appMsg.message).toBe("ログイン失敗テスト");
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe("ログイン失敗テスト");
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Login);
       });
@@ -211,8 +212,8 @@ describe("Login.vue", () => {
         await flushPromises();
 
         expect(wrapper.vm.$data["loading"]).toBe(false);
-        expect(wrapper.vm.$appMsg.type).toBe(AppMessageType.Error);
-        expect(wrapper.vm.$appMsg.message).toBe("サーバとの通信に失敗しました");
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe("サーバとの通信に失敗しました");
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Login);
       });
@@ -241,8 +242,8 @@ describe("Login.vue", () => {
         await flushPromises();
 
         expect(wrapper.vm.$data["loading"]).toBe(false);
-        expect(wrapper.vm.$appMsg.type).toBe(AppMessageType.Error);
-        expect(wrapper.vm.$appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Login);
       });

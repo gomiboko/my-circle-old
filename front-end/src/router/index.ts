@@ -38,7 +38,7 @@ const router = new VueRouter({
 
 // ナビゲーションガード
 router.beforeEach((to, from, next) => {
-  Vue.prototype.$appMsg.message = "";
+  Vue.prototype.$state.appMsg.message = "";
   next();
 });
 

@@ -8,7 +8,7 @@ import VueRouter from "vue-router";
 import Vuetify from "vuetify";
 import flushPromises from "flush-promises";
 import { AxiosError } from "axios";
-import { AppMessageType } from "@/utils/app-message";
+import { AppMessageType } from "@/store/app-message";
 import { errorHandler } from "@/utils/global-error-handler";
 
 const RefUsernameTextField = "usernameTextField";
@@ -280,8 +280,8 @@ describe("Join.vue", () => {
         await flushPromises();
 
         expect(wrapper.vm.$data["loading"]).toBe(false);
-        expect(wrapper.vm.$appMsg.type).toBe(AppMessageType.Error);
-        expect(wrapper.vm.$appMsg.message).toBe("登録失敗テスト");
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe("登録失敗テスト");
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Join);
       });
@@ -312,8 +312,8 @@ describe("Join.vue", () => {
         await flushPromises();
 
         expect(wrapper.vm.$data["loading"]).toBe(false);
-        expect(wrapper.vm.$appMsg.type).toBe(AppMessageType.Error);
-        expect(wrapper.vm.$appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Join);
       });

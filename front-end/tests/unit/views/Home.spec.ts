@@ -5,7 +5,7 @@ import { User } from "@/responses/user";
 import { Circle } from "@/responses/circle";
 import flushPromises from "flush-promises";
 import { AxiosResponse } from "axios";
-import { AppMessageType } from "@/utils/app-message";
+import { AppMessageType } from "@/store/app-message";
 import { errorHandler } from "@/utils/global-error-handler";
 import { initAppMsg } from "../test-utils";
 import { messages } from "../test-consts";
@@ -119,8 +119,8 @@ describe("Home.vue", () => {
         await flushPromises();
 
         expect(wrapper.vm.$data["loading"]).toBe(false);
-        expect(wrapper.vm.$appMsg.type).toBe(AppMessageType.Error);
-        expect(wrapper.vm.$appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         expect(wrapper.html()).toContain("failed to load.");
       });
     });

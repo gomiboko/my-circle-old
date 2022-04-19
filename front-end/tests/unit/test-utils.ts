@@ -2,7 +2,7 @@ import { Wrapper } from "@vue/test-utils";
 import { ValidationProvider } from "vee-validate";
 import flushPromises from "flush-promises";
 import Vue from "vue";
-import { AppMessage, AppMessageType } from "@/utils/app-message";
+import { state } from "@/store/store";
 
 /**
  * 指定されたコンポーネントの input 要素に値を設定する
@@ -47,5 +47,5 @@ export function createEmailAddress(length: number): string {
  * アプリメッセージの初期化を行う
  */
 export function initAppMsg(): void {
-  Vue.prototype.$appMsg = Vue.observable(new AppMessage(AppMessageType.Error, ""));
+  Vue.prototype.$state = state;
 }

@@ -3,7 +3,7 @@ import VueRouter, { NavigationGuardNext, Route } from "vue-router";
 import App from "@/App.vue";
 import AppMessage from "@/components/AppMessage.vue";
 import flushPromises from "flush-promises";
-import { AppMessageSize } from "@/utils/app-message";
+import { AppMessageSize } from "@/store/app-message";
 import { paths } from "./test-consts";
 import { initAppMsg } from "./test-utils";
 import Vue from "vue";
@@ -32,7 +32,7 @@ describe("App.vue", () => {
         test("メッセージが表示されること", async () => {
           const wrapper = shallowMount(App, { localVue });
 
-          wrapper.vm.$appMsg.message = "test message";
+          wrapper.vm.$state.appMsg.message = "test message";
           await flushPromises();
 
           expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
@@ -44,7 +44,7 @@ describe("App.vue", () => {
         test("メッセージが表示されないこと", async () => {
           const wrapper = shallowMount(App, { localVue });
 
-          wrapper.vm.$appMsg.message = "";
+          wrapper.vm.$state.appMsg.message = "";
           await flushPromises();
 
           expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
@@ -58,13 +58,13 @@ describe("App.vue", () => {
           const wrapper = shallowMount(App, { localVue });
 
           // メッセージ表示
-          wrapper.vm.$appMsg.message = "test message";
+          wrapper.vm.$state.appMsg.message = "test message";
           await flushPromises();
           expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
           expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
           // 表示中のメッセージとは異なるメッセージを設定
-          wrapper.vm.$appMsg.message = "updated message";
+          wrapper.vm.$state.appMsg.message = "updated message";
           await flushPromises();
 
           expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
@@ -77,12 +77,12 @@ describe("App.vue", () => {
           const wrapper = shallowMount(App, { localVue });
 
           // メッセージ表示
-          wrapper.vm.$appMsg.message = "test message";
+          wrapper.vm.$state.appMsg.message = "test message";
           await flushPromises();
           expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
           expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
-          wrapper.vm.$appMsg.message = "";
+          wrapper.vm.$state.appMsg.message = "";
           await flushPromises();
 
           expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
@@ -98,8 +98,8 @@ describe("App.vue", () => {
     ])("%s", async (explanation, inputSize, mdSize, lgSize, xlSize) => {
       const wrapper = shallowMount(App, { localVue });
 
-      wrapper.vm.$appMsg.message = "test message";
-      wrapper.vm.$appMsg.setSize(inputSize);
+      wrapper.vm.$state.appMsg.message = "test message";
+      wrapper.vm.$state.appMsg.setSize(inputSize);
       await flushPromises();
 
       expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
@@ -119,7 +119,7 @@ describe("App.vue", () => {
         const wrapper = shallowMount(App, { localVue, router });
 
         // メッセージ表示
-        wrapper.vm.$appMsg.message = "test message";
+        wrapper.vm.$state.appMsg.message = "test message";
         await flushPromises();
         expect(wrapper.findComponent(AppMessage).exists()).toBeTruthy();
         expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
@@ -156,6 +156,6 @@ describe("App.vue", () => {
  * @param next ナビゲーションの為のコールバック関数
  */
 function beforeEachGuard(to: Route, from: Route, next: NavigationGuardNext<Vue>) {
-  Vue.prototype.$appMsg.message = "";
+  Vue.prototype.$state.appMsg.message = "";
   next();
 }

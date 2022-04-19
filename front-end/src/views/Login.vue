@@ -83,7 +83,7 @@ import { ValidationObserver, ValidationProvider, extend, localize } from "vee-va
 import { required } from "vee-validate/dist/rules";
 import ja from "vee-validate/dist/locale/ja.json";
 import SmallLink from "@/components/SmallLink.vue";
-import { AppMessageSize } from "@/utils/app-message";
+import { AppMessageSize } from "@/store/app-message";
 
 extend("required", required);
 localize("ja", ja);
@@ -101,7 +101,7 @@ export default class Login extends Vue {
   private loading = false;
 
   private created() {
-    this.$appMsg.setSize(AppMessageSize.Small);
+    this.$state.appMsg.setSize(AppMessageSize.Small);
   }
 
   private async login() {
