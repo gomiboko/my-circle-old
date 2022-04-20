@@ -15,6 +15,26 @@ Vue.prototype.$state = state;
 // axiosの設定
 axios.defaults.baseURL = process.env.VUE_APP_BACKEND_BASE_URL;
 axios.defaults.timeout = 10 * 1000;
+axios.interceptors.request.use(
+  (config) => {
+    Vue.prototype.$state.loading = true;
+    return config;
+  },
+  (error) => {
+    Vue.prototype.$state.loading = false;
+    return Promise.reject(error);
+  }
+);
+axios.interceptors.response.use(
+  (response) => {
+    Vue.prototype.$state.loading = false;
+    return response;
+  },
+  (error) => {
+    Vue.prototype.$state.loading = false;
+    return Promise.reject(error);
+  }
+);
 Vue.prototype.$http = axios;
 
 // エラーハンドラの設定

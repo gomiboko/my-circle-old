@@ -53,7 +53,13 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn ref="loginButton" @click="login" :loading="loading" :disabled="loading" color="primary" block
+                <v-btn
+                  ref="loginButton"
+                  @click="login"
+                  :loading="$state.loading"
+                  :disabled="$state.loading"
+                  color="primary"
+                  block
                   >ログイン</v-btn
                 >
               </v-col>
@@ -98,38 +104,30 @@ localize("ja", ja);
 export default class Login extends Vue {
   private email = "";
   private password = "";
-  private loading = false;
 
   private created() {
     this.$state.appMsg.setSize(AppMessageSize.Small);
   }
 
   private async login() {
-    this.loading = true;
-
     const observer = this.$refs.observer as InstanceType<typeof ValidationObserver>;
     observer.reset();
 
     if (!(await observer.validate())) {
-      this.loading = false;
       return;
     }
 
-    try {
-      await this.$http.post(
-        "/login",
-        {
-          email: this.email,
-          password: this.password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      this.$router.push("/");
-    } finally {
-      this.loading = false;
-    }
+    await this.$http.post(
+      "/login",
+      {
+        email: this.email,
+        password: this.password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    this.$router.push("/");
   }
 
   private gotoJoin() {

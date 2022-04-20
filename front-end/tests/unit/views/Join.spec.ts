@@ -279,7 +279,6 @@ describe("Join.vue", () => {
         wrapper.findComponent({ ref: RefRegisterButton }).vm.$emit("click");
         await flushPromises();
 
-        expect(wrapper.vm.$data["loading"]).toBe(false);
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe("登録失敗テスト");
         // ページ遷移していないこと
@@ -311,7 +310,6 @@ describe("Join.vue", () => {
         wrapper.findComponent({ ref: RefRegisterButton }).vm.$emit("click");
         await flushPromises();
 
-        expect(wrapper.vm.$data["loading"]).toBe(false);
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         // ページ遷移していないこと

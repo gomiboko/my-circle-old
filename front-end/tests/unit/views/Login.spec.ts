@@ -178,7 +178,6 @@ describe("Login.vue", () => {
         loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
-        expect(wrapper.vm.$data["loading"]).toBe(false);
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe("ログイン失敗テスト");
         // ページ遷移していないこと
@@ -211,7 +210,6 @@ describe("Login.vue", () => {
         loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
-        expect(wrapper.vm.$data["loading"]).toBe(false);
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe("サーバとの通信に失敗しました");
         // ページ遷移していないこと
@@ -241,7 +239,6 @@ describe("Login.vue", () => {
         loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
-        expect(wrapper.vm.$data["loading"]).toBe(false);
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         // ページ遷移していないこと

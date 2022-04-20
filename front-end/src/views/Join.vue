@@ -75,8 +75,8 @@
                 <v-btn
                   ref="registerButton"
                   @click="register"
-                  :loading="loading"
-                  :disabled="loading"
+                  :loading="$state.loading"
+                  :disabled="$state.loading"
                   color="primary"
                   block
                   >登録する</v-btn
@@ -118,41 +118,33 @@ export default class Join extends Vue {
   private email = "";
   private password = "";
   private showPassword = false;
-  private loading = false;
 
   private created() {
     this.$state.appMsg.setSize(AppMessageSize.Small);
   }
 
   private async register() {
-    this.loading = true;
-
     const observer = this.$refs.observer as InstanceType<typeof ValidationObserver>;
     observer.reset();
 
     if (!(await observer.validate())) {
-      this.loading = false;
       return;
     }
 
-    try {
-      await this.$http.post(
-        "/users",
-        {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+    await this.$http.post(
+      "/users",
+      {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
 
-      // トップページに遷移
-      this.$router.push("/");
-    } finally {
-      this.loading = false;
-    }
+    // トップページに遷移
+    this.$router.push("/");
   }
 }
 </script>

@@ -55,6 +55,8 @@ import { AppMessageSize } from "@/store/app-message";
 
 @Component
 export default class Home extends Vue {
+  // ストアのロード中フラグだとビューの切り替えが適切にできない為、個別に管理する
+  // (axiosの通信完了時にフラグが下ろされるが、その時点ではmeにユーザ情報が設定されていない)
   private loading = true;
   private me?: User;
 
@@ -64,7 +66,6 @@ export default class Home extends Vue {
     try {
       const res = await this.$http.get("/users/me", { withCredentials: true });
       this.me = res.data.user as User;
-      this.loading = false;
     } finally {
       this.loading = false;
     }
