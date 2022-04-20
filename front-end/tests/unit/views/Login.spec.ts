@@ -9,7 +9,7 @@ import { createMockedLocalVue } from "../local-vue";
 import { consts, messages, paths } from "../test-consts";
 import { errorHandler } from "@/utils/global-error-handler";
 import { AppMessageType } from "@/store/app-message";
-// import { AppMessageType } from "@/utils/app-message";
+import { initVeeValidate } from "@/utils/global-settings";
 
 const RefEmailTextField = "emailTextField";
 const RefPasswordTextField = "passwordTextField";
@@ -18,6 +18,7 @@ const RefEmailTextFieldProvider = "emailTextFieldProvider";
 const RefPasswordTextFieldProvider = "passwordTextFieldProvider";
 
 jest.useFakeTimers();
+initVeeValidate();
 
 beforeEach(() => {
   initAppMsg();

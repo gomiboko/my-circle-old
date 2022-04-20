@@ -48,8 +48,8 @@
               <v-col>
                 <validation-provider
                   ref="passwordTextFieldProvider"
-                  rules="required|min:8|max:128|password"
                   name="パスワード"
+                  rules="required|min:8|max:128|password"
                   v-slot="{ errors }"
                 >
                   <required-text-field
@@ -92,19 +92,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
-import { required, min, max } from "vee-validate/dist/rules";
-import { customEmail, password } from "@/utils/validations";
-import ja from "vee-validate/dist/locale/ja.json";
+import { ValidationObserver, ValidationProvider } from "vee-validate";
 import RequiredTextField from "@/components/RequiredTextField.vue";
 import { AppMessageSize } from "@/store/app-message";
-
-extend("required", required);
-extend("min", min);
-extend("max", max);
-extend("email", customEmail);
-extend("password", password);
-localize("ja", ja);
 
 @Component({
   components: {

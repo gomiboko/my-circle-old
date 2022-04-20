@@ -85,14 +85,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
-import { required } from "vee-validate/dist/rules";
-import ja from "vee-validate/dist/locale/ja.json";
+import { ValidationObserver, ValidationProvider } from "vee-validate";
 import SmallLink from "@/components/SmallLink.vue";
 import { AppMessageSize } from "@/store/app-message";
-
-extend("required", required);
-localize("ja", ja);
 
 @Component({
   components: {

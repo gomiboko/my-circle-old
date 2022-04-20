@@ -10,6 +10,7 @@ import flushPromises from "flush-promises";
 import { AxiosError } from "axios";
 import { AppMessageType } from "@/store/app-message";
 import { errorHandler } from "@/utils/global-error-handler";
+import { initVeeValidate } from "@/utils/global-settings";
 
 const RefUsernameTextField = "usernameTextField";
 const RefPasswordTextField = "passwordTextField";
@@ -19,6 +20,7 @@ const RefEmailValidationProvider = "emailTextFieldProvider";
 const RefPasswordValidationProvider = "passwordTextFieldProvider";
 
 jest.useFakeTimers();
+initVeeValidate();
 
 beforeEach(() => {
   initAppMsg();

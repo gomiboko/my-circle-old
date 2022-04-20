@@ -6,6 +6,7 @@ import vuetify from "./plugins/vuetify";
 import axios from "axios";
 import { errorHandler } from "./utils/global-error-handler";
 import { state } from "./store/store";
+import { initVeeValidate } from "./utils/global-settings";
 
 Vue.config.productionTip = false;
 
@@ -39,6 +40,9 @@ Vue.prototype.$http = axios;
 
 // エラーハンドラの設定
 Vue.config.errorHandler = errorHandler;
+
+// VeeValidateの設定
+initVeeValidate();
 
 new Vue({
   router,
