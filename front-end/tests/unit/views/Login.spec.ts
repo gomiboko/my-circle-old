@@ -7,9 +7,8 @@ import { getValidationProviderErrors, flushAll, setValue, initAppMsg } from "../
 import flushPromises from "flush-promises";
 import { createMockedLocalVue } from "../local-vue";
 import { consts, messages, paths } from "../test-consts";
-import { errorHandler } from "@/utils/global-error-handler";
 import { AppMessageType } from "@/store/app-message";
-import { initVeeValidate } from "@/utils/global-settings";
+import { errorHandler, initVeeValidate } from "@/utils/global-settings";
 
 const RefEmailTextField = "emailTextField";
 const RefPasswordTextField = "passwordTextField";

@@ -4,9 +4,8 @@ import "./registerServiceWorker";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
 import axios from "axios";
-import { errorHandler } from "./utils/global-error-handler";
 import { state } from "./store/store";
-import { initVeeValidate } from "./utils/global-settings";
+import { errorHandler, initVeeValidate } from "./utils/global-settings";
 
 Vue.config.productionTip = false;
 

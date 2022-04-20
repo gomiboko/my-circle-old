@@ -9,8 +9,7 @@ import Vuetify from "vuetify";
 import flushPromises from "flush-promises";
 import { AxiosError } from "axios";
 import { AppMessageType } from "@/store/app-message";
-import { errorHandler } from "@/utils/global-error-handler";
-import { initVeeValidate } from "@/utils/global-settings";
+import { errorHandler, initVeeValidate } from "@/utils/global-settings";
 
 const RefUsernameTextField = "usernameTextField";
 const RefPasswordTextField = "passwordTextField";

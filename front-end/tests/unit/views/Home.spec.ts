@@ -6,7 +6,7 @@ import { Circle } from "@/responses/circle";
 import flushPromises from "flush-promises";
 import { AxiosResponse } from "axios";
 import { AppMessageType } from "@/store/app-message";
-import { errorHandler } from "@/utils/global-error-handler";
+import { errorHandler } from "@/utils/global-settings";
 import { initAppMsg } from "../test-utils";
 import { messages } from "../test-consts";
 
