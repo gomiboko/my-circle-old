@@ -49,22 +49,24 @@
 </template>
 
 <script lang="ts">
-import { showError } from "@/utils/message";
 import { Component, Vue } from "vue-property-decorator";
 import { User } from "@/responses/user";
+import { AppMessageSize } from "@/store/app-message";
 
 @Component
 export default class Home extends Vue {
+  // ストアのロード中フラグだとビューの切り替えが適切にできない為、個別に管理する
+  // (axiosの通信完了時にフラグが下ろされるが、その時点ではmeにユーザ情報が設定されていない)
   private loading = true;
   private me?: User;
 
   private async created() {
+    this.$state.appMsg.setSize(AppMessageSize.Medium);
+
     try {
-      const res = await this.$http.get(`${process.env.VUE_APP_BACKEND_BASE_URL}/users/me`, { withCredentials: true });
+      const res = await this.$http.get("/users/me", { withCredentials: true });
       this.me = res.data.user as User;
-      this.loading = false;
-    } catch (e) {
-      showError(this, e);
+    } finally {
       this.loading = false;
     }
   }

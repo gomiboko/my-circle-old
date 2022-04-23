@@ -3,11 +3,12 @@ import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Login from "@/views/Login.vue";
 import VueRouter from "vue-router";
 import { AxiosError } from "axios";
-import { Message, MSG_EVENT } from "@/utils/message";
-import { getValidationProviderErrors, flushAll, getEventCount, getVeryFirstEventData, setValue } from "../test-utils";
+import { getValidationProviderErrors, flushAll, setValue, initAppMsg } from "../test-utils";
 import flushPromises from "flush-promises";
 import { createMockedLocalVue } from "../local-vue";
-import { consts, paths } from "../test-consts";
+import { consts, messages, paths } from "../test-consts";
+import { AppMessageType } from "@/store/app-message";
+import { errorHandler, initVeeValidate } from "@/utils/global-settings";
 
 const RefEmailTextField = "emailTextField";
 const RefPasswordTextField = "passwordTextField";
@@ -16,6 +17,11 @@ const RefEmailTextFieldProvider = "emailTextFieldProvider";
 const RefPasswordTextFieldProvider = "passwordTextFieldProvider";
 
 jest.useFakeTimers();
+initVeeValidate();
+
+beforeEach(() => {
+  initAppMsg();
+});
 
 describe("Login.vue", () => {
   describe("バリデーション", () => {
@@ -148,6 +154,7 @@ describe("Login.vue", () => {
     describe("ログインに失敗した場合", () => {
       test("ログインページにエラーメッセージが表示されること", async () => {
         const { localVue, axiosMock } = createMockedLocalVue();
+        localVue.config.errorHandler = errorHandler;
 
         axiosMock.post.mockRejectedValue({
           isAxiosError: true,
@@ -171,11 +178,40 @@ describe("Login.vue", () => {
         loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
-        // メッセージ表示のカスタムイベントが1回発生していること
-        expect(getEventCount(wrapper, MSG_EVENT)).toBe(1);
-        // 「予期せぬエラー」のメッセージでないこと
-        const eventData = getVeryFirstEventData<Login, Message>(wrapper, MSG_EVENT);
-        expect(eventData.message).not.toContain("予期せぬエラー");
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe("ログイン失敗テスト");
+        // ページ遷移していないこと
+        expect(wrapper.vm.$route.path).toBe(paths.Login);
+      });
+    });
+
+    describe("バックエンドとの通信に失敗した場合", () => {
+      test("ログインページにエラーメッセージが表示されること", async () => {
+        const { localVue, axiosMock } = createMockedLocalVue();
+        localVue.config.errorHandler = errorHandler;
+
+        axiosMock.post.mockRejectedValue({
+          isAxiosError: true,
+          request: {},
+        } as AxiosError);
+        axiosMock.isAxiosError.mockReturnValue(true);
+
+        const router = new VueRouter();
+        router.push(paths.Login);
+        const wrapper = mount(Login, { localVue, router });
+
+        const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
+        const passTextWrapper = wrapper.findComponent({ ref: RefPasswordTextField });
+        await setValue(emailTextWrapper, consts.ValidEmail);
+        await setValue(passTextWrapper, consts.ValidPassword);
+        await flushAll();
+
+        const loginBtnWrapper = wrapper.findComponent({ ref: RefLoginButton });
+        loginBtnWrapper.vm.$emit("click");
+        await flushPromises();
+
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe("サーバとの通信に失敗しました");
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Login);
       });
@@ -184,6 +220,7 @@ describe("Login.vue", () => {
     describe("予期せぬエラーが発生した場合", () => {
       test("ログインページにエラーメッセージが表示されること", async () => {
         const { localVue, axiosMock } = createMockedLocalVue();
+        localVue.config.errorHandler = errorHandler;
 
         axiosMock.post.mockRejectedValue(new Error("エラーテスト"));
         axiosMock.isAxiosError.mockReturnValue(false);
@@ -202,11 +239,8 @@ describe("Login.vue", () => {
         loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
-        // メッセージ表示のカスタムイベントが1回発生していること
-        expect(getEventCount(wrapper, MSG_EVENT)).toBe(1);
-        // 「予期せぬエラー」のメッセージであること
-        const eventData = getVeryFirstEventData<Login, Message>(wrapper, MSG_EVENT);
-        expect(eventData.message).toContain("予期せぬエラー");
+        expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
+        expect(wrapper.vm.$state.appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         // ページ遷移していないこと
         expect(wrapper.vm.$route.path).toBe(paths.Login);
       });

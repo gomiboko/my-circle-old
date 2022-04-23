@@ -53,7 +53,13 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn ref="loginButton" @click="login" :loading="loading" :disabled="loading" color="primary" block
+                <v-btn
+                  ref="loginButton"
+                  @click="login"
+                  :loading="$state.loading"
+                  :disabled="$state.loading"
+                  color="primary"
+                  block
                   >ログイン</v-btn
                 >
               </v-col>
@@ -79,15 +85,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
-import { required } from "vee-validate/dist/rules";
-import ja from "vee-validate/dist/locale/ja.json";
+import { ValidationObserver, ValidationProvider } from "vee-validate";
 import SmallLink from "@/components/SmallLink.vue";
-import { showError } from "@/utils/message";
-import { AppMsgSize } from "@/utils/consts";
-
-extend("required", required);
-localize("ja", ja);
+import { AppMessageSize } from "@/store/app-message";
 
 @Component({
   components: {
@@ -99,37 +99,30 @@ localize("ja", ja);
 export default class Login extends Vue {
   private email = "";
   private password = "";
-  private loading = false;
+
+  private created() {
+    this.$state.appMsg.setSize(AppMessageSize.Small);
+  }
 
   private async login() {
-    this.loading = true;
-
     const observer = this.$refs.observer as InstanceType<typeof ValidationObserver>;
     observer.reset();
 
     if (!(await observer.validate())) {
-      this.loading = false;
       return;
     }
 
-    const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-    try {
-      await this.$http.post(
-        `${baseUrl}/login`,
-        {
-          email: this.email,
-          password: this.password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      // TODO: トップページに遷移
-      this.$router.push("/");
-    } catch (e) {
-      showError(this, e, AppMsgSize.Col4);
-      this.loading = false;
-    }
+    await this.$http.post(
+      "/login",
+      {
+        email: this.email,
+        password: this.password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    this.$router.push("/");
   }
 
   private gotoJoin() {

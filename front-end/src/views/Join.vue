@@ -48,8 +48,8 @@
               <v-col>
                 <validation-provider
                   ref="passwordTextFieldProvider"
-                  rules="required|min:8|max:128|password"
                   name="パスワード"
+                  rules="required|min:8|max:128|password"
                   v-slot="{ errors }"
                 >
                   <required-text-field
@@ -75,8 +75,8 @@
                 <v-btn
                   ref="registerButton"
                   @click="register"
-                  :loading="loading"
-                  :disabled="loading"
+                  :loading="$state.loading"
+                  :disabled="$state.loading"
                   color="primary"
                   block
                   >登録する</v-btn
@@ -92,20 +92,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ValidationObserver, ValidationProvider, extend, localize } from "vee-validate";
-import { required, min, max } from "vee-validate/dist/rules";
-import { customEmail, password } from "@/utils/validations";
-import ja from "vee-validate/dist/locale/ja.json";
-import { showError } from "@/utils/message";
+import { ValidationObserver, ValidationProvider } from "vee-validate";
 import RequiredTextField from "@/components/RequiredTextField.vue";
-import { AppMsgSize } from "@/utils/consts";
-
-extend("required", required);
-extend("min", min);
-extend("max", max);
-extend("email", customEmail);
-extend("password", password);
-localize("ja", ja);
+import { AppMessageSize } from "@/store/app-message";
 
 @Component({
   components: {
@@ -119,39 +108,33 @@ export default class Join extends Vue {
   private email = "";
   private password = "";
   private showPassword = false;
-  private loading = false;
+
+  private created() {
+    this.$state.appMsg.setSize(AppMessageSize.Small);
+  }
 
   private async register() {
-    this.loading = true;
-
     const observer = this.$refs.observer as InstanceType<typeof ValidationObserver>;
     observer.reset();
 
     if (!(await observer.validate())) {
-      this.loading = false;
       return;
     }
 
-    const baseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-    try {
-      await this.$http.post(
-        `${baseUrl}/users`,
-        {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+    await this.$http.post(
+      "/users",
+      {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
 
-      // トップページに繊維
-      this.$router.push("/");
-    } catch (e) {
-      showError(this, e, AppMsgSize.Col4);
-      this.loading = false;
-    }
+    // トップページに遷移
+    this.$router.push("/");
   }
 }
 </script>
