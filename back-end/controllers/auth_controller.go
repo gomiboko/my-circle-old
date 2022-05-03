@@ -52,9 +52,8 @@ func (ac AuthController) Login(c *gin.Context) {
 }
 
 func (ac AuthController) Logout(c *gin.Context) {
-	// TODO:
 	session := sessions.Default(c)
 	session.Clear()
 	session.Save()
-	c.JSON(http.StatusOK, messageResponseBody("logged out"))
+	c.Status(http.StatusOK)
 }

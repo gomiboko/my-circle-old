@@ -83,7 +83,7 @@ export default class App extends Vue {
     ];
   }
 
-  private onMenuClick(id: number) {
+  private async onMenuClick(id: number) {
     switch (id) {
       case ACCOUNT_MENU_ITEMS.PROFILE.ID:
         // TODO: プロフィール表示
@@ -92,7 +92,8 @@ export default class App extends Vue {
         // TODO: 設定表示
         break;
       case ACCOUNT_MENU_ITEMS.LOGOUT.ID:
-        // TODO: ログアウト処理
+        await this.$http.get("/logout", { withCredentials: true });
+        this.$router.push("/login");
         break;
     }
   }
