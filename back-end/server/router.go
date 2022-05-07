@@ -56,6 +56,10 @@ func NewRouter() (*gin.Engine, error) {
 	uc := controllers.NewUserController(services.NewUserService(ur))
 	r.POST("/login", ac.Login)
 	r.GET("/logout", ac.Logout)
+	auth := r.Group("/auth")
+	{
+		auth.GET("/check", ac.IsAuthorized)
+	}
 	users := r.Group("/users")
 	{
 		users.POST("", uc.Create)
