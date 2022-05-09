@@ -88,8 +88,6 @@ import { Component, Vue } from "vue-property-decorator";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import SmallLink from "@/components/SmallLink.vue";
 import { AppMessageSize } from "@/store/app-message";
-import axios from "axios";
-import { StatusCodes } from "http-status-codes";
 
 @Component({
   components: {
@@ -103,17 +101,10 @@ export default class Login extends Vue {
   private password = "";
 
   private async beforeCreate() {
-    try {
-      // ログイン済みチェック
-      await this.$http.get("/auth/check", { withCredentials: true });
-
-      // ログイン済みだった場合、ホーム画面に遷移
+    // ログイン済みだった場合、ホーム画面に遷移
+    const res = await this.$http.get("/auth/check", { withCredentials: true });
+    if (res.data.isAuthorized) {
       this.$router.push("/");
-    } catch (e) {
-      // 401エラー(＝未ログイン)の場合は何もせず、それ以外のエラーはthrowしてグローバルエラーハンドラに任せる
-      if (!(axios.isAxiosError(e) && e.response?.status === StatusCodes.UNAUTHORIZED)) {
-        throw e;
-      }
     }
   }
 

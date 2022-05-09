@@ -62,9 +62,5 @@ func (ac AuthController) IsAuthorized(c *gin.Context) {
 	session := sessions.Default(c)
 	isLoggedIn := session.Get("user_id") != nil
 
-	if isLoggedIn {
-		c.Status(http.StatusOK)
-	} else {
-		c.Status(http.StatusUnauthorized)
-	}
+	c.JSON(http.StatusOK, gin.H{"isAuthorized": isLoggedIn})
 }
