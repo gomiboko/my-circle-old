@@ -13,6 +13,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gomiboko/my-circle/controllers"
 	"github.com/gomiboko/my-circle/db"
+	"github.com/gomiboko/my-circle/middlewares"
 	"github.com/gomiboko/my-circle/repositories"
 	"github.com/gomiboko/my-circle/services"
 	"github.com/gomiboko/my-circle/validations"
@@ -60,9 +61,12 @@ func NewRouter() (*gin.Engine, error) {
 	{
 		auth.GET("/check", ac.IsAuthorized)
 	}
-	users := r.Group("/users")
+	r.POST("/users", uc.Create)
+
+	// 認証が必要なエンドポイント
+	authorized := r.Group("/", middlewares.AuthRequired())
 	{
-		users.POST("", uc.Create)
+		users := authorized.Group("/users")
 		users.GET("/me", uc.GetHomeInfo)
 	}
 

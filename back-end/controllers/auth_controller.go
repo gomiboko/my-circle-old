@@ -40,7 +40,7 @@ func (ac AuthController) Login(c *gin.Context) {
 
 	// 認証失敗
 	if userID == nil {
-		c.JSON(http.StatusUnauthorized, messageResponseBody("メールアドレスまたはパスワードが違います"))
+		c.JSON(http.StatusUnauthorized, MessageResponseBody("メールアドレスまたはパスワードが違います"))
 		return
 	}
 

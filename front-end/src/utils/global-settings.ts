@@ -5,6 +5,8 @@ import { customEmail, password } from "./validations";
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosStatic } from "axios";
 import Vue from "vue";
 import { AppMessageType } from "@/store/app-message";
+import router from "@/router";
+import { StatusCodes } from "http-status-codes";
 
 /**
  * VeeValidateの設定を行う
@@ -26,7 +28,7 @@ export function initAxios(): AxiosStatic {
   axios.defaults.baseURL = process.env.VUE_APP_BACKEND_BASE_URL;
   axios.defaults.timeout = 10 * 1000;
   axios.interceptors.request.use(onRequestFulfilled, onRejected);
-  axios.interceptors.response.use(onResponseFulfilled, onRejected);
+  axios.interceptors.response.use(onResponseFulfilled, onResponseRejected);
   return axios;
 }
 
@@ -71,6 +73,16 @@ function onRequestFulfilled(config: AxiosRequestConfig): AxiosRequestConfig {
 function onResponseFulfilled(response: AxiosResponse<any>): AxiosResponse<any> {
   Vue.prototype.$state.loading = false;
   return response;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function onResponseRejected(error: any): Promise<never> {
+  // 認証が必要なページで401エラーとなった場合、ログイン画面に遷移
+  if (axios.isAxiosError(error) && error.response?.status === StatusCodes.UNAUTHORIZED) {
+    router.push("/login");
+  }
+
+  return onRejected(error);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
