@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/gomiboko/my-circle/controllers"
+	"github.com/gomiboko/my-circle/utils"
 )
 
 func AuthRequired() gin.HandlerFunc {
@@ -14,7 +14,7 @@ func AuthRequired() gin.HandlerFunc {
 		isLoggedIn := session.Get("user_id") != nil
 
 		if !isLoggedIn {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, controllers.MessageResponseBody("ログインしてください"))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.MessageResponseBody("ログインしてください"))
 		}
 	}
 }

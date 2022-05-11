@@ -1,4 +1,4 @@
-package controllers
+package utils
 
 import (
 	"net/http"
@@ -11,10 +11,10 @@ func MessageResponseBody(message string) gin.H {
 	return gin.H{"message": message}
 }
 
-func responseBody400BadRequest() (int, gin.H) {
+func ResponseBody400BadRequest() (int, gin.H) {
 	return http.StatusBadRequest, MessageResponseBody("不正なリクエストです")
 }
 
-func responseBody500UnexpectedError() (int, gin.H) {
+func ResponseBody500UnexpectedError() (int, gin.H) {
 	return http.StatusInternalServerError, MessageResponseBody("予期せぬエラーが発生しました")
 }
