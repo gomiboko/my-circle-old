@@ -23,23 +23,24 @@
 
       <v-spacer></v-spacer>
 
-      <!-- FIXME: ログイン中のみ表示させる -->
-      <v-menu offset-y nudge-bottom="5">
-        <template v-slot:activator="{ on }">
-          <v-avatar color="white" size="36" v-on="on" style="cursor: pointer" tabindex="-1">
-            <!-- TODO: プロフィール画像が設定済みかどうかで分岐させる -->
-            <v-icon light>mdi-account</v-icon>
-          </v-avatar>
-        </template>
-        <v-list dense>
-          <template v-for="(menu, index) in accountMenus">
-            <v-list-item v-if="menu.NAME" @click="onMenuClick(menu.ID)" :key="index">
-              <v-list-item-title>{{ menu.NAME }}</v-list-item-title>
-            </v-list-item>
-            <v-divider v-else :key="index"></v-divider>
+      <template v-if="isLoginRequiredPage">
+        <v-menu offset-y nudge-bottom="5">
+          <template v-slot:activator="{ on }">
+            <v-avatar color="white" size="36" v-on="on" style="cursor: pointer" tabindex="-1">
+              <!-- TODO: プロフィール画像が設定済みかどうかで分岐させる -->
+              <v-icon light>mdi-account</v-icon>
+            </v-avatar>
           </template>
-        </v-list>
-      </v-menu>
+          <v-list dense>
+            <template v-for="(menu, index) in accountMenus">
+              <v-list-item v-if="menu.NAME" @click="onMenuClick(menu.ID)" :key="index">
+                <v-list-item-title>{{ menu.NAME }}</v-list-item-title>
+              </v-list-item>
+              <v-divider v-else :key="index"></v-divider>
+            </template>
+          </v-list>
+        </v-menu>
+      </template>
     </v-app-bar>
 
     <v-main>
@@ -81,6 +82,10 @@ export default class App extends Vue {
       ACCOUNT_MENU_ITEMS.DIVIDER,
       ACCOUNT_MENU_ITEMS.LOGOUT,
     ];
+  }
+
+  get isLoginRequiredPage(): boolean {
+    return !["/login", "/join"].includes(this.$route.path);
   }
 
   private async onMenuClick(id: number) {
