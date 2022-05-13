@@ -34,7 +34,10 @@
           <v-list dense>
             <template v-for="(menu, index) in accountMenus">
               <v-list-item v-if="menu.NAME" @click="onMenuClick(menu.ID)" :key="index">
-                <v-list-item-title>{{ menu.NAME }}</v-list-item-title>
+                <v-list-item-title>
+                  <v-icon color="blue-grey lighten-3" class="mr-2" dense>{{ menu.ICON }}</v-icon>
+                  {{ menu.NAME }}
+                </v-list-item-title>
               </v-list-item>
               <v-divider v-else :key="index"></v-divider>
             </template>
@@ -63,10 +66,10 @@ import { Vue, Component } from "vue-property-decorator";
 import AppMessage from "@/components/AppMessage.vue";
 
 const ACCOUNT_MENU_ITEMS = Object.freeze({
-  DIVIDER: Object.freeze({ ID: 0, NAME: "" }),
-  PROFILE: Object.freeze({ ID: 1, NAME: "プロフィール" }),
-  CONFIG: Object.freeze({ ID: 2, NAME: "設定" }),
-  LOGOUT: Object.freeze({ ID: 3, NAME: "ログアウト" }),
+  DIVIDER: Object.freeze({ ID: 0, NAME: "", ICON: "" }),
+  PROFILE: Object.freeze({ ID: 1, NAME: "プロフィール", ICON: "mdi-account-cog-outline" }),
+  CONFIG: Object.freeze({ ID: 2, NAME: "設定", ICON: "mdi-cog-outline" }),
+  LOGOUT: Object.freeze({ ID: 3, NAME: "ログアウト", ICON: "mdi-logout" }),
 });
 
 @Component({
