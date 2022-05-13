@@ -100,14 +100,6 @@ export default class Login extends Vue {
   private email = "";
   private password = "";
 
-  private async beforeCreate() {
-    // ログイン済みだった場合、ホーム画面に遷移
-    const res = await this.$http.get("/auth/check", { withCredentials: true });
-    if (res.data.isAuthorized) {
-      this.$router.push("/");
-    }
-  }
-
   private created() {
     this.$state.appMsg.setSize(AppMessageSize.Small);
   }

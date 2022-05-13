@@ -58,10 +58,3 @@ func (ac AuthController) Logout(c *gin.Context) {
 	session.Save()
 	c.Status(http.StatusOK)
 }
-
-func (ac AuthController) IsAuthorized(c *gin.Context) {
-	session := sessions.Default(c)
-	isLoggedIn := session.Get("user_id") != nil
-
-	c.JSON(http.StatusOK, gin.H{"isAuthorized": isLoggedIn})
-}
