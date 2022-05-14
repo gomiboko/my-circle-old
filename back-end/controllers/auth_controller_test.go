@@ -199,7 +199,6 @@ func (s *AuthControllerTestSuite) TestLogout() {
 	json.Unmarshal(r.Body.Bytes(), &res)
 
 	assert.Equal(s.T(), http.StatusOK, r.Code)
-	assert.Equal(s.T(), "logged out", res.Message)
 	sessMock.AssertCalled(s.T(), "Save")
 	sessMock.AssertCalled(s.T(), "Clear")
 }
