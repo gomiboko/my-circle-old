@@ -52,6 +52,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { User } from "@/responses/user";
 import { AppMessageSize } from "@/store/app-message";
+import { API_PATHS } from "@/utils/consts";
 
 @Component
 export default class Home extends Vue {
@@ -64,7 +65,7 @@ export default class Home extends Vue {
     this.$state.appMsg.setSize(AppMessageSize.Medium);
 
     try {
-      const res = await this.$http.get("/users/me", { withCredentials: true });
+      const res = await this.$http.get(API_PATHS.USERS_ME, { withCredentials: true });
       this.me = res.data.user as User;
     } finally {
       this.loading = false;

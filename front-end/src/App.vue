@@ -64,6 +64,7 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import AppMessage from "@/components/AppMessage.vue";
+import { API_PATHS, PAGE_PATHS } from "./utils/consts";
 
 const ACCOUNT_MENU_ITEMS = Object.freeze({
   DIVIDER: Object.freeze({ ID: 0, NAME: "", ICON: "" }),
@@ -88,7 +89,7 @@ export default class App extends Vue {
   }
 
   get isLoginRequiredPage(): boolean {
-    return !["/login", "/join"].includes(this.$route.path);
+    return ![PAGE_PATHS.LOGIN, PAGE_PATHS.JOIN].includes(this.$route.path);
   }
 
   private async onMenuClick(id: number) {
@@ -100,8 +101,8 @@ export default class App extends Vue {
         // TODO: 設定表示
         break;
       case ACCOUNT_MENU_ITEMS.LOGOUT.ID:
-        await this.$http.get("/logout", { withCredentials: true });
-        this.$router.push("/login");
+        await this.$http.get(API_PATHS.LOGOUT, { withCredentials: true });
+        this.$router.push(PAGE_PATHS.LOGIN);
         break;
     }
   }

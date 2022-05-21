@@ -28,17 +28,6 @@ export const lengths = {
   UserNameMaxLength: 45,
 };
 
-export const paths = {
-  /** トップページ */
-  Root: "/",
-  /** ログイン画面 */
-  Login: "/login",
-  /** アカウント作成画面 */
-  Join: "/join",
-  /** ログアウトAPI */
-  Logout: "/logout",
-};
-
 export const messages = {
   UnexpectedErrorHasOccurred: "予期せぬエラーが発生しました",
 };

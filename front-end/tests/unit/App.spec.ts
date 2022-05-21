@@ -4,10 +4,10 @@ import App from "@/App.vue";
 import AppMessage from "@/components/AppMessage.vue";
 import flushPromises from "flush-promises";
 import { AppMessageSize } from "@/store/app-message";
-import { paths } from "./test-consts";
 import { execAsyncMethod, initAppMsg } from "./test-utils";
 import Vue from "vue";
 import { createMockedLocalVue } from "./local-vue";
+import { API_PATHS, PAGE_PATHS } from "@/utils/consts";
 
 // AppMessage.vue の message プロパティ名
 const MESSAGE_PROPS_NAME = "message";
@@ -23,7 +23,7 @@ describe("App.vue", () => {
   describe("初期表示", () => {
     test("メッセージが表示されていないこと", () => {
       const router = new VueRouter();
-      router.push(paths.Root);
+      router.push(PAGE_PATHS.HOME);
       const wrapper = shallowMount(App, { localVue, router });
 
       expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
@@ -35,7 +35,7 @@ describe("App.vue", () => {
       describe("メッセージに空文字以外を設定した場合", () => {
         test("メッセージが表示されること", async () => {
           const router = new VueRouter();
-          router.push(paths.Root);
+          router.push(PAGE_PATHS.HOME);
           const wrapper = shallowMount(App, { localVue, router });
 
           wrapper.vm.$state.appMsg.message = "test message";
@@ -49,7 +49,7 @@ describe("App.vue", () => {
       describe("メッセージに空文字を設定した場合", () => {
         test("メッセージが表示されないこと", async () => {
           const router = new VueRouter();
-          router.push(paths.Root);
+          router.push(PAGE_PATHS.HOME);
           const wrapper = shallowMount(App, { localVue, router });
 
           wrapper.vm.$state.appMsg.message = "";
@@ -64,7 +64,7 @@ describe("App.vue", () => {
       describe("メッセージに空文字以外を設定した場合", () => {
         test("メッセージが更新されること", async () => {
           const router = new VueRouter();
-          router.push(paths.Root);
+          router.push(PAGE_PATHS.HOME);
           const wrapper = shallowMount(App, { localVue, router });
 
           // メッセージ表示
@@ -85,7 +85,7 @@ describe("App.vue", () => {
       describe("メッセージに空文字を設定した場合", () => {
         test("メッセージが非表示になること", async () => {
           const router = new VueRouter();
-          router.push(paths.Root);
+          router.push(PAGE_PATHS.HOME);
           const wrapper = shallowMount(App, { localVue, router });
 
           // メッセージ表示
@@ -109,7 +109,7 @@ describe("App.vue", () => {
       ["表示中と異なる大きさが指定された場合", AppMessageSize.Large, "12", "9", "6"],
     ])("%s", async (explanation, inputSize, mdSize, lgSize, xlSize) => {
       const router = new VueRouter();
-      router.push(paths.Root);
+      router.push(PAGE_PATHS.HOME);
       const wrapper = shallowMount(App, { localVue, router });
 
       wrapper.vm.$state.appMsg.message = "test message";
@@ -127,8 +127,8 @@ describe("App.vue", () => {
   describe("プロフィールアイコンの表示", () => {
     describe("プロフィールアイコン非表示画面の場合", () => {
       test.each([
-        ["ログイン画面の場合", paths.Login],
-        ["アカウント登録画面の場合", paths.Join],
+        ["ログイン画面の場合", PAGE_PATHS.LOGIN],
+        ["アカウント登録画面の場合", PAGE_PATHS.JOIN],
       ])("%s", (explanation, path) => {
         const router = new VueRouter();
         router.push(path);
@@ -141,7 +141,7 @@ describe("App.vue", () => {
     describe("プロフィールアイコン表示画面の場合", () => {
       test("プロフィールアイコンが表示されること", () => {
         const router = new VueRouter();
-        router.push(paths.Root);
+        router.push(PAGE_PATHS.HOME);
         const wrapper = shallowMount(App, { localVue, router });
 
         expect(wrapper.findComponent({ ref: "accountMenu" }).exists()).toBeTruthy();
@@ -157,14 +157,14 @@ describe("App.vue", () => {
       axiosMock.get.mockResolvedValue(null);
 
       const router = new VueRouter();
-      router.push(paths.Root);
+      router.push(PAGE_PATHS.HOME);
       const wrapper = shallowMount(App, { localVue, router });
 
       // ログアウト処理実行
       await execAsyncMethod(wrapper, "onMenuClick", LogoutMenuId);
 
-      expect(axiosMock.get).toBeCalledWith(paths.Logout, { withCredentials: true });
-      expect(wrapper.vm.$route.path).toBe(paths.Login);
+      expect(axiosMock.get).toBeCalledWith(API_PATHS.LOGOUT, { withCredentials: true });
+      expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.LOGIN);
     });
   });
 
@@ -172,7 +172,7 @@ describe("App.vue", () => {
     describe("メッセージが表示されている場合", () => {
       test("メッセージが非表示になること", async () => {
         const router = new VueRouter();
-        router.push(paths.Login);
+        router.push(PAGE_PATHS.LOGIN);
         router.beforeEach(beforeEachGuard);
         const wrapper = shallowMount(App, { localVue, router });
 
@@ -183,7 +183,7 @@ describe("App.vue", () => {
         expect(wrapper.findComponent(AppMessage).attributes(MESSAGE_PROPS_NAME)).toBe("test message");
 
         // ページ遷移
-        router.push(paths.Join);
+        router.push(PAGE_PATHS.JOIN);
         await flushPromises();
 
         expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
@@ -193,12 +193,12 @@ describe("App.vue", () => {
     describe("メッセージが表示されていない場合", () => {
       test("メッセージが非表示のままであること", async () => {
         const router = new VueRouter();
-        router.push(paths.Login);
+        router.push(PAGE_PATHS.LOGIN);
         router.beforeEach(beforeEachGuard);
         const wrapper = shallowMount(App, { localVue, router });
 
         // ページ遷移
-        router.push(paths.Join);
+        router.push(PAGE_PATHS.JOIN);
         await flushPromises();
 
         expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();

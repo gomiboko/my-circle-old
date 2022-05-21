@@ -6,9 +6,10 @@ import { AxiosError } from "axios";
 import { getValidationProviderErrors, flushAll, setValue, initAppMsg } from "../test-utils";
 import flushPromises from "flush-promises";
 import { createMockedLocalVue } from "../local-vue";
-import { consts, messages, paths } from "../test-consts";
+import { consts, messages } from "../test-consts";
 import { AppMessageType } from "@/store/app-message";
 import { errorHandler, initVeeValidate } from "@/utils/global-settings";
+import { PAGE_PATHS } from "@/utils/consts";
 
 const RefEmailTextField = "emailTextField";
 const RefPasswordTextField = "passwordTextField";
@@ -72,7 +73,7 @@ describe("Login.vue", () => {
         axiosMock.post.mockResolvedValue(null);
 
         const router = new VueRouter();
-        router.push(paths.Login);
+        router.push(PAGE_PATHS.LOGIN);
         const wrapper = shallowMount(Login, {
           localVue,
           router,
@@ -86,7 +87,7 @@ describe("Login.vue", () => {
 
         const emailErrs = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
         const passErrs = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
-        expect(wrapper.vm.$route.path).toBe(paths.Login);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.LOGIN);
         expect(emailErrs.length).toBe(1);
         expect(passErrs.length).toBe(1);
       });
@@ -99,7 +100,7 @@ describe("Login.vue", () => {
         axiosMock.post.mockResolvedValue(null);
 
         const router = new VueRouter();
-        router.push(paths.Login);
+        router.push(PAGE_PATHS.LOGIN);
         const wrapper = mount(Login, { localVue, router });
 
         // 全て未入力でログインボタンを押下し、エラーメッセージを表示させる
@@ -120,7 +121,7 @@ describe("Login.vue", () => {
 
         emailErrs = getValidationProviderErrors(wrapper, RefEmailTextFieldProvider);
         passErrs = getValidationProviderErrors(wrapper, RefPasswordTextFieldProvider);
-        expect(wrapper.vm.$route.path).toBe(paths.Login);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.LOGIN);
         expect(emailErrs.length).toBe(0);
         expect(passErrs.length).toBe(1);
       });
@@ -134,7 +135,7 @@ describe("Login.vue", () => {
         axiosMock.post.mockResolvedValue(null);
 
         const router = new VueRouter();
-        router.push(paths.Login);
+        router.push(PAGE_PATHS.LOGIN);
         const wrapper = mount(Login, { localVue, router });
 
         const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
@@ -147,7 +148,7 @@ describe("Login.vue", () => {
         loginBtnWrapper.vm.$emit("click");
         await flushPromises();
 
-        expect(wrapper.vm.$route.path).toBe(paths.Root);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.HOME);
       });
     });
 
@@ -165,7 +166,7 @@ describe("Login.vue", () => {
         axiosMock.isAxiosError.mockReturnValue(true);
 
         const router = new VueRouter();
-        router.push(paths.Login);
+        router.push(PAGE_PATHS.LOGIN);
         const wrapper = mount(Login, { localVue, router });
 
         const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
@@ -181,7 +182,7 @@ describe("Login.vue", () => {
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe("ログイン失敗テスト");
         // ページ遷移していないこと
-        expect(wrapper.vm.$route.path).toBe(paths.Login);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.LOGIN);
       });
     });
 
@@ -197,7 +198,7 @@ describe("Login.vue", () => {
         axiosMock.isAxiosError.mockReturnValue(true);
 
         const router = new VueRouter();
-        router.push(paths.Login);
+        router.push(PAGE_PATHS.LOGIN);
         const wrapper = mount(Login, { localVue, router });
 
         const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
@@ -213,7 +214,7 @@ describe("Login.vue", () => {
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe("サーバとの通信に失敗しました");
         // ページ遷移していないこと
-        expect(wrapper.vm.$route.path).toBe(paths.Login);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.LOGIN);
       });
     });
 
@@ -226,7 +227,7 @@ describe("Login.vue", () => {
         axiosMock.isAxiosError.mockReturnValue(false);
 
         const router = new VueRouter();
-        router.push(paths.Login);
+        router.push(PAGE_PATHS.LOGIN);
         const wrapper = mount(Login, { localVue, router });
 
         const emailTextWrapper = wrapper.findComponent({ ref: RefEmailTextField });
@@ -242,7 +243,7 @@ describe("Login.vue", () => {
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         // ページ遷移していないこと
-        expect(wrapper.vm.$route.path).toBe(paths.Login);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.LOGIN);
       });
     });
   });
@@ -252,14 +253,14 @@ describe("Login.vue", () => {
       const { localVue } = createMockedLocalVue();
 
       const router = new VueRouter();
-      router.push(paths.Login);
+      router.push(PAGE_PATHS.LOGIN);
 
       const wrapper = shallowMount(Login, { localVue, router });
 
       const regAccountBtnWrapper = wrapper.findComponent({ ref: "registerAccountButton" });
       regAccountBtnWrapper.vm.$emit("click");
 
-      expect(wrapper.vm.$route.path).toBe(paths.Join);
+      expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.JOIN);
     });
   });
 });

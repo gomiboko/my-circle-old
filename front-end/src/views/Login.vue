@@ -88,6 +88,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import SmallLink from "@/components/SmallLink.vue";
 import { AppMessageSize } from "@/store/app-message";
+import { API_PATHS, PAGE_PATHS } from "@/utils/consts";
 
 @Component({
   components: {
@@ -113,7 +114,7 @@ export default class Login extends Vue {
     }
 
     await this.$http.post(
-      "/login",
+      API_PATHS.LOGIN,
       {
         email: this.email,
         password: this.password,
@@ -122,11 +123,11 @@ export default class Login extends Vue {
         withCredentials: true,
       }
     );
-    this.$router.push("/");
+    this.$router.push(PAGE_PATHS.HOME);
   }
 
   private gotoJoin() {
-    this.$router.push("/join");
+    this.$router.push(PAGE_PATHS.JOIN);
   }
 }
 </script>

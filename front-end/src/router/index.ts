@@ -1,3 +1,4 @@
+import { PAGE_PATHS } from "@/utils/consts";
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
@@ -6,7 +7,7 @@ Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: "/",
+    path: PAGE_PATHS.HOME,
     name: "Home",
     component: Home,
   },
@@ -19,12 +20,12 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
   {
-    path: "/login",
+    path: PAGE_PATHS.LOGIN,
     name: "Login",
     component: () => import("../views/Login.vue"),
   },
   {
-    path: "/join",
+    path: PAGE_PATHS.JOIN,
     name: "Join",
     component: () => import("../views/Join.vue"),
   },
