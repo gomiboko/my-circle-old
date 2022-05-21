@@ -24,7 +24,7 @@
       <v-spacer></v-spacer>
 
       <template v-if="isLoginRequiredPage">
-        <v-menu offset-y nudge-bottom="5">
+        <v-menu ref="accountMenu" offset-y nudge-bottom="5">
           <template v-slot:activator="{ on }">
             <v-avatar color="white" size="36" v-on="on" style="cursor: pointer" tabindex="-1">
               <!-- TODO: プロフィール画像が設定済みかどうかで分岐させる -->

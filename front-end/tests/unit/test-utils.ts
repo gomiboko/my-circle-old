@@ -49,3 +49,19 @@ export function createEmailAddress(length: number): string {
 export function initAppMsg(): void {
   Vue.prototype.$state = state;
 }
+
+/**
+ * 指定されたコンポーネントの非同期メソッドを実行する
+ * @param wrapper コンポーネントの Wrapper オブジェクト
+ * @param methodName 実行するメソッド名
+ * @param args メソッドの引数
+ */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export async function execAsyncMethod<T extends Vue | null>(
+  wrapper: Wrapper<T, Element>,
+  methodName: string,
+  ...args: any[]
+): Promise<void> {
+  await (wrapper.vm as any)[methodName](...args);
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */

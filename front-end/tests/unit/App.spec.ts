@@ -5,8 +5,9 @@ import AppMessage from "@/components/AppMessage.vue";
 import flushPromises from "flush-promises";
 import { AppMessageSize } from "@/store/app-message";
 import { paths } from "./test-consts";
-import { initAppMsg } from "./test-utils";
+import { execAsyncMethod, initAppMsg } from "./test-utils";
 import Vue from "vue";
+import { createMockedLocalVue } from "./local-vue";
 
 // AppMessage.vue の message プロパティ名
 const MESSAGE_PROPS_NAME = "message";
@@ -21,7 +22,10 @@ beforeEach(() => {
 describe("App.vue", () => {
   describe("初期表示", () => {
     test("メッセージが表示されていないこと", () => {
-      const wrapper = shallowMount(App, { localVue });
+      const router = new VueRouter();
+      router.push(paths.Root);
+      const wrapper = shallowMount(App, { localVue, router });
+
       expect(wrapper.findComponent(AppMessage).exists()).toBeFalsy();
     });
   });
@@ -30,7 +34,9 @@ describe("App.vue", () => {
     describe("メッセージが表示されていない場合", () => {
       describe("メッセージに空文字以外を設定した場合", () => {
         test("メッセージが表示されること", async () => {
-          const wrapper = shallowMount(App, { localVue });
+          const router = new VueRouter();
+          router.push(paths.Root);
+          const wrapper = shallowMount(App, { localVue, router });
 
           wrapper.vm.$state.appMsg.message = "test message";
           await flushPromises();
@@ -42,7 +48,9 @@ describe("App.vue", () => {
 
       describe("メッセージに空文字を設定した場合", () => {
         test("メッセージが表示されないこと", async () => {
-          const wrapper = shallowMount(App, { localVue });
+          const router = new VueRouter();
+          router.push(paths.Root);
+          const wrapper = shallowMount(App, { localVue, router });
 
           wrapper.vm.$state.appMsg.message = "";
           await flushPromises();
@@ -55,7 +63,9 @@ describe("App.vue", () => {
     describe("メッセージが表示されている場合", () => {
       describe("メッセージに空文字以外を設定した場合", () => {
         test("メッセージが更新されること", async () => {
-          const wrapper = shallowMount(App, { localVue });
+          const router = new VueRouter();
+          router.push(paths.Root);
+          const wrapper = shallowMount(App, { localVue, router });
 
           // メッセージ表示
           wrapper.vm.$state.appMsg.message = "test message";
@@ -74,7 +84,9 @@ describe("App.vue", () => {
 
       describe("メッセージに空文字を設定した場合", () => {
         test("メッセージが非表示になること", async () => {
-          const wrapper = shallowMount(App, { localVue });
+          const router = new VueRouter();
+          router.push(paths.Root);
+          const wrapper = shallowMount(App, { localVue, router });
 
           // メッセージ表示
           wrapper.vm.$state.appMsg.message = "test message";
@@ -96,7 +108,9 @@ describe("App.vue", () => {
       ["表示中と同じ大きさが指定された場合", AppMessageSize.Medium, "8", "6", "4"],
       ["表示中と異なる大きさが指定された場合", AppMessageSize.Large, "12", "9", "6"],
     ])("%s", async (explanation, inputSize, mdSize, lgSize, xlSize) => {
-      const wrapper = shallowMount(App, { localVue });
+      const router = new VueRouter();
+      router.push(paths.Root);
+      const wrapper = shallowMount(App, { localVue, router });
 
       wrapper.vm.$state.appMsg.message = "test message";
       wrapper.vm.$state.appMsg.setSize(inputSize);
@@ -107,6 +121,50 @@ describe("App.vue", () => {
       expect(wrapper.findComponent({ ref: "appMessageColumn" }).attributes("md")).toBe(mdSize);
       expect(wrapper.findComponent({ ref: "appMessageColumn" }).attributes("lg")).toBe(lgSize);
       expect(wrapper.findComponent({ ref: "appMessageColumn" }).attributes("xl")).toBe(xlSize);
+    });
+  });
+
+  describe("プロフィールアイコンの表示", () => {
+    describe("プロフィールアイコン非表示画面の場合", () => {
+      test.each([
+        ["ログイン画面の場合", paths.Login],
+        ["アカウント登録画面の場合", paths.Join],
+      ])("%s", (explanation, path) => {
+        const router = new VueRouter();
+        router.push(path);
+        const wrapper = shallowMount(App, { localVue, router });
+
+        expect(wrapper.findComponent({ ref: "accountMenu" }).exists()).toBeFalsy();
+      });
+    });
+
+    describe("プロフィールアイコン表示画面の場合", () => {
+      test("プロフィールアイコンが表示されること", () => {
+        const router = new VueRouter();
+        router.push(paths.Root);
+        const wrapper = shallowMount(App, { localVue, router });
+
+        expect(wrapper.findComponent({ ref: "accountMenu" }).exists()).toBeTruthy();
+      });
+    });
+  });
+
+  describe("ログアウト処理", () => {
+    const LogoutMenuId = 3;
+
+    test("ログアウトAPIが呼ばれ、ログイン画面に遷移すること", async () => {
+      const { localVue, axiosMock } = createMockedLocalVue();
+      axiosMock.get.mockResolvedValue(null);
+
+      const router = new VueRouter();
+      router.push(paths.Root);
+      const wrapper = shallowMount(App, { localVue, router });
+
+      // ログアウト処理実行
+      await execAsyncMethod(wrapper, "onMenuClick", LogoutMenuId);
+
+      expect(axiosMock.get).toBeCalledWith(paths.Logout, { withCredentials: true });
+      expect(wrapper.vm.$route.path).toBe(paths.Login);
     });
   });
 
