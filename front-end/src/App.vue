@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
+      <!-- TODO: アプリロゴ等に変更 -->
       <div class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
