@@ -95,6 +95,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import RequiredTextField from "@/components/RequiredTextField.vue";
 import { AppMessageSize } from "@/store/app-message";
+import { API_PATHS, PAGE_PATHS } from "@/utils/consts";
 
 @Component({
   components: {
@@ -122,7 +123,7 @@ export default class Join extends Vue {
     }
 
     await this.$http.post(
-      "/users",
+      API_PATHS.USERS,
       {
         username: this.username,
         email: this.email,
@@ -134,7 +135,7 @@ export default class Join extends Vue {
     );
 
     // トップページに遷移
-    this.$router.push("/");
+    this.$router.push(PAGE_PATHS.HOME);
   }
 }
 </script>

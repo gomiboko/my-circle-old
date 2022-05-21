@@ -8,6 +8,7 @@ import (
 	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/services"
+	"github.com/gomiboko/my-circle/utils"
 )
 
 type UserController struct {
@@ -25,7 +26,7 @@ func (uc *UserController) Create(c *gin.Context) {
 	// 入力チェック
 	var form forms.UserForm
 	if err := c.ShouldBindJSON(&form); err != nil {
-		c.JSON(responseBody400BadRequest())
+		c.JSON(utils.ResponseBody400BadRequest())
 		return
 	}
 
@@ -33,9 +34,9 @@ func (uc *UserController) Create(c *gin.Context) {
 	user, err := uc.userService.CreateUser(form)
 	if err != nil {
 		if db.Is(err, db.ErrDuplicateEntry) {
-			c.JSON(http.StatusConflict, messageResponseBody("登録済みのメールアドレスです"))
+			c.JSON(http.StatusConflict, utils.MessageResponseBody("登録済みのメールアドレスです"))
 		} else {
-			c.JSON(responseBody500UnexpectedError())
+			c.JSON(utils.ResponseBody500UnexpectedError())
 		}
 		return
 	}
@@ -55,7 +56,7 @@ func (uc *UserController) GetHomeInfo(c *gin.Context) {
 	user, err := uc.userService.GetHomeInfo(userId)
 
 	if err != nil {
-		c.JSON(responseBody500UnexpectedError())
+		c.JSON(utils.ResponseBody500UnexpectedError())
 		return
 	}
 

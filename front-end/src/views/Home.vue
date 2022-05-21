@@ -5,7 +5,7 @@
       loading...
     </div>
     <!-- 通信に失敗した場合 -->
-    <div v-else-if="me === undefined">
+    <div v-else-if="me === null">
       <!-- TODO: 失敗したとき用のアイコンか何か表示する -->
       failed to load.
     </div>
@@ -52,19 +52,20 @@
 import { Component, Vue } from "vue-property-decorator";
 import { User } from "@/responses/user";
 import { AppMessageSize } from "@/store/app-message";
+import { API_PATHS } from "@/utils/consts";
 
 @Component
 export default class Home extends Vue {
   // ストアのロード中フラグだとビューの切り替えが適切にできない為、個別に管理する
   // (axiosの通信完了時にフラグが下ろされるが、その時点ではmeにユーザ情報が設定されていない)
   private loading = true;
-  private me?: User;
+  private me: User | null = null;
 
   private async created() {
     this.$state.appMsg.setSize(AppMessageSize.Medium);
 
     try {
-      const res = await this.$http.get("/users/me", { withCredentials: true });
+      const res = await this.$http.get(API_PATHS.USERS_ME, { withCredentials: true });
       this.me = res.data.user as User;
     } finally {
       this.loading = false;

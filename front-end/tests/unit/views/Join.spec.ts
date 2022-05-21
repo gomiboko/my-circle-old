@@ -2,7 +2,7 @@ import { shallowMount, mount } from "@vue/test-utils";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Join from "@/views/Join.vue";
 import { flushAll, getValidationProviderErrors, setValue, createEmailAddress, initAppMsg } from "../test-utils";
-import { consts, lengths, messages, paths } from "../test-consts";
+import { consts, lengths, messages } from "../test-consts";
 import { createMockedLocalVue } from "../local-vue";
 import VueRouter from "vue-router";
 import Vuetify from "vuetify";
@@ -10,6 +10,7 @@ import flushPromises from "flush-promises";
 import { AxiosError } from "axios";
 import { AppMessageType } from "@/store/app-message";
 import { errorHandler, initVeeValidate } from "@/utils/global-settings";
+import { PAGE_PATHS } from "@/utils/consts";
 
 const RefUsernameTextField = "usernameTextField";
 const RefPasswordTextField = "passwordTextField";
@@ -149,7 +150,7 @@ describe("Join.vue", () => {
         axiosMock.post.mockResolvedValue(null);
 
         const router = new VueRouter();
-        router.push(paths.Join);
+        router.push(PAGE_PATHS.JOIN);
 
         const wrapper = shallowMount(Join, {
           localVue,
@@ -164,7 +165,7 @@ describe("Join.vue", () => {
         const usernameErrs = getValidationProviderErrors(wrapper, RefUsernameValidationProvider);
         const emailErrs = getValidationProviderErrors(wrapper, RefEmailValidationProvider);
         const passErrs = getValidationProviderErrors(wrapper, RefPasswordValidationProvider);
-        expect(wrapper.vm.$route.path).toBe(paths.Join);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.JOIN);
         expect(usernameErrs.length).toBe(1);
         expect(emailErrs.length).toBe(1);
         expect(passErrs.length).toBe(1);
@@ -177,7 +178,7 @@ describe("Join.vue", () => {
           axiosMock.post.mockResolvedValue(null);
 
           const router = new VueRouter();
-          router.push(paths.Join);
+          router.push(PAGE_PATHS.JOIN);
 
           const vuetify = new Vuetify();
 
@@ -205,7 +206,7 @@ describe("Join.vue", () => {
           usernameErrs = getValidationProviderErrors(wrapper, RefUsernameValidationProvider);
           emailErrs = getValidationProviderErrors(wrapper, RefEmailValidationProvider);
           passErrs = getValidationProviderErrors(wrapper, RefPasswordValidationProvider);
-          expect(wrapper.vm.$route.path).toBe(paths.Join);
+          expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.JOIN);
           expect(usernameErrs.length).toBe(0);
           expect(emailErrs.length).toBe(1);
           expect(passErrs.length).toBe(1);
@@ -233,7 +234,7 @@ describe("Join.vue", () => {
         });
 
         const router = new VueRouter();
-        router.push(paths.Join);
+        router.push(PAGE_PATHS.JOIN);
         const wrapper = shallowMount(Join, {
           localVue,
           router,
@@ -247,7 +248,7 @@ describe("Join.vue", () => {
         wrapper.findComponent({ ref: RefRegisterButton }).vm.$emit("click");
         await flushPromises();
 
-        expect(wrapper.vm.$route.path).toBe(paths.Root);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.HOME);
       });
     });
 
@@ -265,7 +266,7 @@ describe("Join.vue", () => {
         axiosMock.isAxiosError.mockReturnValue(true);
 
         const router = new VueRouter();
-        router.push(paths.Join);
+        router.push(PAGE_PATHS.JOIN);
         const wrapper = shallowMount(Join, {
           localVue,
           router,
@@ -283,7 +284,7 @@ describe("Join.vue", () => {
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe("登録失敗テスト");
         // ページ遷移していないこと
-        expect(wrapper.vm.$route.path).toBe(paths.Join);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.JOIN);
       });
     });
 
@@ -296,7 +297,7 @@ describe("Join.vue", () => {
         axiosMock.isAxiosError.mockReturnValue(false);
 
         const router = new VueRouter();
-        router.push(paths.Join);
+        router.push(PAGE_PATHS.JOIN);
         const wrapper = shallowMount(Join, {
           localVue,
           router,
@@ -314,7 +315,7 @@ describe("Join.vue", () => {
         expect(wrapper.vm.$state.appMsg.type).toBe(AppMessageType.Error);
         expect(wrapper.vm.$state.appMsg.message).toBe(messages.UnexpectedErrorHasOccurred);
         // ページ遷移していないこと
-        expect(wrapper.vm.$route.path).toBe(paths.Join);
+        expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.JOIN);
       });
     });
   });

@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/services"
+	"github.com/gomiboko/my-circle/utils"
 )
 
 type AuthController struct {
@@ -24,7 +25,7 @@ func NewAuthController(as services.AuthService) *AuthController {
 func (ac AuthController) Login(c *gin.Context) {
 	var form forms.LoginForm
 	if err := c.ShouldBindJSON(&form); err != nil {
-		c.JSON(responseBody400BadRequest())
+		c.JSON(utils.ResponseBody400BadRequest())
 		return
 	}
 
@@ -34,13 +35,13 @@ func (ac AuthController) Login(c *gin.Context) {
 	if err != nil {
 		log.Print(err)
 
-		c.JSON(responseBody500UnexpectedError())
+		c.JSON(utils.ResponseBody500UnexpectedError())
 		return
 	}
 
 	// 認証失敗
 	if userID == nil {
-		c.JSON(http.StatusUnauthorized, messageResponseBody("メールアドレスまたはパスワードが違います"))
+		c.JSON(http.StatusUnauthorized, utils.MessageResponseBody("メールアドレスまたはパスワードが違います"))
 		return
 	}
 
@@ -52,9 +53,8 @@ func (ac AuthController) Login(c *gin.Context) {
 }
 
 func (ac AuthController) Logout(c *gin.Context) {
-	// TODO:
 	session := sessions.Default(c)
 	session.Clear()
 	session.Save()
-	c.JSON(http.StatusOK, messageResponseBody("logged out"))
+	c.Status(http.StatusOK)
 }
