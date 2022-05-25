@@ -13,15 +13,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type AuthServiceTestSuite struct {
+type SessionServiceTestSuite struct {
 	suite.Suite
 }
 
-func TestAuthService(t *testing.T) {
-	suite.Run(t, new(AuthServiceTestSuite))
+func TestSessionService(t *testing.T) {
+	suite.Run(t, new(SessionServiceTestSuite))
 }
 
-func (s *AuthServiceTestSuite) TestAuthenticate() {
+func (s *SessionServiceTestSuite) TestAuthenticate() {
 	s.Run("認証OKの場合", func() {
 		user := models.User{
 			ID:           1,
@@ -30,9 +30,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 		urMock := new(mocks.UserRepositoryMock)
 		urMock.On("Get", mock.AnythingOfType("string")).Return(&user, nil)
 
-		as := NewAuthService(urMock)
+		ss := NewSessionService(urMock)
 
-		userID, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
+		userID, err := ss.Authenticate(testutils.User1Email, testutils.User1Password)
 
 		assert.Equal(s.T(), uint(1), *userID)
 		assert.Nil(s.T(), err)
@@ -42,9 +42,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 		urMock := new(mocks.UserRepositoryMock)
 		urMock.On("Get", mock.AnythingOfType("string")).Return(new(models.User), gorm.ErrRecordNotFound)
 
-		as := NewAuthService(urMock)
+		ss := NewSessionService(urMock)
 
-		userID, err := as.Authenticate(testutils.UnregisteredEmail, testutils.User1Password)
+		userID, err := ss.Authenticate(testutils.UnregisteredEmail, testutils.User1Password)
 
 		assert.Nil(s.T(), userID)
 		assert.Nil(s.T(), err)
@@ -58,10 +58,10 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 		urMock := new(mocks.UserRepositoryMock)
 		urMock.On("Get", mock.AnythingOfType("string")).Return(&user, nil)
 
-		as := NewAuthService(urMock)
+		ss := NewSessionService(urMock)
 
 		// "password"で認証
-		userID, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
+		userID, err := ss.Authenticate(testutils.User1Email, testutils.User1Password)
 
 		assert.Nil(s.T(), userID)
 		assert.Nil(s.T(), err)
@@ -71,9 +71,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 		urMock := new(mocks.UserRepositoryMock)
 		urMock.On("Get", mock.AnythingOfType("string")).Return(new(models.User), gorm.ErrInvalidDB)
 
-		as := NewAuthService(urMock)
+		ss := NewSessionService(urMock)
 
-		userID, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
+		userID, err := ss.Authenticate(testutils.User1Email, testutils.User1Password)
 
 		assert.Nil(s.T(), userID)
 		assert.EqualError(s.T(), err, gorm.ErrInvalidDB.Error())
@@ -86,9 +86,9 @@ func (s *AuthServiceTestSuite) TestAuthenticate() {
 		urMock := new(mocks.UserRepositoryMock)
 		urMock.On("Get", mock.AnythingOfType("string")).Return(&user, nil)
 
-		as := NewAuthService(urMock)
+		ss := NewSessionService(urMock)
 
-		userID, err := as.Authenticate(testutils.User1Email, testutils.User1Password)
+		userID, err := ss.Authenticate(testutils.User1Email, testutils.User1Password)
 
 		assert.Nil(s.T(), userID)
 		assert.EqualError(s.T(), err, bcrypt.ErrHashTooShort.Error())

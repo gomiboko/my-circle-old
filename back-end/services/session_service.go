@@ -8,21 +8,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type AuthService interface {
+type SessionService interface {
 	Authenticate(email string, password string) (*uint, error)
 }
 
-type authService struct {
+type sessionService struct {
 	userRepository repositories.UserRepository
 }
 
-func NewAuthService(ur repositories.UserRepository) AuthService {
-	return &authService{ur}
+func NewSessionService(ur repositories.UserRepository) SessionService {
+	return &sessionService{ur}
 }
 
-func (as *authService) Authenticate(email string, password string) (*uint, error) {
+func (ss *sessionService) Authenticate(email string, password string) (*uint, error) {
 	// ユーザ検索
-	user, err := as.userRepository.Get(email)
+	user, err := ss.userRepository.Get(email)
 	if err != nil {
 		// ユーザが取得できなかった場合、認証失敗
 		if errors.Is(err, gorm.ErrRecordNotFound) {

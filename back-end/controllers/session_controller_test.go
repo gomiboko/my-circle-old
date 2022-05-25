@@ -17,28 +17,28 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-// AuthControllerテストスイート
-type AuthControllerTestSuite struct {
+// SessionControllerテストスイート
+type SessionControllerTestSuite struct {
 	suite.Suite
 }
 
-func (s *AuthControllerTestSuite) SetupSuite() {
+func (s *SessionControllerTestSuite) SetupSuite() {
 	gin.SetMode(gin.TestMode)
 }
 
-func TestAuthController(t *testing.T) {
-	suite.Run(t, new(AuthControllerTestSuite))
+func TestSessionController(t *testing.T) {
+	suite.Run(t, new(SessionControllerTestSuite))
 }
 
-func (s *AuthControllerTestSuite) TestLogin() {
+func (s *SessionControllerTestSuite) TestLogin() {
 	const reqPath = "/login"
 
 	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
 		var userID *uint = nil
-		asMock := new(mocks.AuthServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
+		ssMock := new(mocks.SessionServiceMock)
+		ssMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
-		ac := NewAuthController(asMock)
+		sc := NewSessionController(ssMock)
 
 		values := url.Values{}
 		values.Set("email", testutils.ValidEmail)
@@ -50,7 +50,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		c.Request, _ = http.NewRequest(http.MethodPost, reqPath, strings.NewReader(values.Encode()))
 		c.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-		ac.Login(c)
+		sc.Login(c)
 
 		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
@@ -73,10 +73,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		}
 
 		var userID *uint = nil
-		asMock := new(mocks.AuthServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
+		ssMock := new(mocks.SessionServiceMock)
+		ssMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
-		ac := NewAuthController(asMock)
+		sc := NewSessionController(ssMock)
 
 		for _, in := range inputs {
 			reqBody, err := testutils.CreateRequestBodyStr(in)
@@ -85,7 +85,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			}
 			r, c := testutils.CreatePostContext(reqPath, reqBody)
 
-			ac.Login(c)
+			sc.Login(c)
 
 			var res testutils.ApiErrorReponse
 			json.Unmarshal(r.Body.Bytes(), &res)
@@ -105,12 +105,12 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			{Email: testutils.ValidEmail, Password: strings.Repeat("a", testutils.PasswordMaxLength)},
 		}
 
-		// AuthServiceモック
+		// SessionServiceモック
 		userID := uint(1)
-		asMock := new(mocks.AuthServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&userID, nil)
+		ssMock := new(mocks.SessionServiceMock)
+		ssMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(&userID, nil)
 
-		ac := NewAuthController(asMock)
+		sc := NewSessionController(ssMock)
 
 		for _, in := range inputs {
 			reqBody, err := testutils.CreateRequestBodyStr(in)
@@ -123,7 +123,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 			sessMock := mocks.NewSessionMock()
 			testutils.SetSessionMockToGin(c, sessMock)
 
-			ac.Login(c)
+			sc.Login(c)
 			c.Writer.WriteHeaderNow()
 
 			assert.Equal(s.T(), http.StatusCreated, r.Code)
@@ -135,10 +135,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 	s.Run("認証失敗の場合", func() {
 		var userID *uint = nil
-		asMock := new(mocks.AuthServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
+		ssMock := new(mocks.SessionServiceMock)
+		ssMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
-		ac := NewAuthController(asMock)
+		sc := NewSessionController(ssMock)
 
 		form := forms.LoginForm{Email: testutils.ValidEmail, Password: testutils.ValidPassword}
 		reqBody, err := testutils.CreateRequestBodyStr(form)
@@ -147,7 +147,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		}
 		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
-		ac.Login(c)
+		sc.Login(c)
 
 		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
@@ -158,10 +158,10 @@ func (s *AuthControllerTestSuite) TestLogin() {
 
 	s.Run("予期せぬエラーが発生した場合", func() {
 		var userID *uint = nil
-		asMock := new(mocks.AuthServiceMock)
-		asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, testutils.ErrTest)
+		ssMock := new(mocks.SessionServiceMock)
+		ssMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, testutils.ErrTest)
 
-		ac := NewAuthController(asMock)
+		sc := NewSessionController(ssMock)
 
 		form := forms.LoginForm{Email: testutils.ValidEmail, Password: testutils.ValidPassword}
 		reqBody, err := testutils.CreateRequestBodyStr(form)
@@ -170,7 +170,7 @@ func (s *AuthControllerTestSuite) TestLogin() {
 		}
 		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
-		ac.Login(c)
+		sc.Login(c)
 
 		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
@@ -180,12 +180,12 @@ func (s *AuthControllerTestSuite) TestLogin() {
 	})
 }
 
-func (s *AuthControllerTestSuite) TestLogout() {
+func (s *SessionControllerTestSuite) TestLogout() {
 	var userID *uint = nil
-	asMock := new(mocks.AuthServiceMock)
-	asMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
+	ssMock := new(mocks.SessionServiceMock)
+	ssMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
 
-	ac := NewAuthController(asMock)
+	sc := NewSessionController(ssMock)
 
 	r, c := testutils.CreateGetContext("/logout")
 
@@ -193,7 +193,7 @@ func (s *AuthControllerTestSuite) TestLogout() {
 	sessMock := mocks.NewSessionMock()
 	testutils.SetSessionMockToGin(c, sessMock)
 
-	ac.Logout(c)
+	sc.Logout(c)
 
 	var res testutils.ApiErrorReponse
 	json.Unmarshal(r.Body.Bytes(), &res)

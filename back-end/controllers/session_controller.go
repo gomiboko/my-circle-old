@@ -11,18 +11,18 @@ import (
 	"github.com/gomiboko/my-circle/utils"
 )
 
-type AuthController struct {
-	authService services.AuthService
+type SessionController struct {
+	sessionService services.SessionService
 }
 
-func NewAuthController(as services.AuthService) *AuthController {
-	ac := &AuthController{
-		authService: as,
+func NewSessionController(ss services.SessionService) *SessionController {
+	sc := &SessionController{
+		sessionService: ss,
 	}
-	return ac
+	return sc
 }
 
-func (ac AuthController) Login(c *gin.Context) {
+func (sc SessionController) Login(c *gin.Context) {
 	var form forms.LoginForm
 	if err := c.ShouldBindJSON(&form); err != nil {
 		c.JSON(utils.ResponseBody400BadRequest())
@@ -30,7 +30,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 
 	// ログイン認証
-	userID, err := ac.authService.Authenticate(form.Email, form.Password)
+	userID, err := sc.sessionService.Authenticate(form.Email, form.Password)
 
 	if err != nil {
 		log.Print(err)
@@ -52,7 +52,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-func (ac AuthController) Logout(c *gin.Context) {
+func (sc SessionController) Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
 	session.Save()
