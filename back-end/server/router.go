@@ -58,7 +58,7 @@ func NewRouter() (*gin.Engine, error) {
 	sess := r.Group("/sessions")
 	{
 		sess.POST("", sc.Create)
-		sess.GET("", sc.Destroy)
+		sess.DELETE("", sc.Destroy)
 	}
 	r.POST("/users", uc.Create)
 
