@@ -30,7 +30,7 @@ func TestSessionController(t *testing.T) {
 	suite.Run(t, new(SessionControllerTestSuite))
 }
 
-func (s *SessionControllerTestSuite) TestLogin() {
+func (s *SessionControllerTestSuite) TestCreate() {
 	const reqPath = "/login"
 
 	s.Run("不正なリクエスト(URLエンコード)の場合", func() {
@@ -180,7 +180,7 @@ func (s *SessionControllerTestSuite) TestLogin() {
 	})
 }
 
-func (s *SessionControllerTestSuite) TestLogout() {
+func (s *SessionControllerTestSuite) TestDestroy() {
 	var userID *uint = nil
 	ssMock := new(mocks.SessionServiceMock)
 	ssMock.On("Authenticate", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(userID, nil)
