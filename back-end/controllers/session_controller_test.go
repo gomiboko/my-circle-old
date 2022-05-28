@@ -50,7 +50,7 @@ func (s *SessionControllerTestSuite) TestLogin() {
 		c.Request, _ = http.NewRequest(http.MethodPost, reqPath, strings.NewReader(values.Encode()))
 		c.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-		sc.Login(c)
+		sc.Create(c)
 
 		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
@@ -85,7 +85,7 @@ func (s *SessionControllerTestSuite) TestLogin() {
 			}
 			r, c := testutils.CreatePostContext(reqPath, reqBody)
 
-			sc.Login(c)
+			sc.Create(c)
 
 			var res testutils.ApiErrorReponse
 			json.Unmarshal(r.Body.Bytes(), &res)
@@ -123,7 +123,7 @@ func (s *SessionControllerTestSuite) TestLogin() {
 			sessMock := mocks.NewSessionMock()
 			testutils.SetSessionMockToGin(c, sessMock)
 
-			sc.Login(c)
+			sc.Create(c)
 			c.Writer.WriteHeaderNow()
 
 			assert.Equal(s.T(), http.StatusCreated, r.Code)
@@ -147,7 +147,7 @@ func (s *SessionControllerTestSuite) TestLogin() {
 		}
 		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
-		sc.Login(c)
+		sc.Create(c)
 
 		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
@@ -170,7 +170,7 @@ func (s *SessionControllerTestSuite) TestLogin() {
 		}
 		r, c := testutils.CreatePostContext(reqPath, reqBody)
 
-		sc.Login(c)
+		sc.Create(c)
 
 		var res testutils.ApiErrorReponse
 		json.Unmarshal(r.Body.Bytes(), &res)
@@ -193,7 +193,7 @@ func (s *SessionControllerTestSuite) TestLogout() {
 	sessMock := mocks.NewSessionMock()
 	testutils.SetSessionMockToGin(c, sessMock)
 
-	sc.Logout(c)
+	sc.Destroy(c)
 
 	var res testutils.ApiErrorReponse
 	json.Unmarshal(r.Body.Bytes(), &res)

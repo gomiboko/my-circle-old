@@ -22,7 +22,7 @@ func NewSessionController(ss services.SessionService) *SessionController {
 	return sc
 }
 
-func (sc SessionController) Login(c *gin.Context) {
+func (sc SessionController) Create(c *gin.Context) {
 	var form forms.LoginForm
 	if err := c.ShouldBindJSON(&form); err != nil {
 		c.JSON(utils.ResponseBody400BadRequest())
@@ -52,7 +52,7 @@ func (sc SessionController) Login(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-func (sc SessionController) Logout(c *gin.Context) {
+func (sc SessionController) Destroy(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
 	session.Save()

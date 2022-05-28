@@ -102,7 +102,7 @@ export default class App extends Vue {
         // TODO: 設定表示
         break;
       case ACCOUNT_MENU_ITEMS.LOGOUT.ID:
-        await this.$http.get(API_PATHS.LOGOUT, { withCredentials: true });
+        await this.$http.get(API_PATHS.SESSIONS, { withCredentials: true });
         this.$router.push(PAGE_PATHS.LOGIN);
         break;
     }

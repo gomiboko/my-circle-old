@@ -13,6 +13,5 @@ export const PAGE_PATHS = Object.freeze({
 export const API_PATHS = Object.freeze({
   USERS: "/users",
   USERS_ME: "/users/me",
-  LOGIN: "/login",
-  LOGOUT: "/logout",
+  SESSIONS: "/sessions",
 });

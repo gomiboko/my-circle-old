@@ -163,7 +163,7 @@ describe("App.vue", () => {
       // ログアウト処理実行
       await execAsyncMethod(wrapper, "onMenuClick", LogoutMenuId);
 
-      expect(axiosMock.get).toBeCalledWith(API_PATHS.LOGOUT, { withCredentials: true });
+      expect(axiosMock.get).toBeCalledWith(API_PATHS.SESSIONS, { withCredentials: true });
       expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.LOGIN);
     });
   });

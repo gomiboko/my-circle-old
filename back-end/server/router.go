@@ -55,8 +55,11 @@ func NewRouter() (*gin.Engine, error) {
 	ur := repositories.NewUserRepository(db.GetDB())
 	sc := controllers.NewSessionController(services.NewSessionService(ur))
 	uc := controllers.NewUserController(services.NewUserService(ur))
-	r.POST("/login", sc.Login)
-	r.GET("/logout", sc.Logout)
+	sess := r.Group("/sessions")
+	{
+		sess.POST("", sc.Create)
+		sess.GET("", sc.Destroy)
+	}
 	r.POST("/users", uc.Create)
 
 	// 認証が必要なエンドポイント
