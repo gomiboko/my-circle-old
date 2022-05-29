@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/controllers"
 	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/middlewares"
@@ -41,13 +42,13 @@ func NewRouter() (*gin.Engine, error) {
 }
 
 func setupMiddlewares(r *gin.Engine) error {
-	isSecure, err := strconv.ParseBool(os.Getenv("COOKIE_SECURE"))
+	isSecure, err := strconv.ParseBool(os.Getenv(consts.EnvCookieSecure))
 	if err != nil {
 		return err
 	}
 
 	// セッションの設定
-	store := memstore.NewStore([]byte(os.Getenv("SESSION_AUTH_KEY")))
+	store := memstore.NewStore([]byte(os.Getenv(consts.EnvSessionAuthKey)))
 	store.Options(sessions.Options{
 		Secure:   isSecure,
 		HttpOnly: true,
@@ -61,7 +62,7 @@ func setupMiddlewares(r *gin.Engine) error {
 	// 本来CORSミドルウェアで設定されるはずだった「Access-Control-Allow-Origin」ヘッダが付与されずにレスポンスが返却されることになり、
 	// クライアント側でCORSエラーが発生してしまうので注意。
 	cfg := cors.DefaultConfig()
-	cfg.AllowOrigins = []string{os.Getenv("FRONTEND_ORIGIN")}
+	cfg.AllowOrigins = []string{os.Getenv(consts.EnvFrontendOrigin)}
 	cfg.AllowCredentials = true
 	r.Use(cors.New(cfg))
 
