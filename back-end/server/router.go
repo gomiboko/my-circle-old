@@ -22,9 +22,28 @@ import (
 func NewRouter() (*gin.Engine, error) {
 	r := gin.Default()
 
-	isSecure, err := strconv.ParseBool(os.Getenv("COOKIE_SECURE"))
+	// ミドルウェアの設定
+	err := setupMiddlewares(r)
 	if err != nil {
 		return nil, err
+	}
+
+	// カスタムバリデーションの設定
+	err = setupCustomValidations()
+	if err != nil {
+		return nil, err
+	}
+
+	// ルーティングの設定
+	setupRoutings(r)
+
+	return r, nil
+}
+
+func setupMiddlewares(r *gin.Engine) error {
+	isSecure, err := strconv.ParseBool(os.Getenv("COOKIE_SECURE"))
+	if err != nil {
+		return err
 	}
 
 	// セッションの設定
@@ -37,20 +56,29 @@ func NewRouter() (*gin.Engine, error) {
 	r.Use(sessions.Sessions("sessionid", store))
 
 	// CORSの設定
-	// (内部で許可されていないOriginの場合は処理を中断して403を返しているので、OriginチェックによるCSRF対策も兼ねる)
+	// 内部で許可されていないOriginの場合は処理を中断して403を返しているので、OriginチェックによるCSRF対策も兼ねる。
+	// Abortするミドルウェアを登録する場合、CORSミドルウェアより先に登録してしまうと
+	// 本来CORSミドルウェアで設定されるはずだった「Access-Control-Allow-Origin」ヘッダが付与されずにレスポンスが返却されることになり、
+	// クライアント側でCORSエラーが発生してしまうので注意。
 	cfg := cors.DefaultConfig()
 	cfg.AllowOrigins = []string{os.Getenv("FRONTEND_ORIGIN")}
 	cfg.AllowCredentials = true
 	r.Use(cors.New(cfg))
 
-	// カスタムバリデーションの登録
+	return nil
+}
+
+func setupCustomValidations() error {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("notonlywhitespace", validations.NotOnlyWhitespace)
 		v.RegisterValidation("password", validations.Password)
+		return nil
 	} else {
-		return nil, errors.New("カスタムバリデーションの登録に失敗しました")
+		return errors.New("カスタムバリデーションの登録に失敗しました")
 	}
+}
 
+func setupRoutings(r *gin.Engine) {
 	// ルーティング
 	ur := repositories.NewUserRepository(db.GetDB())
 	sc := controllers.NewSessionController(services.NewSessionService(ur))
@@ -68,6 +96,4 @@ func NewRouter() (*gin.Engine, error) {
 		users := authorized.Group("/users")
 		users.GET("/me", uc.GetHomeInfo)
 	}
-
-	return r, nil
 }
