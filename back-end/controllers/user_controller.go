@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/services"
@@ -43,7 +44,7 @@ func (uc *UserController) Create(c *gin.Context) {
 
 	// ユーザ登録に成功した場合、ログイン状態にする
 	session := sessions.Default(c)
-	session.Set("user_id", user.ID)
+	session.Set(consts.SessKeyUserId, user.ID)
 	session.Save()
 
 	c.JSON(http.StatusCreated, gin.H{"user": user})
@@ -51,7 +52,7 @@ func (uc *UserController) Create(c *gin.Context) {
 
 func (uc *UserController) GetHomeInfo(c *gin.Context) {
 	session := sessions.Default(c)
-	userId := session.Get("user_id").(uint)
+	userId := session.Get(consts.SessKeyUserId).(uint)
 
 	user, err := uc.userService.GetHomeInfo(userId)
 

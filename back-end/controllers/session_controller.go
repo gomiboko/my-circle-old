@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/services"
 	"github.com/gomiboko/my-circle/utils"
@@ -46,7 +47,7 @@ func (sc SessionController) Create(c *gin.Context) {
 	}
 
 	session := sessions.Default(c)
-	session.Set("user_id", *userID)
+	session.Set(consts.SessKeyUserId, *userID)
 	session.Save()
 
 	c.Status(http.StatusCreated)
