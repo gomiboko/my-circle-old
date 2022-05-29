@@ -75,7 +75,7 @@ func setupCustomValidations() error {
 		v.RegisterValidation("password", validations.Password)
 		return nil
 	} else {
-		return errors.New("カスタムバリデーションの登録に失敗しました")
+		return errors.New(consts.MsgFailedToRegisterValidations)
 	}
 }
 

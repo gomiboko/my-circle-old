@@ -35,7 +35,7 @@ func (uc *UserController) Create(c *gin.Context) {
 	user, err := uc.userService.CreateUser(form)
 	if err != nil {
 		if db.Is(err, db.ErrDuplicateEntry) {
-			c.JSON(http.StatusConflict, utils.MessageResponseBody("登録済みのメールアドレスです"))
+			c.JSON(http.StatusConflict, utils.MessageResponseBody(consts.MsgDuplicatedEmailAddress))
 		} else {
 			c.JSON(utils.ResponseBody500UnexpectedError())
 		}

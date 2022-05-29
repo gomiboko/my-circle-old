@@ -15,7 +15,7 @@ func AuthRequired() gin.HandlerFunc {
 		isLoggedIn := session.Get(consts.SessKeyUserId) != nil
 
 		if !isLoggedIn {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.MessageResponseBody("ログインしてください"))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.MessageResponseBody(consts.MsgNeedToLogin))
 		}
 	}
 }

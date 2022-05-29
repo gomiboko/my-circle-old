@@ -42,7 +42,7 @@ func (sc SessionController) Create(c *gin.Context) {
 
 	// 認証失敗
 	if userID == nil {
-		c.JSON(http.StatusUnauthorized, utils.MessageResponseBody("メールアドレスまたはパスワードが違います"))
+		c.JSON(http.StatusUnauthorized, utils.MessageResponseBody(consts.MsgFailedToLogin))
 		return
 	}
 
