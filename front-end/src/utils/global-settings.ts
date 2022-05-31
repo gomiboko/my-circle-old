@@ -25,7 +25,7 @@ export function initVeeValidate(): void {
  * @returns axios
  */
 export function initAxios(): AxiosStatic {
-  axios.defaults.baseURL = process.env.VUE_APP_BACKEND_BASE_URL;
+  axios.defaults.baseURL = process.env.VUE_APP_BACKEND_BASE_URL + "/v1";
   axios.defaults.timeout = 10 * 1000;
   axios.interceptors.request.use(onRequestFulfilled, onRejected);
   axios.interceptors.response.use(onResponseFulfilled, onResponseRejected);

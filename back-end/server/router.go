@@ -20,6 +20,11 @@ import (
 	"github.com/gomiboko/my-circle/validations"
 )
 
+const (
+	pathV1    = "/v1"
+	pathUsers = "/users"
+)
+
 func NewRouter() (*gin.Engine, error) {
 	r := gin.Default()
 
@@ -80,21 +85,24 @@ func setupCustomValidations() error {
 }
 
 func setupRoutings(r *gin.Engine) {
-	// ルーティング
 	ur := repositories.NewUserRepository(db.GetDB())
 	sc := controllers.NewSessionController(services.NewSessionService(ur))
 	uc := controllers.NewUserController(services.NewUserService(ur))
-	sess := r.Group("/sessions")
+
+	// 認証が不要なエンドポイント
+	v1 := r.Group(pathV1)
+	sess := v1.Group("/sessions")
 	{
 		sess.POST("", sc.Create)
 		sess.DELETE("", sc.Destroy)
 	}
-	r.POST("/users", uc.Create)
+	v1.POST(pathUsers, uc.Create)
 
 	// 認証が必要なエンドポイント
 	authorized := r.Group("/", middlewares.AuthRequired())
+	v1Auth := authorized.Group(pathV1)
 	{
-		users := authorized.Group("/users")
+		users := v1Auth.Group(pathUsers)
 		users.GET("/me", uc.GetHomeInfo)
 	}
 }
