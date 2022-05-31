@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/controllers"
 	"github.com/gomiboko/my-circle/db"
 	"github.com/gomiboko/my-circle/middlewares"
@@ -19,16 +20,40 @@ import (
 	"github.com/gomiboko/my-circle/validations"
 )
 
+const (
+	pathV1    = "/v1"
+	pathUsers = "/users"
+)
+
 func NewRouter() (*gin.Engine, error) {
 	r := gin.Default()
 
-	isSecure, err := strconv.ParseBool(os.Getenv("COOKIE_SECURE"))
+	// ミドルウェアの設定
+	err := setupMiddlewares(r)
 	if err != nil {
 		return nil, err
 	}
 
+	// カスタムバリデーションの設定
+	err = setupCustomValidations()
+	if err != nil {
+		return nil, err
+	}
+
+	// ルーティングの設定
+	setupRoutings(r)
+
+	return r, nil
+}
+
+func setupMiddlewares(r *gin.Engine) error {
+	isSecure, err := strconv.ParseBool(os.Getenv(consts.EnvCookieSecure))
+	if err != nil {
+		return err
+	}
+
 	// セッションの設定
-	store := memstore.NewStore([]byte(os.Getenv("SESSION_AUTH_KEY")))
+	store := memstore.NewStore([]byte(os.Getenv(consts.EnvSessionAuthKey)))
 	store.Options(sessions.Options{
 		Secure:   isSecure,
 		HttpOnly: true,
@@ -37,34 +62,47 @@ func NewRouter() (*gin.Engine, error) {
 	r.Use(sessions.Sessions("sessionid", store))
 
 	// CORSの設定
-	// (内部で許可されていないOriginの場合は処理を中断して403を返しているので、OriginチェックによるCSRF対策も兼ねる)
+	// 内部で許可されていないOriginの場合は処理を中断して403を返しているので、OriginチェックによるCSRF対策も兼ねる。
+	// Abortするミドルウェアを登録する場合、CORSミドルウェアより先に登録してしまうと
+	// 本来CORSミドルウェアで設定されるはずだった「Access-Control-Allow-Origin」ヘッダが付与されずにレスポンスが返却されることになり、
+	// クライアント側でCORSエラーが発生してしまうので注意。
 	cfg := cors.DefaultConfig()
-	cfg.AllowOrigins = []string{os.Getenv("FRONTEND_ORIGIN")}
+	cfg.AllowOrigins = []string{os.Getenv(consts.EnvFrontendOrigin)}
 	cfg.AllowCredentials = true
 	r.Use(cors.New(cfg))
 
-	// カスタムバリデーションの登録
+	return nil
+}
+
+func setupCustomValidations() error {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("notonlywhitespace", validations.NotOnlyWhitespace)
 		v.RegisterValidation("password", validations.Password)
+		return nil
 	} else {
-		return nil, errors.New("カスタムバリデーションの登録に失敗しました")
+		return errors.New(consts.MsgFailedToRegisterValidations)
 	}
+}
 
-	// ルーティング
+func setupRoutings(r *gin.Engine) {
 	ur := repositories.NewUserRepository(db.GetDB())
-	ac := controllers.NewAuthController(services.NewAuthService(ur))
+	sc := controllers.NewSessionController(services.NewSessionService(ur))
 	uc := controllers.NewUserController(services.NewUserService(ur))
-	r.POST("/login", ac.Login)
-	r.GET("/logout", ac.Logout)
-	r.POST("/users", uc.Create)
+
+	// 認証が不要なエンドポイント
+	v1 := r.Group(pathV1)
+	sess := v1.Group("/sessions")
+	{
+		sess.POST("", sc.Create)
+		sess.DELETE("", sc.Destroy)
+	}
+	v1.POST(pathUsers, uc.Create)
 
 	// 認証が必要なエンドポイント
 	authorized := r.Group("/", middlewares.AuthRequired())
+	v1Auth := authorized.Group(pathV1)
 	{
-		users := authorized.Group("/users")
+		users := v1Auth.Group(pathUsers)
 		users.GET("/me", uc.GetHomeInfo)
 	}
-
-	return r, nil
 }

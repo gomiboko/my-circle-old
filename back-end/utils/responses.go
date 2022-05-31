@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/consts"
 )
 
 // メッセージを含むレスポンスボディを生成する
@@ -12,9 +13,9 @@ func MessageResponseBody(message string) gin.H {
 }
 
 func ResponseBody400BadRequest() (int, gin.H) {
-	return http.StatusBadRequest, MessageResponseBody("不正なリクエストです")
+	return http.StatusBadRequest, MessageResponseBody(consts.Msg400BadRequest)
 }
 
 func ResponseBody500UnexpectedError() (int, gin.H) {
-	return http.StatusInternalServerError, MessageResponseBody("予期せぬエラーが発生しました")
+	return http.StatusInternalServerError, MessageResponseBody(consts.Msg500UnexpectedError)
 }

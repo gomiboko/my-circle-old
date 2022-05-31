@@ -114,7 +114,7 @@ export default class Login extends Vue {
     }
 
     await this.$http.post(
-      API_PATHS.LOGIN,
+      API_PATHS.SESSIONS,
       {
         email: this.email,
         password: this.password,
