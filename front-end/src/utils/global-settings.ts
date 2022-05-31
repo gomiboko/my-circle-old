@@ -7,6 +7,7 @@ import Vue from "vue";
 import { AppMessageType } from "@/store/app-message";
 import router from "@/router";
 import { StatusCodes } from "http-status-codes";
+import { PAGE_PATHS } from "./consts";
 
 /**
  * VeeValidateの設定を行う
@@ -79,7 +80,7 @@ function onResponseFulfilled(response: AxiosResponse<any>): AxiosResponse<any> {
 function onResponseRejected(error: any): Promise<never> {
   // 認証が必要なページで401エラーとなった場合、ログイン画面に遷移
   if (axios.isAxiosError(error) && error.response?.status === StatusCodes.UNAUTHORIZED) {
-    router.push("/login");
+    router.push(PAGE_PATHS.LOGIN);
   }
 
   return onRejected(error);
