@@ -23,7 +23,7 @@
       </v-row>
       <v-row justify="center">
         <v-col md="4" lg="3" xl="2">
-          <v-btn color="primary" block>サークル作成</v-btn>
+          <v-btn @click="gotoCircleRegister" color="primary" block>サークル作成</v-btn>
         </v-col>
       </v-row>
       <v-row align="end" style="height: 100px">
@@ -52,7 +52,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { User } from "@/responses/user";
 import { AppMessageSize } from "@/store/app-message";
-import { API_PATHS } from "@/utils/consts";
+import { API_PATHS, PAGE_PATHS } from "@/utils/consts";
 
 @Component
 export default class Home extends Vue {
@@ -70,6 +70,10 @@ export default class Home extends Vue {
     } finally {
       this.loading = false;
     }
+  }
+
+  private gotoCircleRegister() {
+    this.$router.push(PAGE_PATHS.CIRCLE_REGISTER);
   }
 }
 </script>

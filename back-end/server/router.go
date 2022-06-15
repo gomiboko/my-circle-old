@@ -86,8 +86,11 @@ func setupCustomValidations() error {
 
 func setupRoutings(r *gin.Engine) {
 	ur := repositories.NewUserRepository(db.GetDB())
+	cr := repositories.NewCircleRepository(db.GetDB())
+	ucr := repositories.NewUsersCirclesRepository(db.GetDB())
 	sc := controllers.NewSessionController(services.NewSessionService(ur))
 	uc := controllers.NewUserController(services.NewUserService(ur))
+	cc := controllers.NewCircleController(services.NewCircleService(cr, ucr))
 
 	// 認証が不要なエンドポイント
 	v1 := r.Group(pathV1)
@@ -104,5 +107,8 @@ func setupRoutings(r *gin.Engine) {
 	{
 		users := v1Auth.Group(pathUsers)
 		users.GET("/me", uc.GetHomeInfo)
+
+		circles := v1Auth.Group("/circles")
+		circles.POST("", cc.Create)
 	}
 }

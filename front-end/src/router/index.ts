@@ -29,6 +29,11 @@ const routes: Array<RouteConfig> = [
     name: "Join",
     component: () => import("../views/Join.vue"),
   },
+  {
+    path: PAGE_PATHS.CIRCLE_REGISTER,
+    name: "CircleRegister",
+    component: () => import("../views/CircleRegister.vue"),
+  },
 ];
 
 const router = new VueRouter({
