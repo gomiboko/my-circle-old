@@ -24,7 +24,7 @@ func NewCircleController(cs services.CircleService) *CircleController {
 func (cc *CircleController) Create(c *gin.Context) {
 	// 入力チェック
 	var form forms.CircleForm
-	if err := c.ShouldBindJSON(&form); err != nil {
+	if err := c.ShouldBind(&form); err != nil {
 		c.JSON(utils.ResponseBody400BadRequest())
 		return
 	}

@@ -86,6 +86,7 @@ import { ValidationObserver, ValidationProvider } from "vee-validate";
 import RequiredTextField from "@/components/RequiredTextField.vue";
 import { API_PATHS, PAGE_PATHS } from "@/utils/consts";
 import { Route, NavigationGuardNext } from "vue-router";
+import { CONTENT_TYPE, createFormData } from "@/utils/http";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
@@ -120,13 +121,17 @@ export default class CircleRegister extends Vue {
       return;
     }
 
+    const data = createFormData({
+      circleName: this.circleName,
+      circleIconFile: this.circleIconFile,
+    });
+
     await this.$http.post(
       API_PATHS.CIRCLES,
-      {
-        circleName: this.circleName,
-      },
+      data,
       {
         withCredentials: true,
+        headers: CONTENT_TYPE.MULTIPART_FORM_DATA,
       }
     );
 
