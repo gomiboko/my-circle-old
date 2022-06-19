@@ -12,61 +12,33 @@
           <v-col md="4" lg="3" xl="2">
             <v-row>
               <v-col>
-                <validation-provider
-                  name="サークル名"
-                  rules="required|max:45"
-                  v-slot="{ errors }"
-                >
-                  <required-text-field
-                    label="サークル名"
-                    v-model="circleName"
-                    :error-messages="errors"
-                  >
+                <validation-provider name="サークル名" rules="required|max:45" v-slot="{ errors }">
+                  <required-text-field label="サークル名" v-model="circleName" :error-messages="errors">
                     <template v-slot:prepend>
-                      <v-icon
-                        v-if="circleIconFile === null"
-                        size="32"
-                        @click="showFileChooser"
-                      >
+                      <v-icon v-if="circleIconFile === null" size="32" @click="showFileChooser">
                         mdi-account-supervisor-circle
                       </v-icon>
-                      <v-avatar
-                        v-else
-                        size="32"
-                        style="cursor: pointer"
-                        @click="showFileChooser"
-                      >
+                      <v-avatar v-else size="32" style="cursor: pointer" @click="showFileChooser">
                         <!-- TODO: アイコンが設定済みの場合、それを表示する -->
                         <!-- <img src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"> -->
-                        <img :src="circleIconData">
+                        <img :src="circleIconData" />
                       </v-avatar>
                     </template>
                   </required-text-field>
                 </validation-provider>
-                <input
-                  type="file"
-                  ref="fileInput"
-                  @change="changeIcon"
-                  style="display: none;" />
+                <input type="file" ref="fileInput" @change="changeIcon" style="display: none" />
               </v-col>
             </v-row>
             <v-row>
               <v-col class="text-right">
-                <v-btn
-                  @click="cancel"
-                  outlined
-                  style="width: 100px;"
-                  class="mr-2"
-                >
-                  キャンセル
-                </v-btn>
+                <v-btn @click="cancel" outlined style="width: 100px" class="mr-2"> キャンセル </v-btn>
                 <v-btn
                   @click="register"
                   :loading="$state.loading"
                   :disabled="$state.loading"
                   color="primary"
                   depressed
-                  style="width: 100px;"
+                  style="width: 100px"
                 >
                   作成
                 </v-btn>
@@ -104,7 +76,7 @@ export default class CircleRegister extends Vue {
   private fromPath = "";
 
   private beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
-    next(vm => {
+    next((vm) => {
       vm.$data["fromPath"] = from.path;
     });
   }
@@ -126,14 +98,10 @@ export default class CircleRegister extends Vue {
       circleIconFile: this.circleIconFile,
     });
 
-    await this.$http.post(
-      API_PATHS.CIRCLES,
-      data,
-      {
-        withCredentials: true,
-        headers: CONTENT_TYPE.MULTIPART_FORM_DATA,
-      }
-    );
+    await this.$http.post(API_PATHS.CIRCLES, data, {
+      withCredentials: true,
+      headers: CONTENT_TYPE.MULTIPART_FORM_DATA,
+    });
 
     // FIXME: 作成したサークルの詳細ページに遷移。そこからメンバー招待等。
     this.$router.push(PAGE_PATHS.HOME);
@@ -169,7 +137,7 @@ export default class CircleRegister extends Vue {
     reader.onload = (e) => {
       this.circleIconData = e.target?.result || null;
     };
-    reader.readAsDataURL(this.circleIconFile as Blob)
+    reader.readAsDataURL(this.circleIconFile as Blob);
   }
 }
 </script>
