@@ -9,6 +9,7 @@ import (
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/services"
 	"github.com/gomiboko/my-circle/utils"
+	"github.com/gomiboko/my-circle/validations"
 )
 
 type CircleController struct {
@@ -25,6 +26,12 @@ func (cc *CircleController) Create(c *gin.Context) {
 	// 入力チェック
 	var form forms.CircleForm
 	if err := c.ShouldBind(&form); err != nil {
+		c.JSON(utils.ResponseBody400BadRequest())
+		return
+	}
+
+	// アイコンファイルのサイズチェック
+	if validations.IsOverMaxIconFileSize(form.CircleIconFile) {
 		c.JSON(utils.ResponseBody400BadRequest())
 		return
 	}

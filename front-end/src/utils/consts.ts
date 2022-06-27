@@ -17,3 +17,15 @@ export const API_PATHS = Object.freeze({
   SESSIONS: "/sessions",
   CIRCLES: "/circles",
 });
+
+/**
+ * メッセージ
+ */
+export const MESSAGES = Object.freeze({
+  OVER_MAX_ICON_FILE_SIZE: "1MB以下のファイルを選択してください",
+});
+
+/**
+ * アイコンファイルの最大サイズ(1MB)
+ */
+export const MAX_ICON_FILE_SIZE = 1_000_000;

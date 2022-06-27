@@ -52,11 +52,11 @@
 </template>
 
 <script lang="ts">
-import { AppMessageSize } from "@/store/app-message";
+import { AppMessageSize, AppMessageType } from "@/store/app-message";
 import { Component, Vue } from "vue-property-decorator";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import RequiredTextField from "@/components/RequiredTextField.vue";
-import { API_PATHS, PAGE_PATHS } from "@/utils/consts";
+import { API_PATHS, MAX_ICON_FILE_SIZE, MESSAGES, PAGE_PATHS } from "@/utils/consts";
 import { Route, NavigationGuardNext } from "vue-router";
 import { CONTENT_TYPE, createFormData } from "@/utils/http";
 
@@ -127,7 +127,16 @@ export default class CircleRegister extends Vue {
       return;
     }
 
+    this.$state.appMsg.message = "";
+
     // TODO: ファイルの形式チェック
+    // アイコンファイルのサイズチェック
+    if (selectedFile.size > MAX_ICON_FILE_SIZE) {
+      this.$state.appMsg.type = AppMessageType.Error;
+      this.$state.appMsg.message = MESSAGES.OVER_MAX_ICON_FILE_SIZE;
+      return;
+    }
+
     // TODO: 画像の範囲選択ダイアログを表示
 
     this.circleIconFile = selectedFile;
