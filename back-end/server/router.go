@@ -71,6 +71,9 @@ func setupMiddlewares(r *gin.Engine) error {
 	cfg.AllowCredentials = true
 	r.Use(cors.New(cfg))
 
+	// リクエストボディサイズ上限の設定
+	r.Use(middlewares.RequestBodySizeLimiter())
+
 	return nil
 }
 
