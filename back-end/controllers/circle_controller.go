@@ -30,6 +30,12 @@ func (cc *CircleController) Create(c *gin.Context) {
 		return
 	}
 
+	// アイコンファイルの形式チェック
+	if validations.IsNotAllowedIconFileFormat(form.CircleIconFile) {
+		c.JSON(utils.ResponseBody400BadRequest())
+		return
+	}
+
 	// アイコンファイルのサイズチェック
 	if validations.IsOverMaxIconFileSize(form.CircleIconFile) {
 		c.JSON(utils.ResponseBody400BadRequest())

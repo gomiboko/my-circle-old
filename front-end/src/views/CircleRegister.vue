@@ -21,12 +21,12 @@
                       <v-avatar v-else size="32" style="cursor: pointer" @click="showFileChooser">
                         <!-- TODO: アイコンが設定済みの場合、それを表示する -->
                         <!-- <img src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"> -->
-                        <img :src="circleIconData" />
+                        <img :src="circleIconDataUrl" />
                       </v-avatar>
                     </template>
                   </required-text-field>
                 </validation-provider>
-                <input type="file" ref="fileInput" @change="changeIcon" style="display: none" />
+                <input type="file" ref="fileInput" @change="changeIcon" accept=".png,.jpg" style="display: none" />
               </v-col>
             </v-row>
             <v-row>
@@ -59,6 +59,7 @@ import RequiredTextField from "@/components/RequiredTextField.vue";
 import { API_PATHS, MAX_ICON_FILE_SIZE, MESSAGES, PAGE_PATHS } from "@/utils/consts";
 import { Route, NavigationGuardNext } from "vue-router";
 import { CONTENT_TYPE, createFormData } from "@/utils/http";
+import { IsNotAllowedIconFileFormat } from "@/utils/image";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
@@ -72,7 +73,7 @@ Component.registerHooks(["beforeRouteEnter"]);
 export default class CircleRegister extends Vue {
   private circleName = "";
   private circleIconFile: File | null = null;
-  private circleIconData: string | ArrayBuffer | null = null;
+  private circleIconDataUrl: string | null = null;
   private fromPath = "";
 
   private beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
@@ -129,7 +130,6 @@ export default class CircleRegister extends Vue {
 
     this.$state.appMsg.message = "";
 
-    // TODO: ファイルの形式チェック
     // アイコンファイルのサイズチェック
     if (selectedFile.size > MAX_ICON_FILE_SIZE) {
       this.$state.appMsg.type = AppMessageType.Error;
@@ -139,14 +139,29 @@ export default class CircleRegister extends Vue {
 
     // TODO: 画像の範囲選択ダイアログを表示
 
-    this.circleIconFile = selectedFile;
-
-    // サークルアイコンの表示を更新
+    // 選択されたファイルの読み込み
     const reader = new FileReader();
     reader.onload = (e) => {
-      this.circleIconData = e.target?.result || null;
+      // FileReader.readAsDataURLで読み込んだ場合、resultは文字列
+      const dataUrl = e.target?.result as string | null | undefined;
+
+      if (!dataUrl) {
+        this.$state.appMsg.type = AppMessageType.Error;
+        this.$state.appMsg.message = MESSAGES.FAILED_TO_LOAD_FILE;
+        return;
+      }
+
+      // アイコンファイルのフォーマットチェック
+      if (IsNotAllowedIconFileFormat(dataUrl)) {
+        this.$state.appMsg.type = AppMessageType.Error;
+        this.$state.appMsg.message = MESSAGES.NOT_ALLOWED_ICON_FILE_FORMAT;
+      } else {
+        // サークルアイコンの表示を更新
+        this.circleIconDataUrl = dataUrl;
+        this.circleIconFile = selectedFile;
+      }
     };
-    reader.readAsDataURL(this.circleIconFile as Blob);
+    reader.readAsDataURL(selectedFile);
   }
 }
 </script>
