@@ -18,11 +18,19 @@
                       <v-icon v-if="circleIconFile === null" size="32" @click="showFileChooser">
                         mdi-account-supervisor-circle
                       </v-icon>
-                      <v-avatar v-else size="32" style="cursor: pointer" @click="showFileChooser">
-                        <!-- TODO: アイコンが設定済みの場合、それを表示する -->
-                        <!-- <img src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"> -->
-                        <img :src="circleIconDataUrl" />
-                      </v-avatar>
+                      <v-badge
+                        v-else
+                        @click.native="removeIcon"
+                        icon="mdi-close-thick"
+                        color="red lighten-2"
+                        overlap
+                        bordered
+                        style="cursor: pointer"
+                      >
+                        <v-avatar size="32" style="cursor: pointer" @click.stop="showFileChooser">
+                          <img :src="circleIconDataUrl" />
+                        </v-avatar>
+                      </v-badge>
                     </template>
                   </required-text-field>
                 </validation-provider>
@@ -162,6 +170,11 @@ export default class CircleRegister extends Vue {
       }
     };
     reader.readAsDataURL(selectedFile);
+  }
+
+  private removeIcon() {
+    this.circleIconDataUrl = null;
+    this.circleIconFile = null;
   }
 }
 </script>
