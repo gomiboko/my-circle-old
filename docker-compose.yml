@@ -31,7 +31,7 @@ services:
       - ./back-end/mysql/data:/var/lib/mysql
     container_name: mc-db-dev-compose
   dev-localstack:
-    image: localstack/localstack:0.14.5
+    build: ./back-end/localstack
     ports:
       - "127.0.0.1:4510-4559:4510-4559"
       - "127.0.0.1:4566:4566"
