@@ -30,3 +30,14 @@ services:
       - ./back-end/mysql/init:/docker-entrypoint-initdb.d
       - ./back-end/mysql/data:/var/lib/mysql
     container_name: mc-db-dev-compose
+  dev-localstack:
+    image: localstack/localstack:0.14.5
+    ports:
+      - "127.0.0.1:4510-4559:4510-4559"
+      - "127.0.0.1:4566:4566"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./back-end/localstack/volume:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    container_name: mc-localstack-dev-compose
