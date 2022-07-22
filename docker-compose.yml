@@ -11,6 +11,9 @@ services:
     volumes:
       - ./back-end:/app
     container_name: mc-back-dev-compose
+    depends_on:
+      dev-db:
+        condition: service_healthy
   dev-front:
     build: ./front-end
     ports:
@@ -30,6 +33,12 @@ services:
       - ./back-end/mysql/init:/docker-entrypoint-initdb.d
       - ./back-end/mysql/data:/var/lib/mysql
     container_name: mc-db-dev-compose
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root -proot
+      interval: 5s
+      timeout: 5s
+      retries: 11
+      start_period: 5s
   dev-localstack:
     build: ./back-end/localstack
     ports:
