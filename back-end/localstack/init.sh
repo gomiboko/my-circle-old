@@ -1,8 +1,8 @@
 #!/bin/bash
 
-BUCKET_NAME=my-circle-bucket
-ACCOUNTS_DIR_NAME=accounts
-INIT_S3_DATA_DIR_PATH=/init-data-s3
+readonly BUCKET_NAME="my-circle-bucket"
+readonly ACCOUNTS_DIR_NAME="accounts"
+readonly INIT_S3_DATA_DIR_PATH="/init-data-s3"
 
 # S3バケットの作成
 awslocal s3api create-bucket --bucket $BUCKET_NAME
