@@ -15,6 +15,10 @@ func IsOverMaxIconFileSize(fh *multipart.FileHeader) bool {
 }
 
 func IsNotAllowedIconFileFormat(fh *multipart.FileHeader) bool {
+	if fh == nil {
+		return false
+	}
+
 	file, err := fh.Open()
 	if err != nil {
 		log.Print("ファイルオープンエラー")
