@@ -107,10 +107,15 @@ export default class CircleRegister extends Vue {
       circleIconFile: this.circleIconFile,
     });
 
-    await this.$http.post(API_PATHS.CIRCLES, data, {
+    const res = await this.$http.post(API_PATHS.CIRCLES, data, {
       withCredentials: true,
       headers: CONTENT_TYPE.MULTIPART_FORM_DATA,
     });
+
+    if (res.data.message) {
+      this.$state.nextScreenMsg.type = res.data.messageType;
+      this.$state.nextScreenMsg.message = res.data.message;
+    }
 
     // FIXME: 作成したサークルの詳細ページに遷移。そこからメンバー招待等。
     this.$router.push(PAGE_PATHS.HOME);

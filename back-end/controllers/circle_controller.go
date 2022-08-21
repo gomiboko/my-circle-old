@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -13,12 +14,14 @@ import (
 )
 
 type CircleController struct {
-	circleService services.CircleService
+	circleService  services.CircleService
+	storageService services.StorageService
 }
 
-func NewCircleController(cs services.CircleService) *CircleController {
+func NewCircleController(cs services.CircleService, ss services.StorageService) *CircleController {
 	return &CircleController{
-		circleService: cs,
+		circleService:  cs,
+		storageService: ss,
 	}
 }
 
@@ -51,5 +54,20 @@ func (cc *CircleController) Create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"circle": circle})
+	res := gin.H{consts.ResKeyCircle: circle}
+
+	// アイコンファイルをアップロード
+	if form.CircleIconFile != nil {
+		key := utils.CreateHashedStorageKey(consts.StorageDirCircles, consts.StorageKeyPrefixCircleIcon, circle.ID)
+
+		err = cc.storageService.Upload(key, form.CircleIconFile)
+		if err != nil {
+			log.Print(err.Error())
+
+			res[consts.ResKeyMessage] = consts.MsgFailedToRegisterCircleIcon
+			res[consts.ResKeyMessageType] = consts.MsgTypeWarn
+		}
+	}
+
+	c.JSON(http.StatusCreated, res)
 }

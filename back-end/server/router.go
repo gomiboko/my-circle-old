@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/gomiboko/my-circle/aws"
 	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/controllers"
 	"github.com/gomiboko/my-circle/db"
@@ -88,12 +89,15 @@ func setupCustomValidations() error {
 }
 
 func setupRoutings(r *gin.Engine) {
+	storageService := services.NewS3Service(aws.GetConf())
+
 	ur := repositories.NewUserRepository(db.GetDB())
 	cr := repositories.NewCircleRepository(db.GetDB())
 	ucr := repositories.NewUsersCirclesRepository(db.GetDB())
+
 	sc := controllers.NewSessionController(services.NewSessionService(ur))
 	uc := controllers.NewUserController(services.NewUserService(ur))
-	cc := controllers.NewCircleController(services.NewCircleService(cr, ucr))
+	cc := controllers.NewCircleController(services.NewCircleService(cr, ucr), storageService)
 
 	// 認証が不要なエンドポイント
 	v1 := r.Group(pathV1)
