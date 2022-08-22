@@ -15,12 +15,16 @@ type StorageService interface {
 }
 
 type s3Service struct {
-	conf aws.Config
+	s3Client *s3.Client
 }
 
 func NewS3Service(conf aws.Config) StorageService {
+	client := s3.NewFromConfig(conf, func(o *s3.Options) {
+		o.UsePathStyle = true
+	})
+
 	return &s3Service{
-		conf: conf,
+		s3Client: client,
 	}
 }
 
@@ -39,11 +43,7 @@ func (s3s *s3Service) Upload(key string, fh *multipart.FileHeader) error {
 	}
 	defer file.Close()
 
-	client := s3.NewFromConfig(s3s.conf, func(o *s3.Options) {
-		o.UsePathStyle = true
-	})
-
-	_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
+	_, err = s3s.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(consts.AwsS3BucketName),
 		Key:    aws.String(key),
 		Body:   file,
