@@ -8,6 +8,7 @@ import (
 
 type CircleService interface {
 	CreateCircle(circleForm forms.CircleForm, userId uint) (*models.Circle, error)
+	UpdateCircle(circle *models.Circle) error
 }
 
 type circleService struct {
@@ -47,4 +48,8 @@ func (cs *circleService) CreateCircle(circleForm forms.CircleForm, userId uint) 
 	tx.Commit()
 
 	return &circle, nil
+}
+
+func (cs *circleService) UpdateCircle(circle *models.Circle) error {
+	return cs.circleRepository.Update(circle)
 }

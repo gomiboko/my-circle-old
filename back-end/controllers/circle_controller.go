@@ -56,12 +56,24 @@ func (cc *CircleController) Create(c *gin.Context) {
 
 	res := gin.H{consts.ResKeyCircle: circle}
 
-	// アイコンファイルをアップロード
 	if form.CircleIconFile != nil {
 		key := utils.CreateHashedStorageKey(consts.StorageDirCircles, consts.StorageKeyPrefixCircleIcon, circle.ID)
 
+		// アイコンファイルをアップロード
 		err = cc.storageService.Upload(key, form.CircleIconFile)
 		if err != nil {
+			log.Print(err.Error())
+
+			res[consts.ResKeyMessage] = consts.MsgFailedToRegisterCircleIcon
+			res[consts.ResKeyMessageType] = consts.MsgTypeWarn
+		}
+
+		// サークルテーブルに、アップロードしたアイコンのURLを設定
+		circle.IconUrl = utils.CreateStorageUrl(key)
+		err = cc.circleService.UpdateCircle(circle)
+
+		if err != nil {
+			// ここで初めてサークルを作ったので、楽観ロックエラーについては考慮しなくてOK
 			log.Print(err.Error())
 
 			res[consts.ResKeyMessage] = consts.MsgFailedToRegisterCircleIcon

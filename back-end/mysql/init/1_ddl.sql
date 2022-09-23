@@ -14,8 +14,10 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `mycircle`.`circles` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
+  `icon_url` VARCHAR(150) NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
+  `row_version` INT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 

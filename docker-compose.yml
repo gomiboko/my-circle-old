@@ -7,6 +7,7 @@ services:
     environment:
       DB_SERVICE_NAME: dev-db
       LOCALSTACK_ENDPOINT: http://dev-localstack:4566
+      LOCALSTACK_ENDPOINT_FOR_FRONT: http://localhost:4566
     ports:
       - '8080:8080'
     volumes:
