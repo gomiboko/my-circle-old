@@ -47,7 +47,7 @@
         </v-avatar>
         <v-avatar v-else size="24" :style="createBgColorStyleFromText(c.Name)">
           <!-- サークル名の先頭1文字をアイコンとして使用する -->
-          <span class="white--text text-h6">{{c.Name.substr(0, 1)}}</span>
+          <span class="white--text text-h6">{{ c.Name.substr(0, 1) }}</span>
         </v-avatar>
         {{ c.Name }}
       </li>

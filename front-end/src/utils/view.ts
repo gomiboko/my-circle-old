@@ -29,7 +29,9 @@ export function createBgColorStyleFromText(text: string): string {
  */
 function createColorFromText(text: string): string {
   // 1文字ずつ文字コードに変換して加算
-  const textSum = Array.from(text).map(val => val.charCodeAt(0)).reduce((prev, cur) => prev + cur);
+  const textSum = Array.from(text)
+    .map((val) => val.charCodeAt(0))
+    .reduce((prev, cur) => prev + cur);
 
   const hue = textSum % MAX_COLOR_WHEEL_ANGLE;
   return `hsl(${hue}, ${SATURATION}, ${LIGHTNESS})`;
