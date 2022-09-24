@@ -5,8 +5,10 @@ CREATE TABLE IF NOT EXISTS `mycircle`.`users` (
   `name` VARCHAR(45) NOT NULL,
   `email` VARCHAR(254) NOT NULL,
   `password_hash` VARCHAR(60) NOT NULL,
+  `icon_url` VARCHAR(150) NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
+  `row_version` INT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB;
