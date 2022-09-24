@@ -41,7 +41,7 @@ func (ur *userRepository) GetHomeInfo(userId uint) (*models.User, error) {
 	cond := models.User{ID: userId}
 	result := ur.DB.Where(&cond).
 		Preload("Circles", func(db *gorm.DB) *gorm.DB {
-			return db.Select("id", "name", "icon_url").Order("name")
+			return db.Select("id", "name", "icon_url").Order("name, id")
 		}).
 		Table("users").
 		Select("id, name, email, created_at, updated_at").
