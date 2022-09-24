@@ -54,12 +54,12 @@ func (uc *UserController) GetHomeInfo(c *gin.Context) {
 	session := sessions.Default(c)
 	userId := session.Get(consts.SessKeyUserId).(uint)
 
-	user, err := uc.userService.GetHomeInfo(userId)
+	res, err := uc.userService.GetHomeInfo(userId)
 
 	if err != nil {
 		c.JSON(utils.ResponseBody500UnexpectedError())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	c.JSON(http.StatusOK, res)
 }

@@ -1,5 +1,5 @@
-import { Updatable } from "./bases/updatable";
-
-export interface Circle extends Updatable {
+export interface Circle {
+  ID: number;
   Name: string;
+  IconUrl: string;
 }
