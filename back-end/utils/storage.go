@@ -20,11 +20,11 @@ func CreateStorageUrl(key string) string {
 }
 
 func getStorageEndpoint() string {
-	localStackEndpoint := os.Getenv(consts.SessKeyLocalStackEndpointForFront)
+	localStackEndpoint := os.Getenv(consts.EnvLocalStackEndpointForFront)
 
 	if localStackEndpoint != "" {
 		return localStackEndpoint
 	} else {
-		return "https://s3." + os.Getenv(consts.SessKeyAWSRegion) + ".amazonaws.com"
+		return "https://s3." + os.Getenv(consts.EnvAWSRegion) + ".amazonaws.com"
 	}
 }

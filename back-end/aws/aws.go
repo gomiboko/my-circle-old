@@ -12,8 +12,8 @@ import (
 var conf aws.Config
 
 func Init() error {
-	localStackEndpoint := os.Getenv(consts.SessKeyLocalStackEndpoint)
-	awsRegion := os.Getenv(consts.SessKeyAWSRegion)
+	localStackEndpoint := os.Getenv(consts.EnvLocalStackEndpoint)
+	awsRegion := os.Getenv(consts.EnvAWSRegion)
 
 	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 		if localStackEndpoint != "" {
