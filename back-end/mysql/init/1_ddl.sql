@@ -1,7 +1,8 @@
 CREATE DATABASE mycircle;
 USE mycircle;
+
 CREATE TABLE IF NOT EXISTS `mycircle`.`users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `email` VARCHAR(254) NOT NULL,
   `password_hash` VARCHAR(60) NOT NULL,
@@ -14,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `mycircle`.`users` (
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `mycircle`.`circles` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `icon_url` VARCHAR(150) NOT NULL,
   `created_at` DATETIME NOT NULL,
@@ -24,10 +25,9 @@ CREATE TABLE IF NOT EXISTS `mycircle`.`circles` (
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `mycircle`.`users_circles` (
-  `user_id` INT NOT NULL,
-  `circle_id` INT NOT NULL,
+  `user_id` INT UNSIGNED NOT NULL,
+  `circle_id` INT UNSIGNED NOT NULL,
   `created_at` DATETIME NOT NULL,
-  `updated_at` DATETIME NOT NULL,
   INDEX `fk_user_id_idx` (`user_id` ASC) VISIBLE,
   INDEX `fk_circle_id_idx` (`circle_id` ASC) VISIBLE,
   PRIMARY KEY (`user_id`, `circle_id`),
