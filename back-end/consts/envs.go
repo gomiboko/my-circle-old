@@ -9,7 +9,7 @@ const (
 	EnvDbPassword                 = "DB_PASSWORD"
 	EnvDbName                     = "DB_NAME"
 	EnvDbTimeZone                 = "DB_TIME_ZONE"
-	EnvLocalStackEndpoint         = "LOCALSTACK_ENDPOINT"
+	EnvLocalStackEndpointForBack  = "LOCALSTACK_ENDPOINT_FOR_BACK"
 	EnvLocalStackEndpointForFront = "LOCALSTACK_ENDPOINT_FOR_FRONT"
 	EnvAWSRegion                  = "AWS_REGION"
 )
