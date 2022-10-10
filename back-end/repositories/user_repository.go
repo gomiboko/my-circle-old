@@ -8,7 +8,7 @@ import (
 type UserRepository interface {
 	Get(email string) (*models.User, error)
 	Create(user *models.User) error
-	GetHomeInfo(userId uint) (*models.User, error)
+	GetHomeInfo(userID uint) (*models.User, error)
 }
 
 type userRepository struct {
@@ -35,10 +35,10 @@ func (ur *userRepository) Create(user *models.User) error {
 	return result.Error
 }
 
-func (ur *userRepository) GetHomeInfo(userId uint) (*models.User, error) {
+func (ur *userRepository) GetHomeInfo(userID uint) (*models.User, error) {
 	var user models.User
 
-	cond := models.User{ID: userId}
+	cond := models.User{ID: userID}
 	result := ur.DB.Where(&cond).
 		Preload("Circles", func(db *gorm.DB) *gorm.DB {
 			return db.Select("id", "name", "icon_url").Order("name, id")

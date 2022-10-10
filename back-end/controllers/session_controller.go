@@ -47,7 +47,7 @@ func (sc SessionController) Create(c *gin.Context) {
 	}
 
 	session := sessions.Default(c)
-	session.Set(consts.SessKeyUserId, *userID)
+	session.Set(consts.SessKeyUserID, *userID)
 	session.Save()
 
 	c.Status(http.StatusCreated)

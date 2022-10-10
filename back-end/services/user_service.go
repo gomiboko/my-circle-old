@@ -15,7 +15,7 @@ const cost = 10
 
 type UserService interface {
 	CreateUser(userForm forms.UserForm) (*models.User, error)
-	GetHomeInfo(userId uint) (gin.H, error)
+	GetHomeInfo(userID uint) (gin.H, error)
 }
 
 type userService struct {
@@ -46,8 +46,8 @@ func (us *userService) CreateUser(userForm forms.UserForm) (*models.User, error)
 	return &user, err
 }
 
-func (us *userService) GetHomeInfo(userId uint) (gin.H, error) {
-	user, err := us.userRepository.GetHomeInfo(userId)
+func (us *userService) GetHomeInfo(userID uint) (gin.H, error) {
+	user, err := us.userRepository.GetHomeInfo(userID)
 	if err != nil {
 		return nil, err
 	}

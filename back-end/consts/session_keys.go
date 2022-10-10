@@ -1,5 +1,5 @@
 package consts
 
 const (
-	SessKeyUserId = "user_id"
+	SessKeyUserID = "user_id"
 )

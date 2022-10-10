@@ -15,7 +15,7 @@ func (m *UserServiceMock) CreateUser(userForm forms.UserForm) (*models.User, err
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
-func (m *UserServiceMock) GetHomeInfo(userId uint) (*models.User, error) {
-	args := m.Called(userId)
+func (m *UserServiceMock) GetHomeInfo(userID uint) (*models.User, error) {
+	args := m.Called(userID)
 	return args.Get(0).(*models.User), args.Error(1)
 }

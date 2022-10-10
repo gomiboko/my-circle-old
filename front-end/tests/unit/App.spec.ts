@@ -150,7 +150,7 @@ describe("App.vue", () => {
   });
 
   describe("ログアウト処理", () => {
-    const LogoutMenuId = 3;
+    const LogoutMenuID = 3;
 
     test("ログアウトAPIが呼ばれ、ログイン画面に遷移すること", async () => {
       const { localVue, axiosMock } = createMockedLocalVue();
@@ -161,7 +161,7 @@ describe("App.vue", () => {
       const wrapper = shallowMount(App, { localVue, router });
 
       // ログアウト処理実行
-      await execAsyncMethod(wrapper, "onMenuClick", LogoutMenuId);
+      await execAsyncMethod(wrapper, "onMenuClick", LogoutMenuID);
 
       expect(axiosMock.delete).toBeCalledWith(API_PATHS.SESSIONS, { withCredentials: true });
       expect(wrapper.vm.$route.path).toBe(PAGE_PATHS.LOGIN);

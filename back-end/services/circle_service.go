@@ -7,7 +7,7 @@ import (
 )
 
 type CircleService interface {
-	CreateCircle(circleForm forms.CircleForm, userId uint) (*models.Circle, error)
+	CreateCircle(circleForm forms.CircleForm, userID uint) (*models.Circle, error)
 	UpdateCircle(circle *models.Circle) error
 }
 
@@ -20,7 +20,7 @@ func NewCircleService(cr repositories.CircleRepository, ucr repositories.UsersCi
 	return &circleService{cr, ucr}
 }
 
-func (cs *circleService) CreateCircle(circleForm forms.CircleForm, userId uint) (*models.Circle, error) {
+func (cs *circleService) CreateCircle(circleForm forms.CircleForm, userID uint) (*models.Circle, error) {
 	circle := models.Circle{
 		Name: circleForm.CircleName,
 	}
@@ -37,7 +37,7 @@ func (cs *circleService) CreateCircle(circleForm forms.CircleForm, userId uint) 
 	// 登録したサークルに自分を所属させる
 	relation := models.UsersCircles{
 		CircleID: circle.ID,
-		UserID:   userId,
+		UserID:   userID,
 	}
 	err = cs.usersCirclesRepository.CreateWithTran(tx, &relation)
 	if err != nil {

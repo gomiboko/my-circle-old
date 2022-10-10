@@ -45,10 +45,10 @@ func (cc *CircleController) Create(c *gin.Context) {
 		return
 	}
 
-	userId := sessions.Default(c).Get(consts.SessKeyUserId).(uint)
+	userID := sessions.Default(c).Get(consts.SessKeyUserID).(uint)
 
 	// サークル登録
-	circle, err := cc.circleService.CreateCircle(form, userId)
+	circle, err := cc.circleService.CreateCircle(form, userID)
 	if err != nil {
 		c.JSON(utils.ResponseBody500UnexpectedError())
 		return
