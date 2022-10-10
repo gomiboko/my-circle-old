@@ -47,7 +47,7 @@ func (uc *UserController) Create(c *gin.Context) {
 	session.Set(consts.SessKeyUserID, user.ID)
 	session.Save()
 
-	c.JSON(http.StatusCreated, gin.H{"user": user})
+	c.Status(http.StatusCreated)
 }
 
 func (uc *UserController) GetHomeInfo(c *gin.Context) {

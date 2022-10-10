@@ -50,13 +50,6 @@ paths:
       responses:
         '201':
           description: 登録成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    $ref: '#/components/schemas/User'
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -117,11 +110,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required:
-                  - circle
                 properties:
-                  circle:
-                    $ref: '#/components/schemas/Circle'
                   message:
                     type: string
                   messageType:
@@ -134,54 +123,6 @@ paths:
         '500':
           $ref: '#/components/responses/UnexpectedError'
 components:
-  schemas:
-    User:
-      type: object
-      properties:
-        ID:
-          type: integer
-          example: 1
-        Name:
-          type: string
-        Email:
-          type: string
-        PasswordHash:
-          type: string
-          example: ''
-          description: 返却されません
-        IconUrl:
-          type: string
-        CreatedAt:
-          type: string
-          format: date-time
-        UpdatedAt:
-          type: string
-          format: date-time
-        RowVersion:
-          type: integer
-        Circles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Circle'
-          example: []
-    Circle:
-      type: object
-      properties:
-        ID:
-          type: integer
-          example: 1
-        Name:
-          type: string
-        IconUrl:
-          type: string
-        CreatedAt:
-          type: string
-          format: date-time
-        UpdatedAt:
-          type: string
-          format: date-time
-        RowVersion:
-          type: integer
   requestBodies:
     Session:
       content:

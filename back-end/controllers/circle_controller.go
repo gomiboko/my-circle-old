@@ -54,7 +54,7 @@ func (cc *CircleController) Create(c *gin.Context) {
 		return
 	}
 
-	res := gin.H{consts.ResKeyCircle: circle}
+	res := gin.H{}
 
 	if form.CircleIconFile != nil {
 		key := utils.CreateHashedStorageKey(consts.StorageDirCircles, consts.StorageKeyPrefixCircleIcon, circle.ID)
@@ -81,5 +81,6 @@ func (cc *CircleController) Create(c *gin.Context) {
 		}
 	}
 
+	// TODO: いずれサークル登録時のアイコン設定はできなくし、`c.Status(...)`に変更する
 	c.JSON(http.StatusCreated, res)
 }
