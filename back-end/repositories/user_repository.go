@@ -1,7 +1,9 @@
 package repositories
 
 import (
+	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/models"
+	"github.com/gomiboko/my-circle/utils"
 	"gorm.io/gorm"
 )
 
@@ -40,11 +42,22 @@ func (ur *userRepository) GetHomeInfo(userID uint) (*models.User, error) {
 
 	cond := models.User{ID: userID}
 	result := ur.DB.Where(&cond).
-		Preload("Circles", func(db *gorm.DB) *gorm.DB {
-			return db.Select("id", "name", "icon_url").Order("name, id")
+		Preload(consts.ModelNameCircles, func(db *gorm.DB) *gorm.DB {
+			orderStr := utils.CreateOrderStr(consts.ColumnNameUsersName, consts.ColumnNameCommonID)
+			return db.
+				Select(
+					consts.ColumnNameCommonID,
+					consts.ColumnNameUsersName,
+					consts.ColumnNameUsersIconUrl).
+				Order(orderStr)
 		}).
-		Table("users").
-		Select("id, name, email, created_at, updated_at").
+		Table(consts.TableNameUsers).
+		Select(
+			consts.ColumnNameCommonID,
+			consts.ColumnNameUsersName,
+			consts.ColumnNameUsersEmail,
+			consts.ColumnNameCommonCreatedAt,
+			consts.ColumnNameCommonUpdatedAt).
 		First(&user)
 
 	return &user, result.Error
