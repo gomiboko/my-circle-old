@@ -11,9 +11,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/controllers/mocks"
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/models"
+	"github.com/gomiboko/my-circle/responses"
 	"github.com/gomiboko/my-circle/testutils"
 	"github.com/gomiboko/my-circle/validations"
 	"github.com/stretchr/testify/assert"
@@ -21,8 +23,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type userResponse struct {
-	User models.User
+type homeInfoResponse struct {
+	UserName    string
+	UserIconUrl string
+	Circles     []responses.Circle
 }
 
 type UserControllerTestSuite struct {
@@ -159,13 +163,8 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 			uc.Create(c)
 			c.Writer.WriteHeaderNow()
 
-			var res userResponse
-			json.Unmarshal(r.Body.Bytes(), &res)
-
 			assert.Equal(s.T(), http.StatusCreated, r.Code)
-			assert.Equal(s.T(), uint(1), res.User.ID)
-			assert.Equal(s.T(), in.Username, res.User.Name)
-			assert.Equal(s.T(), in.Email, res.User.Email)
+			assert.Equal(s.T(), r.Body.Len(), 0)
 			sessMock.AssertCalled(s.T(), "Set", mock.AnythingOfType("string"), mock.AnythingOfType("uint"))
 			sessMock.AssertCalled(s.T(), "Save")
 		}
@@ -236,10 +235,14 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 func (s *UserControllerTestSuite) TestGetHomeInfo() {
 	s.Run("ログイン中のユーザ情報が取得できた場合", func() {
-		circles := []models.Circle{{ID: 1}}
-		user := models.User{ID: 2, Circles: circles}
+		circles := []responses.Circle{{ID: 1}}
+		homeInfo := gin.H{
+			consts.ResKeyUserName:    testutils.ValidUserName,
+			consts.ResKeyUserIconUrl: testutils.ValidUrl,
+			consts.ResKeyCircles:     circles,
+		}
 		usMock := new(mocks.UserServiceMock)
-		usMock.On("GetHomeInfo", mock.AnythingOfType("uint")).Return(&user, nil)
+		usMock.On("GetHomeInfo", mock.AnythingOfType("uint")).Return(homeInfo, nil)
 
 		uc := NewUserController(usMock)
 
@@ -252,20 +255,19 @@ func (s *UserControllerTestSuite) TestGetHomeInfo() {
 		uc.GetHomeInfo(c)
 		c.Writer.WriteHeaderNow()
 
-		var res userResponse
+		var res homeInfoResponse
 		json.Unmarshal(r.Body.Bytes(), &res)
 
 		assert.Equal(s.T(), http.StatusOK, r.Code)
-		assert.Equal(s.T(), uint(2), res.User.ID)
-		assert.Equal(s.T(), 1, len(res.User.Circles))
-		assert.Equal(s.T(), uint(1), res.User.Circles[0].ID)
+		assert.Equal(s.T(), testutils.ValidUserName, res.UserName)
+		assert.Equal(s.T(), testutils.ValidUrl, res.UserIconUrl)
+		assert.Equal(s.T(), 1, len(res.Circles))
+		assert.Equal(s.T(), uint(1), res.Circles[0].ID)
 	})
 
 	s.Run("予期せぬエラーが発生した場合", func() {
-		circles := []models.Circle{{ID: 1}}
-		user := models.User{ID: 1, Circles: circles}
 		usMock := new(mocks.UserServiceMock)
-		usMock.On("GetHomeInfo", mock.AnythingOfType("uint")).Return(&user, testutils.ErrTest)
+		usMock.On("GetHomeInfo", mock.AnythingOfType("uint")).Return(nil, testutils.ErrTest)
 
 		uc := NewUserController(usMock)
 

@@ -35,6 +35,8 @@ const (
 	UnregisteredEmail = "not-exist@example.com"
 	ValidEmail        = "foo@example.com"
 	ValidPassword     = "password"
+	ValidUserName     = "username"
+	ValidUrl          = "https://example.com"
 	FullWidthSpace    = "　"
 	HalfWidthSpace    = " "
 	HalfWidthSymbol   = "`~!@#$%^&*()-_=+[]{}\\|;:'\",./<>?"
