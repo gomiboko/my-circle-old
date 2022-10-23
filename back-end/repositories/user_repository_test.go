@@ -55,8 +55,10 @@ func (s *UserRepositoryTestSuite) TestGet() {
 		assert.Equal(s.T(), testutils.User1Name, user.Name)
 		assert.Equal(s.T(), testutils.User1Email, user.Email)
 		assert.Equal(s.T(), testutils.User1PasswordHash, user.PasswordHash)
+		assert.Equal(s.T(), "", user.IconUrl)
 		assert.Equal(s.T(), testutils.User1CreatedAt, user.CreatedAt)
 		assert.Equal(s.T(), testutils.User1UpdatedAt, user.UpdatedAt)
+		assert.Equal(s.T(), uint(0), user.RowVersion)
 	})
 
 	s.Run("存在しないメールアドレス場合", func() {
@@ -82,6 +84,7 @@ func (s *UserRepositoryTestSuite) TestCreate() {
 			Name:         "user",
 			Email:        testutils.User1Email,
 			PasswordHash: string(hash),
+			IconUrl:      testutils.ValidUrl,
 		}
 		err := s.userRepository.Create(user)
 
@@ -94,6 +97,7 @@ func (s *UserRepositoryTestSuite) TestCreate() {
 			Name:         "user",
 			Email:        testutils.UnregisteredEmail,
 			PasswordHash: string(hash),
+			IconUrl:      testutils.ValidUrl,
 		}
 		err := s.userRepository.Create(user)
 

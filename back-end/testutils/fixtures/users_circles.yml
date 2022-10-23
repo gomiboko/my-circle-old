@@ -1,16 +1,12 @@
 - user_id: 1
   circle_id: 1
   created_at: RAW=NOW()
-  updated_at: RAW=NOW()
 - user_id: 3
   circle_id: 1
   created_at: RAW=NOW()
-  updated_at: RAW=NOW()
 - user_id: 3
   circle_id: 2
   created_at: RAW=NOW()
-  updated_at: RAW=NOW()
 - user_id: 3
   circle_id: 3
   created_at: RAW=NOW()
-  updated_at: RAW=NOW()
