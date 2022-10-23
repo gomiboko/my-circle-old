@@ -126,8 +126,8 @@ func (s *UserRepositoryTestSuite) TestGetHomeInfo() {
 		assert.Equal(s.T(), 1, len(user.Circles))
 		assert.Equal(s.T(), testutils.Circle1ID, user.Circles[0].ID)
 		assert.Equal(s.T(), testutils.Circle1Name, user.Circles[0].Name)
-		assert.Equal(s.T(), testutils.Circle1CreatedAt, user.Circles[0].CreatedAt)
-		assert.Equal(s.T(), testutils.Circle1UpdatedAt, user.Circles[0].UpdatedAt)
+		assert.Equal(s.T(), time.Time{}, user.Circles[0].CreatedAt)
+		assert.Equal(s.T(), time.Time{}, user.Circles[0].UpdatedAt)
 	})
 
 	s.Run("サークルに所属していないユーザの場合", func() {
