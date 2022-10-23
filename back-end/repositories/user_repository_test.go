@@ -3,6 +3,7 @@ package repositories
 import (
 	"errors"
 	"testing"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-testfixtures/testfixtures/v3"
@@ -145,14 +146,17 @@ func (s *UserRepositoryTestSuite) TestGetHomeInfo() {
 			s.FailNow(err.Error())
 		}
 
-		assert.Equal(s.T(), 3, len(user.Circles))
+		assert.Equal(s.T(), 4, len(user.Circles))
 
-		// 所属サークルが名前の昇順で取得されていること
+		// 所属サークルが名前の昇順、IDの昇順で取得されていること
 		circle1st := user.Circles[0]
 		circle2nd := user.Circles[1]
 		circle3rd := user.Circles[2]
+		circle4th := user.Circles[3]
 		assert.Equal(s.T(), "Circle03", circle1st.Name)
-		assert.Equal(s.T(), "Circle1", circle2nd.Name)
-		assert.Equal(s.T(), "Circle2", circle3rd.Name)
+		assert.Equal(s.T(), "Circle03", circle2nd.Name)
+		assert.Less(s.T(), circle1st.ID, circle2nd.ID)
+		assert.Equal(s.T(), "Circle1", circle3rd.Name)
+		assert.Equal(s.T(), "Circle2", circle4th.Name)
 	})
 }

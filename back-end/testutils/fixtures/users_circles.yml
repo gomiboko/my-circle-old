@@ -10,3 +10,6 @@
 - user_id: 3
   circle_id: 3
   created_at: RAW=NOW()
+- user_id: 3
+  circle_id: 4
+  created_at: RAW=NOW()

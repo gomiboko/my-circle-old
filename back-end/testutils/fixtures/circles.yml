@@ -13,3 +13,8 @@
   icon_url: ""
   created_at: RAW=NOW()
   updated_at: RAW=NOW()
+- id: 4
+  name: Circle03
+  icon_url: ""
+  created_at: RAW=NOW()
+  updated_at: RAW=NOW()
