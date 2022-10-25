@@ -19,3 +19,8 @@ const (
 	ColumnNameUsersEmail   = "email"
 	ColumnNameUsersIconUrl = "icon_url"
 )
+
+const (
+	ColumnNameCirclesName    = "name"
+	ColumnNameCirclesIconUrl = "icon_url"
+)

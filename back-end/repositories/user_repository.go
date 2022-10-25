@@ -43,12 +43,12 @@ func (ur *userRepository) GetHomeInfo(userID uint) (*models.User, error) {
 	cond := models.User{ID: userID}
 	result := ur.DB.Where(&cond).
 		Preload(consts.ModelNameCircles, func(db *gorm.DB) *gorm.DB {
-			orderStr := utils.CreateOrderStr(consts.ColumnNameUsersName, consts.ColumnNameCommonID)
+			orderStr := utils.CreateOrderStr(consts.ColumnNameCirclesName, consts.ColumnNameCommonID)
 			return db.
 				Select(
 					consts.ColumnNameCommonID,
-					consts.ColumnNameUsersName,
-					consts.ColumnNameUsersIconUrl).
+					consts.ColumnNameCirclesName,
+					consts.ColumnNameCirclesIconUrl).
 				Order(orderStr)
 		}).
 		Table(consts.TableNameUsers).
