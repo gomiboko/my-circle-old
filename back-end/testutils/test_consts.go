@@ -8,7 +8,7 @@ import (
 	"github.com/gomiboko/my-circle/db"
 )
 
-// テスト用DB登録済みのデータ
+// テスト用DB登録済みのusersデータ
 const (
 	User1ID           uint = 1
 	User1Email             = "user1@example.com"
@@ -24,6 +24,7 @@ const (
 var User1CreatedAt = time.Date(2021, 8, 24, 12, 34, 56, 0, locale())
 var User1UpdatedAt = time.Date(2021, 8, 25, 23, 45, 01, 0, locale())
 
+// テスト用DB登録済みのcirclesデータ
 const (
 	Circle1ID      uint = 1
 	Circle1Name         = "Circle1"
@@ -33,6 +34,7 @@ const (
 var Circle1CreatedAt = time.Date(2022, 3, 28, 12, 34, 56, 0, locale())
 var Circle1UpdatedAt = time.Date(2022, 3, 29, 23, 45, 01, 0, locale())
 
+// テスト用データ
 const (
 	UnregisteredEmail = "not-exist@example.com"
 	ValidEmail        = "foo@example.com"
@@ -53,6 +55,7 @@ const (
 	UsernameMaxLength = 45
 )
 
+// テスト用エラーオブジェクト
 var (
 	ErrTest           = errors.New("test error")
 	ErrDuplicateEntry = &mysql.MySQLError{
