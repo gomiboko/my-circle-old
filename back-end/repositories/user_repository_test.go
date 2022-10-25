@@ -59,7 +59,7 @@ func (s *UserRepositoryTestSuite) TestGet() {
 		assert.Equal(s.T(), "", user.IconUrl)
 		assert.Equal(s.T(), testutils.User1CreatedAt, user.CreatedAt)
 		assert.Equal(s.T(), testutils.User1UpdatedAt, user.UpdatedAt)
-		assert.Equal(s.T(), uint(0), user.RowVersion)
+		assert.Equal(s.T(), testutils.User1RowVersion, user.RowVersion)
 	})
 
 	s.Run("存在しないメールアドレス場合", func() {
@@ -118,17 +118,26 @@ func (s *UserRepositoryTestSuite) TestGetHomeInfo() {
 			s.FailNow(err.Error())
 		}
 
+		// ユーザ情報の検証(SELECTしている項目)
+		assert.Equal(s.T(), testutils.User1ID, user.ID)
 		assert.Equal(s.T(), testutils.User1Name, user.Name)
 		assert.Equal(s.T(), testutils.User1Email, user.Email)
-		assert.Empty(s.T(), user.PasswordHash)
 		assert.Equal(s.T(), testutils.User1CreatedAt, user.CreatedAt)
 		assert.Equal(s.T(), testutils.User1UpdatedAt, user.UpdatedAt)
+		// ユーザ情報の検証(SELECTしていない項目)
+		assert.Empty(s.T(), user.PasswordHash)
+		assert.Empty(s.T(), user.IconUrl)
+		assert.Equal(s.T(), uint(0), user.RowVersion)
 
+		// サークル情報の検証(SELECTしている項目)
 		assert.Equal(s.T(), 1, len(user.Circles))
 		assert.Equal(s.T(), testutils.Circle1ID, user.Circles[0].ID)
 		assert.Equal(s.T(), testutils.Circle1Name, user.Circles[0].Name)
+		assert.Equal(s.T(), testutils.Circle1IconUrl, user.Circles[0].IconUrl)
+		// サークル情報の検証(SELECTしていない項目)
 		assert.Equal(s.T(), time.Time{}, user.Circles[0].CreatedAt)
 		assert.Equal(s.T(), time.Time{}, user.Circles[0].UpdatedAt)
+		assert.Equal(s.T(), uint(0), user.Circles[0].RowVersion)
 	})
 
 	s.Run("サークルに所属していないユーザの場合", func() {

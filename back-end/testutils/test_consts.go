@@ -15,6 +15,7 @@ const (
 	User1Password          = "password"
 	User1PasswordHash      = "$2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG"
 	User1Name              = "user1"
+	User1RowVersion   uint = 2
 
 	User2ID uint = 2
 	User3ID uint = 3
@@ -24,8 +25,9 @@ var User1CreatedAt = time.Date(2021, 8, 24, 12, 34, 56, 0, locale())
 var User1UpdatedAt = time.Date(2021, 8, 25, 23, 45, 01, 0, locale())
 
 const (
-	Circle1ID   uint = 1
-	Circle1Name      = "Circle1"
+	Circle1ID      uint = 1
+	Circle1Name         = "Circle1"
+	Circle1IconUrl      = "http://localhost:4566/my-circle-bucket/circles/54a2e0a21c246a49c4b2f3057ea78da4a38952dbbfa450bc120bde5d99f0a7eb"
 )
 
 var Circle1CreatedAt = time.Date(2022, 3, 28, 12, 34, 56, 0, locale())
