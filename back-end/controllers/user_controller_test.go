@@ -178,7 +178,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 
 		uc := NewUserController(usMock)
 
-		form := forms.UserForm{Username: testutils.ValidUserName, Email: testutils.ValidEmail, Password: testutils.ValidPassword}
+		form := forms.UserForm{Username: testutils.ValidUserName, Email: testutils.User1Email, Password: testutils.ValidPassword}
 		reqBody, err := testutils.CreateRequestBodyStr(form)
 		if err != nil {
 			s.FailNow(err.Error())
@@ -202,7 +202,7 @@ func (s *UserControllerTestSuite) TestCreateUser() {
 	})
 
 	s.Run("予期せぬエラーが発生した場合", func() {
-		user := models.User{Name: testutils.ValidUserName, Email: testutils.UnregisteredEmail}
+		user := models.User{Name: testutils.ValidUserName, Email: testutils.ValidEmail}
 
 		usMock := new(mocks.UserServiceMock)
 		usMock.On("CreateUser", mock.AnythingOfType("forms.UserForm")).Return(&user, testutils.ErrTest)
