@@ -62,7 +62,7 @@ func (s *UserRepositoryTestSuite) TestGet() {
 		assert.Equal(s.T(), testutils.User1RowVersion, user.RowVersion)
 	})
 
-	s.Run("存在しないメールアドレス場合", func() {
+	s.Run("存在しないメールアドレスの場合", func() {
 		user, err := s.userRepository.Get(testutils.ValidEmail)
 
 		assert.True(s.T(), errors.Is(err, gorm.ErrRecordNotFound))
