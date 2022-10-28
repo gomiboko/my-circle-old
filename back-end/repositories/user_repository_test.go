@@ -63,7 +63,7 @@ func (s *UserRepositoryTestSuite) TestGet() {
 	})
 
 	s.Run("存在しないメールアドレス場合", func() {
-		user, err := s.userRepository.Get(testutils.UnregisteredEmail)
+		user, err := s.userRepository.Get(testutils.ValidEmail)
 
 		assert.True(s.T(), errors.Is(err, gorm.ErrRecordNotFound))
 		assert.Equal(s.T(), models.User{}, *user)
@@ -96,7 +96,7 @@ func (s *UserRepositoryTestSuite) TestCreate() {
 	s.Run("メールアドレスが重複しない場合", func() {
 		user := &models.User{
 			Name:         "user",
-			Email:        testutils.UnregisteredEmail,
+			Email:        testutils.ValidEmail,
 			PasswordHash: string(hash),
 			IconUrl:      testutils.ValidUrl,
 		}

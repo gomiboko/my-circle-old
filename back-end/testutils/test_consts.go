@@ -36,16 +36,15 @@ var Circle1UpdatedAt = time.Date(2022, 3, 29, 23, 45, 01, 0, locale())
 
 // テスト用データ
 const (
-	UnregisteredEmail = "not-exist@example.com"
-	ValidEmail        = "foo@example.com"
-	ValidPassword     = "password"
-	ValidUserName     = "username"
-	ValidUrl          = "https://example.com"
-	FullWidthSpace    = "　"
-	HalfWidthSpace    = " "
-	HalfWidthSymbol   = "`~!@#$%^&*()-_=+[]{}\\|;:'\",./<>?"
-	FullWidthA        = "Ａ"
-	UnexpectedErrMsg  = "予期せぬエラーが発生しました"
+	ValidEmail       = "foo@example.com"
+	ValidPassword    = "password"
+	ValidUserName    = "username"
+	ValidUrl         = "https://example.com"
+	FullWidthSpace   = "　"
+	HalfWidthSpace   = " "
+	HalfWidthSymbol  = "`~!@#$%^&*()-_=+[]{}\\|;:'\",./<>?"
+	FullWidthA       = "Ａ"
+	UnexpectedErrMsg = "予期せぬエラーが発生しました"
 )
 
 const (
