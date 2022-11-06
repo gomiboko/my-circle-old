@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `mycircle`.`users` (
   `icon_url` VARCHAR(150) NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
-  `row_version` INT UNSIGNED NOT NULL DEFAULT 0,
+  `row_version` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB;
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `mycircle`.`circles` (
   `icon_url` VARCHAR(150) NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
-  `row_version` INT UNSIGNED NOT NULL DEFAULT 0,
+  `row_version` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 

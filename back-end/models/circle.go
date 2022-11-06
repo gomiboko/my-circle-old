@@ -8,5 +8,5 @@ type Circle struct {
 	IconUrl    string
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
-	RowVersion uint
+	RowVersion uint `gorm:"default:1"`
 }

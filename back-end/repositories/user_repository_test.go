@@ -104,6 +104,7 @@ func (s *UserRepositoryTestSuite) TestCreate() {
 
 		assert.Nil(s.T(), err)
 		assert.Greater(s.T(), user.ID, uint(0))
+		assert.Equal(s.T(), uint(1), user.RowVersion)
 	})
 }
 

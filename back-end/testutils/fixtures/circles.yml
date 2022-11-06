@@ -9,13 +9,16 @@
   icon_url: "http://localhost:4566/my-circle-bucket/circles/793b589f61a6426a9e6f1891f9ad9db4dfa10b3cea192fe4fa736100e0c02976"
   created_at: RAW=NOW()
   updated_at: RAW=NOW()
+  row_version: 1
 - id: 3
   name: Circle03
   icon_url: ""
   created_at: RAW=NOW()
   updated_at: RAW=NOW()
+  row_version: 1
 - id: 4
   name: Circle03
   icon_url: ""
   created_at: RAW=NOW()
   updated_at: RAW=NOW()
+  row_version: 1

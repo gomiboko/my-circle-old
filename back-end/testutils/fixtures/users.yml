@@ -13,6 +13,7 @@
   icon_url: ""
   created_at: RAW=NOW()
   updated_at: RAW=NOW()
+  row_version: 1
 - id: 3
   name: user3
   email: user3@example.com
@@ -20,3 +21,4 @@
   icon_url: ""
   created_at: RAW=NOW()
   updated_at: RAW=NOW()
+  row_version: 1
