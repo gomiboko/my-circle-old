@@ -81,20 +81,7 @@ func (s *UserRepositoryTestSuite) TestCreate() {
 		s.FailNow(err.Error())
 	}
 
-	s.Run("メールアドレスが重複する場合", func() {
-		user := &models.User{
-			Name:         "user",
-			Email:        testutils.User1Email,
-			PasswordHash: string(hash),
-			IconUrl:      testutils.ValidUrl,
-		}
-		err := s.userRepository.Create(user)
-
-		assert.NotNil(s.T(), err)
-		assert.True(s.T(), db.Is(err, db.ErrDuplicateEntry))
-	})
-
-	s.Run("メールアドレスが重複しない場合", func() {
+	s.Run("正常なデータの場合", func() {
 		user := &models.User{
 			Name:         "user",
 			Email:        testutils.ValidEmail,
@@ -116,6 +103,19 @@ func (s *UserRepositoryTestSuite) TestCreate() {
 		assert.Equal(s.T(), testutils.ValidUrl, createdData.IconUrl)
 		assert.Equal(s.T(), uint(1), createdData.RowVersion)
 		assert.Zero(s.T(), len(createdData.Circles))
+	})
+
+	s.Run("メールアドレスが重複する場合", func() {
+		user := &models.User{
+			Name:         "user",
+			Email:        testutils.User1Email,
+			PasswordHash: string(hash),
+			IconUrl:      testutils.ValidUrl,
+		}
+		err := s.userRepository.Create(user)
+
+		assert.NotNil(s.T(), err)
+		assert.True(s.T(), db.Is(err, db.ErrDuplicateEntry))
 	})
 }
 
