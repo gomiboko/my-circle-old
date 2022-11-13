@@ -20,6 +20,7 @@ type UserRepositoryTestSuite struct {
 	suite.Suite
 	fixtures       *testfixtures.Loader
 	userRepository UserRepository
+	db             *gorm.DB
 }
 
 func (s *UserRepositoryTestSuite) SetupSuite() {
@@ -31,11 +32,11 @@ func (s *UserRepositoryTestSuite) SetupSuite() {
 	s.fixtures = fixtures
 
 	// UserRepositoryの準備
-	db, err := testutils.GetDB()
+	s.db, err = testutils.GetDB()
 	if err != nil {
 		s.FailNow(err.Error())
 	}
-	s.userRepository = NewUserRepository(db)
+	s.userRepository = NewUserRepository(s.db)
 }
 
 func TestUserRepository(t *testing.T) {
@@ -103,8 +104,18 @@ func (s *UserRepositoryTestSuite) TestCreate() {
 		err := s.userRepository.Create(user)
 
 		assert.Nil(s.T(), err)
-		assert.Greater(s.T(), user.ID, uint(0))
-		assert.Equal(s.T(), uint(1), user.RowVersion)
+
+		var createdData = models.User{}
+		result := s.db.Where(&models.User{Email: testutils.ValidEmail}).First(&createdData)
+		assert.Nil(s.T(), result.Error)
+
+		assert.Greater(s.T(), createdData.ID, uint(0))
+		assert.Equal(s.T(), "user", createdData.Name)
+		assert.Equal(s.T(), testutils.ValidEmail, createdData.Email)
+		assert.Equal(s.T(), string(hash), createdData.PasswordHash)
+		assert.Equal(s.T(), testutils.ValidUrl, createdData.IconUrl)
+		assert.Equal(s.T(), uint(1), createdData.RowVersion)
+		assert.Zero(s.T(), len(createdData.Circles))
 	})
 }
 
