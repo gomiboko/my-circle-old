@@ -38,7 +38,7 @@ func (cr *circleRepository) Update(circle *models.Circle) error {
 			RowVersion: circle.RowVersion + 1,
 		})
 
-	if result.RowsAffected == 0 {
+	if result.RowsAffected == 0 && result.Error == nil {
 		return consts.ErrUpdatedByOthers
 	}
 
