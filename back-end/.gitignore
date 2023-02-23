@@ -1,3 +1,4 @@
 /tmp/
 /mysql/data/
 /localstack/volume/
+/testutils/docker/localstack_volume/
