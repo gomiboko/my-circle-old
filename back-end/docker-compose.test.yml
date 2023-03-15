@@ -16,6 +16,7 @@ services:
     build:
       context: .
       dockerfile: ./testutils/docker/Dockerfile.db
+    platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Tokyo
