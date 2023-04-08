@@ -10,6 +10,9 @@ services:
       - '8080:8080'
     volumes:
       - ./back-end:/app
+    depends_on:
+      dev-db:
+        condition: service_healthy
     container_name: mc-back-dev-compose
 
   dev-front:
@@ -34,6 +37,12 @@ services:
       - ./back-end/mysql/init:/docker-entrypoint-initdb.d
       - ./back-end/mysql/data:/var/lib/mysql
     container_name: mc-db-dev-compose
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root -proot
+      interval: 5s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
 
 volumes:
   node-modules-vol:
