@@ -1,0 +1,17 @@
+{
+  "name": "devcon-back",
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
+  "service": "dev-back",
+  "shutdownAction": "none",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "Gruntfuggly.todo-tree"
+      ]
+    }
+  }
+}
