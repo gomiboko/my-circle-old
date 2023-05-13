@@ -23,6 +23,9 @@ module.exports = {
         printWidth: 120,
       },
     ],
+    "vue/multi-word-component-names": ["error", {
+      "ignores": ["About"]
+    }]
   },
   overrides: [
     {
