@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  test-front:
+    build: .
+    platform: linux/amd64
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    container_name: mc-test-front
+    command: npm run test:unit
