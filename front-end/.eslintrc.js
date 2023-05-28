@@ -12,6 +12,7 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 2020,
+    parser: '@typescript-eslint/parser'
   },
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
@@ -22,6 +23,9 @@ module.exports = {
         printWidth: 120,
       },
     ],
+    "vue/multi-word-component-names": ["error", {
+      "ignores": ["About"]
+    }]
   },
   overrides: [
     {

@@ -1,6 +1,8 @@
 module.exports = {
   transpileDependencies: ["vuetify"],
   devServer: {
-    public: "localhost:80",
+    client: {
+      webSocketURL: "ws://0.0.0.0:80/ws",
+    },
   },
 };
