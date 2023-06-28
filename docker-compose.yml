@@ -5,7 +5,8 @@ services:
     env_file:
       - ./.env
     environment:
-      DB_SERVICE_NAME: dev-db
+      LOCALSTACK_ENDPOINT_FOR_BACK: http://dev-localstack:4566
+      LOCALSTACK_ENDPOINT_FOR_FRONT: http://localhost:4566
     ports:
       - '8080:8080'
     volumes:
@@ -14,7 +15,6 @@ services:
       dev-db:
         condition: service_healthy
     container_name: mc-back-dev-compose
-
   dev-front:
     build: ./front-end
     platform: linux/amd64
@@ -41,8 +41,19 @@ services:
       test: mysqladmin ping -h 127.0.0.1 -u root -proot
       interval: 5s
       timeout: 5s
-      retries: 6
-      start_period: 30s
+      retries: 11
+      start_period: 5s
+  dev-localstack:
+    build: ./back-end/localstack
+    ports:
+      - "127.0.0.1:4510-4559:4510-4559"
+      - "127.0.0.1:4566:4566"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./back-end/localstack/volume:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    container_name: mc-localstack-dev-compose
 
 volumes:
   node-modules-vol:

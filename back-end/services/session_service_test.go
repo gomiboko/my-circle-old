@@ -44,7 +44,7 @@ func (s *SessionServiceTestSuite) TestAuthenticate() {
 
 		ss := NewSessionService(urMock)
 
-		userID, err := ss.Authenticate(testutils.UnregisteredEmail, testutils.User1Password)
+		userID, err := ss.Authenticate(testutils.ValidEmail, testutils.User1Password)
 
 		assert.Nil(s.T(), userID)
 		assert.Nil(s.T(), err)

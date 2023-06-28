@@ -12,7 +12,7 @@ import (
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		isLoggedIn := session.Get(consts.SessKeyUserId) != nil
+		isLoggedIn := session.Get(consts.SessKeyUserID) != nil
 
 		if !isLoggedIn {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, utils.MessageResponseBody(consts.MsgNeedToLogin))

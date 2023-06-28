@@ -2,17 +2,23 @@
   name: user1
   email: user1@example.com
   password_hash: $2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG
+  icon_url: ""
   created_at: 2021-08-24T12:34:56+0900
   updated_at: 2021-08-25T23:45:01+0900
+  row_version: 2
 - id: 2
   name: user2
   email: user2@example.com
   password_hash: $2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG
+  icon_url: ""
   created_at: RAW=NOW()
   updated_at: RAW=NOW()
+  row_version: 1
 - id: 3
   name: user3
   email: user3@example.com
   password_hash: $2a$10$5zIf9lXlK6F7eaMB38uRSes9ecydTeW/xDA53zADvQjrmxA/Q/BsG
+  icon_url: ""
   created_at: RAW=NOW()
   updated_at: RAW=NOW()
+  row_version: 1

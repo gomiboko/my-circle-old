@@ -29,6 +29,11 @@ const routes: Array<RouteConfig> = [
     name: "Join",
     component: () => import("../views/Join.vue"),
   },
+  {
+    path: PAGE_PATHS.CIRCLE_REGISTER,
+    name: "CircleRegister",
+    component: () => import("../views/CircleRegister.vue"),
+  },
 ];
 
 const router = new VueRouter({
@@ -39,7 +44,15 @@ const router = new VueRouter({
 
 // ナビゲーションガード
 router.beforeEach((to, from, next) => {
-  Vue.prototype.$state.appMsg.message = "";
+  // 遷移後の画面に表示するメッセージがある場合
+  if (Vue.prototype.$state.nextScreenMsg.message) {
+    Vue.prototype.$state.appMsg.type = Vue.prototype.$state.nextScreenMsg.type;
+    Vue.prototype.$state.appMsg.message = Vue.prototype.$state.nextScreenMsg.message;
+    Vue.prototype.$state.nextScreenMsg.message = "";
+  } else {
+    Vue.prototype.$state.appMsg.message = "";
+  }
+
   next();
 });
 

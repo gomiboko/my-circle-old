@@ -1,0 +1,7 @@
+FROM localstack/localstack:1.2.0
+
+# 初期設定スクリプト
+ENV READY_DIR_PATH /etc/localstack/init/ready.d
+RUN mkdir ${READY_DIR_PATH}
+COPY ./testutils/docker/init_localstack.sh ${READY_DIR_PATH}
+RUN chmod +x ${READY_DIR_PATH}/init_localstack.sh

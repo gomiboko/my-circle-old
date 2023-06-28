@@ -1,0 +1,190 @@
+openapi: 3.0.3
+info:
+  title: my-circle
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/v1
+tags:
+  - name: sessions
+  - name: users
+  - name: circles
+paths:
+  /sessions:
+    post:
+      tags:
+        - sessions
+      summary: ログイン
+      requestBody:
+        $ref: '#/components/requestBodies/Session'
+      responses:
+        '201':
+          description: ログイン成功
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: ログイン失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: メールアドレスまたはパスワードが違います
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+    delete:
+      tags:
+        - sessions
+      summary: ログアウト
+      responses:
+        '200':
+          description: ログアウト成功
+  /users:
+    post:
+      tags:
+        - users
+      summary: ユーザの新規登録
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        '201':
+          description: 登録成功
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: 登録失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 登録済みのメールアドレスです
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+  /users/me:
+    get:
+      tags:
+        - users
+      summary: ホーム画面情報の取得
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userName:
+                    type: string
+                  userIconUrl:
+                    type: string
+                  circles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ID:
+                          type: integer
+                        Name:
+                          type: string
+                        IconUrl:
+                          type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+  /circles:
+    post:
+      tags:
+        - circles
+      summary: サークルの新規登録
+      requestBody:
+        $ref: '#/components/requestBodies/Circle'
+      responses:
+        '201':
+          description: 登録成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  messageType:
+                    type: string
+                    enum: [success, info, warning, error]
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+components:
+  requestBodies:
+    Session:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+    User:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+    Circle:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              circleName:
+                type: string
+              circleIconFile:
+                type: string
+                format: binary
+  responses:
+    BadRequest:
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 不正なリクエストです
+    Unauthorized:
+      description: 未ログイン
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: ログインしてください
+    UnexpectedError:
+      description: 予期せぬエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 予期せぬエラーが発生しました

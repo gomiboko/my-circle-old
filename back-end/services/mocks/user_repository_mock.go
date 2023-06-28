@@ -19,7 +19,7 @@ func (m *UserRepositoryMock) Create(user *models.User) error {
 	return args.Error(0)
 }
 
-func (m *UserRepositoryMock) GetHomeInfo(userId uint) (*models.User, error) {
-	args := m.Called(userId)
+func (m *UserRepositoryMock) GetHomeInfo(userID uint) (*models.User, error) {
+	args := m.Called(userID)
 	return args.Get(0).(*models.User), args.Error(1)
 }

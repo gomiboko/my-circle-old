@@ -7,7 +7,9 @@ type User struct {
 	Name         string
 	Email        string
 	PasswordHash string
+	IconUrl      string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
-	Circles      []Circle `gorm:"many2many:users_circles;"`
+	RowVersion   uint     `gorm:"default:1"`
+	Circles      []Circle `gorm:"many2many:users_circles"`
 }

@@ -27,3 +27,14 @@ services:
       timeout: 5s
       retries: 6
       start_period: 30s
+
+  test-localstack:
+    build:
+      context: .
+      dockerfile: ./testutils/docker/Dockerfile.localstack
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./testutils/docker/localstack_volume:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    container_name: mc-test-localstack

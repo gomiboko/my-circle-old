@@ -1,9 +1,12 @@
 package services
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/forms"
 	"github.com/gomiboko/my-circle/models"
 	"github.com/gomiboko/my-circle/repositories"
+	"github.com/gomiboko/my-circle/responses"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -12,7 +15,7 @@ const cost = 10
 
 type UserService interface {
 	CreateUser(userForm forms.UserForm) (*models.User, error)
-	GetHomeInfo(userId uint) (*models.User, error)
+	GetHomeInfo(userID uint) (gin.H, error)
 }
 
 type userService struct {
@@ -43,6 +46,28 @@ func (us *userService) CreateUser(userForm forms.UserForm) (*models.User, error)
 	return &user, err
 }
 
-func (us *userService) GetHomeInfo(userId uint) (*models.User, error) {
-	return us.userRepository.GetHomeInfo(userId)
+func (us *userService) GetHomeInfo(userID uint) (gin.H, error) {
+	user, err := us.userRepository.GetHomeInfo(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// レスポンス用に整形
+	var resCircles []responses.Circle
+	for _, c := range user.Circles {
+		resC := responses.Circle{
+			ID:      c.ID,
+			Name:    c.Name,
+			IconUrl: c.IconUrl,
+		}
+		resCircles = append(resCircles, resC)
+	}
+
+	res := gin.H{
+		consts.ResKeyUserName:    user.Name,
+		consts.ResKeyUserIconUrl: user.IconUrl,
+		consts.ResKeyCircles:     resCircles,
+	}
+
+	return res, nil
 }

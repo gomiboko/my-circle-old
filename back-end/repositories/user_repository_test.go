@@ -3,6 +3,7 @@ package repositories
 import (
 	"errors"
 	"testing"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-testfixtures/testfixtures/v3"
@@ -19,6 +20,7 @@ type UserRepositoryTestSuite struct {
 	suite.Suite
 	fixtures       *testfixtures.Loader
 	userRepository UserRepository
+	db             *gorm.DB
 }
 
 func (s *UserRepositoryTestSuite) SetupSuite() {
@@ -30,11 +32,11 @@ func (s *UserRepositoryTestSuite) SetupSuite() {
 	s.fixtures = fixtures
 
 	// UserRepositoryの準備
-	db, err := testutils.GetDB()
+	s.db, err = testutils.GetDB()
 	if err != nil {
 		s.FailNow(err.Error())
 	}
-	s.userRepository = NewUserRepository(db)
+	s.userRepository = NewUserRepository(s.db)
 }
 
 func TestUserRepository(t *testing.T) {
@@ -55,12 +57,14 @@ func (s *UserRepositoryTestSuite) TestGet() {
 		assert.Equal(s.T(), testutils.User1Name, user.Name)
 		assert.Equal(s.T(), testutils.User1Email, user.Email)
 		assert.Equal(s.T(), testutils.User1PasswordHash, user.PasswordHash)
+		assert.Equal(s.T(), "", user.IconUrl)
 		assert.Equal(s.T(), testutils.User1CreatedAt, user.CreatedAt)
 		assert.Equal(s.T(), testutils.User1UpdatedAt, user.UpdatedAt)
+		assert.Equal(s.T(), testutils.User1RowVersion, user.RowVersion)
 	})
 
-	s.Run("存在しないメールアドレス場合", func() {
-		user, err := s.userRepository.Get(testutils.UnregisteredEmail)
+	s.Run("存在しないメールアドレスの場合", func() {
+		user, err := s.userRepository.Get(testutils.ValidEmail)
 
 		assert.True(s.T(), errors.Is(err, gorm.ErrRecordNotFound))
 		assert.Equal(s.T(), models.User{}, *user)
@@ -77,28 +81,41 @@ func (s *UserRepositoryTestSuite) TestCreate() {
 		s.FailNow(err.Error())
 	}
 
+	s.Run("正常なデータの場合", func() {
+		user := &models.User{
+			Name:         "user",
+			Email:        testutils.ValidEmail,
+			PasswordHash: string(hash),
+			IconUrl:      testutils.ValidUrl,
+		}
+		err := s.userRepository.Create(user)
+
+		assert.Nil(s.T(), err)
+
+		var createdData = models.User{}
+		result := s.db.Where(&models.User{Email: testutils.ValidEmail}).First(&createdData)
+		assert.Nil(s.T(), result.Error)
+
+		assert.Greater(s.T(), createdData.ID, uint(0))
+		assert.Equal(s.T(), "user", createdData.Name)
+		assert.Equal(s.T(), testutils.ValidEmail, createdData.Email)
+		assert.Equal(s.T(), string(hash), createdData.PasswordHash)
+		assert.Equal(s.T(), testutils.ValidUrl, createdData.IconUrl)
+		assert.Equal(s.T(), uint(1), createdData.RowVersion)
+		assert.Zero(s.T(), len(createdData.Circles))
+	})
+
 	s.Run("メールアドレスが重複する場合", func() {
 		user := &models.User{
 			Name:         "user",
 			Email:        testutils.User1Email,
 			PasswordHash: string(hash),
+			IconUrl:      testutils.ValidUrl,
 		}
 		err := s.userRepository.Create(user)
 
 		assert.NotNil(s.T(), err)
 		assert.True(s.T(), db.Is(err, db.ErrDuplicateEntry))
-	})
-
-	s.Run("メールアドレスが重複しない場合", func() {
-		user := &models.User{
-			Name:         "user",
-			Email:        testutils.UnregisteredEmail,
-			PasswordHash: string(hash),
-		}
-		err := s.userRepository.Create(user)
-
-		assert.Nil(s.T(), err)
-		assert.Greater(s.T(), user.ID, uint(0))
 	})
 }
 
@@ -113,17 +130,26 @@ func (s *UserRepositoryTestSuite) TestGetHomeInfo() {
 			s.FailNow(err.Error())
 		}
 
+		// ユーザ情報の検証(SELECTしている項目)
+		assert.Equal(s.T(), testutils.User1ID, user.ID)
 		assert.Equal(s.T(), testutils.User1Name, user.Name)
 		assert.Equal(s.T(), testutils.User1Email, user.Email)
-		assert.Empty(s.T(), user.PasswordHash)
 		assert.Equal(s.T(), testutils.User1CreatedAt, user.CreatedAt)
 		assert.Equal(s.T(), testutils.User1UpdatedAt, user.UpdatedAt)
+		// ユーザ情報の検証(SELECTしていない項目)
+		assert.Empty(s.T(), user.PasswordHash)
+		assert.Empty(s.T(), user.IconUrl)
+		assert.Equal(s.T(), uint(0), user.RowVersion)
 
+		// サークル情報の検証(SELECTしている項目)
 		assert.Equal(s.T(), 1, len(user.Circles))
 		assert.Equal(s.T(), testutils.Circle1ID, user.Circles[0].ID)
 		assert.Equal(s.T(), testutils.Circle1Name, user.Circles[0].Name)
-		assert.Equal(s.T(), testutils.Circle1CreatedAt, user.Circles[0].CreatedAt)
-		assert.Equal(s.T(), testutils.Circle1UpdatedAt, user.Circles[0].UpdatedAt)
+		assert.Equal(s.T(), testutils.Circle1IconUrl, user.Circles[0].IconUrl)
+		// サークル情報の検証(SELECTしていない項目)
+		assert.Equal(s.T(), time.Time{}, user.Circles[0].CreatedAt)
+		assert.Equal(s.T(), time.Time{}, user.Circles[0].UpdatedAt)
+		assert.Equal(s.T(), uint(0), user.Circles[0].RowVersion)
 	})
 
 	s.Run("サークルに所属していないユーザの場合", func() {
@@ -141,14 +167,17 @@ func (s *UserRepositoryTestSuite) TestGetHomeInfo() {
 			s.FailNow(err.Error())
 		}
 
-		assert.Equal(s.T(), 3, len(user.Circles))
+		assert.Equal(s.T(), 4, len(user.Circles))
 
-		// 所属サークルが名前の昇順で取得されていること
+		// 所属サークルが名前の昇順、IDの昇順で取得されていること
 		circle1st := user.Circles[0]
 		circle2nd := user.Circles[1]
 		circle3rd := user.Circles[2]
+		circle4th := user.Circles[3]
 		assert.Equal(s.T(), "Circle03", circle1st.Name)
-		assert.Equal(s.T(), "Circle1", circle2nd.Name)
-		assert.Equal(s.T(), "Circle2", circle3rd.Name)
+		assert.Equal(s.T(), "Circle03", circle2nd.Name)
+		assert.Less(s.T(), circle1st.ID, circle2nd.ID)
+		assert.Equal(s.T(), "Circle1", circle3rd.Name)
+		assert.Equal(s.T(), "Circle2", circle4th.Name)
 	})
 }

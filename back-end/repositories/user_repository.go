@@ -1,14 +1,16 @@
 package repositories
 
 import (
+	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/models"
+	"github.com/gomiboko/my-circle/utils"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
 	Get(email string) (*models.User, error)
 	Create(user *models.User) error
-	GetHomeInfo(userId uint) (*models.User, error)
+	GetHomeInfo(userID uint) (*models.User, error)
 }
 
 type userRepository struct {
@@ -35,16 +37,27 @@ func (ur *userRepository) Create(user *models.User) error {
 	return result.Error
 }
 
-func (ur *userRepository) GetHomeInfo(userId uint) (*models.User, error) {
+func (ur *userRepository) GetHomeInfo(userID uint) (*models.User, error) {
 	var user models.User
 
-	cond := models.User{ID: userId}
+	cond := models.User{ID: userID}
 	result := ur.DB.Where(&cond).
-		Preload("Circles", func(db *gorm.DB) *gorm.DB {
-			return db.Order("name")
+		Preload(consts.ModelNameCircles, func(db *gorm.DB) *gorm.DB {
+			orderStr := utils.CreateOrderStr(consts.ColumnNameCirclesName, consts.ColumnNameCommonID)
+			return db.
+				Select(
+					consts.ColumnNameCommonID,
+					consts.ColumnNameCirclesName,
+					consts.ColumnNameCirclesIconUrl).
+				Order(orderStr)
 		}).
-		Table("users").
-		Select("id, name, email, created_at, updated_at").
+		Table(consts.TableNameUsers).
+		Select(
+			consts.ColumnNameCommonID,
+			consts.ColumnNameUsersName,
+			consts.ColumnNameUsersEmail,
+			consts.ColumnNameCommonCreatedAt,
+			consts.ColumnNameCommonUpdatedAt).
 		First(&user)
 
 	return &user, result.Error

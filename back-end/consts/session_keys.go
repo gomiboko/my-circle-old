@@ -1,3 +1,5 @@
 package consts
 
-const SessKeyUserId = "user_id"
+const (
+	SessKeyUserID = "user_id"
+)

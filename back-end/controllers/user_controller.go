@@ -44,22 +44,22 @@ func (uc *UserController) Create(c *gin.Context) {
 
 	// ユーザ登録に成功した場合、ログイン状態にする
 	session := sessions.Default(c)
-	session.Set(consts.SessKeyUserId, user.ID)
+	session.Set(consts.SessKeyUserID, user.ID)
 	session.Save()
 
-	c.JSON(http.StatusCreated, gin.H{"user": user})
+	c.Status(http.StatusCreated)
 }
 
 func (uc *UserController) GetHomeInfo(c *gin.Context) {
 	session := sessions.Default(c)
-	userId := session.Get(consts.SessKeyUserId).(uint)
+	userID := session.Get(consts.SessKeyUserID).(uint)
 
-	user, err := uc.userService.GetHomeInfo(userId)
+	res, err := uc.userService.GetHomeInfo(userID)
 
 	if err != nil {
 		c.JSON(utils.ResponseBody500UnexpectedError())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	c.JSON(http.StatusOK, res)
 }

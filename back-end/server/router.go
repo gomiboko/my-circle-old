@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/gomiboko/my-circle/aws"
 	"github.com/gomiboko/my-circle/consts"
 	"github.com/gomiboko/my-circle/controllers"
 	"github.com/gomiboko/my-circle/db"
@@ -71,6 +72,9 @@ func setupMiddlewares(r *gin.Engine) error {
 	cfg.AllowCredentials = true
 	r.Use(cors.New(cfg))
 
+	// リクエストボディサイズ上限の設定
+	r.Use(middlewares.RequestBodySizeLimiter())
+
 	return nil
 }
 
@@ -85,9 +89,15 @@ func setupCustomValidations() error {
 }
 
 func setupRoutings(r *gin.Engine) {
+	storageService := services.NewS3Service(aws.GetConf())
+
 	ur := repositories.NewUserRepository(db.GetDB())
+	cr := repositories.NewCircleRepository(db.GetDB())
+	ucr := repositories.NewUsersCirclesRepository(db.GetDB())
+
 	sc := controllers.NewSessionController(services.NewSessionService(ur))
 	uc := controllers.NewUserController(services.NewUserService(ur))
+	cc := controllers.NewCircleController(services.NewCircleService(cr, ucr), storageService)
 
 	// 認証が不要なエンドポイント
 	v1 := r.Group(pathV1)
@@ -104,5 +114,8 @@ func setupRoutings(r *gin.Engine) {
 	{
 		users := v1Auth.Group(pathUsers)
 		users.GET("/me", uc.GetHomeInfo)
+
+		circles := v1Auth.Group("/circles")
+		circles.POST("", cc.Create)
 	}
 }
